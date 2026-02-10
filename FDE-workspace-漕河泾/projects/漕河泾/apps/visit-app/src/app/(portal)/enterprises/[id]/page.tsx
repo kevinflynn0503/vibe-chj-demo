@@ -10,13 +10,13 @@ import {
   ArrowLeft, FileText, Video, Building2, Clock, ListChecks,
   Shield, ExternalLink, ChevronRight, CheckCircle2, AlertCircle,
   MapPin, Users, Calendar, Tag, TrendingUp, Briefcase, Globe, Rocket,
-  Phone, Mail, Globe2, Copy
+  Phone, Mail, Globe2, Copy, Sparkles, Bot
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getEnterprise, getVisitRecords, getDemands, getBackgroundReport, getAssessments } from '@/lib/mock-data';
 import { VISIT_TYPE_LABELS, DEMAND_TYPE_LABELS, GRADE_STYLES, TOUCH_STATUS_LABELS } from '@/lib/schema';
 import type { VisitType, DemandType, DemandStatus } from '@/lib/schema';
-import { generateReport, linkMinute, exportToFeishu } from '@/lib/host-api';
+import { generateReport, linkMinute, exportToFeishu, sendChat } from '@/lib/host-api';
 
 type TabKey = 'basic' | 'visits' | 'demands' | 'policy';
 
@@ -82,6 +82,9 @@ export default function EnterprisePage() {
               </button>
               <button className="btn btn-primary btn-sm" onClick={() => generateReport(name)}>
                 <FileText className="h-3.5 w-3.5" /> 生成背调
+              </button>
+              <button className="btn btn-primary btn-sm" onClick={() => sendChat(`请对「${name}」进行综合分析：评估企业发展潜力、合作价值、政策匹配度和潜在风险，给出投资/合作建议。`)}>
+                <Sparkles className="h-3.5 w-3.5" /> AI 分析
               </button>
             </div>
           </div>
@@ -284,7 +287,15 @@ function BasicTab({ enterprise, report }: { enterprise: any; report: any }) {
         </div>
         
         <div className="enterprise-card">
-          <h3 className="text-sm font-bold text-slate-900 mb-3">风险扫描</h3>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-bold text-slate-900">风险扫描</h3>
+            <button
+              className="flex items-center gap-1 text-[10px] font-medium text-[#3370FF] bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded border border-blue-100 transition-colors"
+              onClick={() => sendChat(`请对「${enterprise.short_name ?? enterprise.name}」进行深度风险扫描，检查工商异常、司法诉讼、经营风险、股权质押等，给出风险评估报告。`)}
+            >
+              <Sparkles className="h-3 w-3" /> AI 深度扫描
+            </button>
+          </div>
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm p-2 bg-green-50 text-green-700 rounded border border-green-100">
               <span>经营异常</span>
@@ -347,7 +358,7 @@ function VisitsTab({ visits, router }: { visits: any[]; router: any }) {
 }
 
 function DemandsTab({ demands }: { demands: any[] }) {
-  if (demands.length === 0) return <EmptyState text="暂无需求" />;
+  if (demands.length === 0) return <EmptyState text="暂无需求，可通过 AI 走访提取自动发现" />;
 
   const statusMap: Record<string, string> = { pending: '待处理', processing: '处理中', done: '已完成' };
   const statusClass: Record<string, string> = { 

@@ -5,7 +5,7 @@
 'use client';
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { Home, Briefcase, Shield, Rocket, Building2 } from 'lucide-react';
+import { Home, Briefcase, Shield, Rocket, Building2, BarChart3 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Suspense } from 'react';
 
@@ -15,10 +15,12 @@ const TABS = [
   { id: 'policy', label: '政策服务', icon: Shield, href: '/policy' },
   { id: 'incubator', label: '孵化器', icon: Rocket, href: '/incubator' },
   { id: 'enterprises', label: '企业库', icon: Building2, href: '/enterprises' },
+  { id: 'dashboard', label: '管理看板', icon: BarChart3, href: '/dashboard' },
 ];
 
 function getActiveTab(pathname: string): string {
   if (pathname === '/') return 'home';
+  if (pathname.startsWith('/dashboard')) return 'dashboard';
   if (pathname.startsWith('/policy')) return 'policy';
   if (pathname.startsWith('/incubator')) return 'incubator';
   if (pathname.startsWith('/enterprises')) return 'enterprises';

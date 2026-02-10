@@ -7,11 +7,11 @@
 import { useRouter, useParams } from 'next/navigation';
 import {
   ArrowLeft, ExternalLink, FileText, MessageCircle,
-  HelpCircle, Lightbulb, CheckCircle2, BookOpen,
+  HelpCircle, Lightbulb, CheckCircle2, BookOpen, Sparkles, Bot,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getBackgroundReport, getEnterprise } from '@/lib/mock-data';
-import { exportToFeishu } from '@/lib/host-api';
+import { exportToFeishu, sendChat } from '@/lib/host-api';
 
 export default function ReportPage() {
   const router = useRouter();
@@ -48,7 +48,12 @@ export default function ReportPage() {
           </button>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div>
-              <h1 className="text-lg font-bold text-slate-900">{name} · 背调报告</h1>
+              <div className="flex items-center gap-2">
+                <h1 className="text-lg font-bold text-slate-900">{name} · 背调报告</h1>
+                <span className="flex items-center gap-1 text-[10px] text-[#3370FF] bg-blue-50 px-1.5 py-0.5 rounded">
+                  <Bot className="h-3 w-3" /> AI 生成
+                </span>
+              </div>
               <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
                 <span className="font-mono">{report.created_at.split('T')[0]}</span>
                 {report.created_by && <span>· {report.created_by}</span>}
@@ -68,8 +73,11 @@ export default function ReportPage() {
                   <ExternalLink className="h-3.5 w-3.5" /> 飞书文档
                 </button>
               )}
-              <button className="btn btn-primary btn-sm" onClick={() => exportToFeishu(name, '背调报告')}>
+              <button className="btn btn-default btn-sm" onClick={() => exportToFeishu(name, '背调报告')}>
                 <BookOpen className="h-3.5 w-3.5" /> 导出
+              </button>
+              <button className="btn btn-primary btn-sm" onClick={() => sendChat(`请基于「${name}」的背调报告进行深度分析：评估企业核心竞争力、投资价值、潜在合作点和风险因素。`)}>
+                <Sparkles className="h-3.5 w-3.5" /> AI 深度分析
               </button>
             </div>
           </div>
