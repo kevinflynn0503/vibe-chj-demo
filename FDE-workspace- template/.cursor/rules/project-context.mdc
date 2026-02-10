@@ -1,0 +1,46 @@
+---
+description: Vibe FDE 工作空间核心规则
+alwaysApply: true
+---
+
+# 工作空间规则
+
+你是 FDE 的 AI 搭档，帮助 FDE 交付 ToG 智能驾驶舱项目。
+
+## 启动序列
+
+每次会话开始时：
+1. 读根 `MEMORY.md` — FDE 当前在做哪些项目
+2. 确认操作哪个项目 → 进入 `projects/[项目名]/`
+3. 读项目的 `MEMORY.md` — 项目在什么阶段
+4. 读项目的 `memory/` — 最近做了什么
+5. 从那里继续
+
+## 技能引用
+
+方法论技能在 `skills/` 目录，按需读取：
+- Phase 1-3（需求/设计）→ `skills/product/SKILL.md`
+- Phase 4-6（开发/部署）→ `skills/north-app/SKILL.md`
+- Agent 设计 → `skills/agent-design/SKILL.md`
+- 工作空间设计 → `skills/workspace-design/SKILL.md`
+
+## 核心约束
+
+- 不直接面对客户，输出经 FDE 审查后才给客户
+- 阶段切换必须 FDE 显式确认
+- 不确定的点主动标出，降低 FDE 审查成本
+- 问题清单必须带选择项（不是开放性问题）
+- 项目数据严格在 `projects/[项目名]/` 中，不要放到根目录
+- 每次重要工作完成后记日记
+
+## 新建项目
+
+```bash
+cp -r projects/_template projects/[客户名]-驾驶舱
+```
+
+## 新建 App
+
+```bash
+cp -r skills/north-app/app-template projects/[项目名]/apps/[app-name]
+```

@@ -1,0 +1,24 @@
+# 工作空间配置
+# 路径: .workspace/config.yaml
+
+# 基本信息
+name: "{工作空间名称}"
+description: "{一句话描述这个空间是做什么的}"
+created: "{创建日期}"
+
+# 数据文件
+data_files:
+  - memory/user.csv          # 用户偏好
+  - memory/knowledge.csv     # 知识库
+  - tasks/backlog.csv        # 任务列表
+
+# 检查点设置
+checkpoint:
+  auto_save: true            # 自动保存
+  interval: 2h               # 保存间隔
+  keep_count: 5              # 保留几个
+
+# Git 设置
+git:
+  auto_commit: false         # 是否自动提交
+  branch: main               # 默认分支

@@ -1,0 +1,42 @@
+{
+  "name": "@north-app/your-app-name",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev --turbo --port 3333",
+    "build": "next build",
+    "start": "next start",
+    "check": "next lint && tsc --noEmit",
+    "lint": "eslint . --ext .ts,.tsx --max-warnings 100",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@north/common": "workspace:*",
+    "@north/design": "workspace:*",
+    "@north/north-client-sdk": "workspace:*",
+    "@supabase/supabase-js": "^2.47.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "clsx": "^2.1.1",
+    "framer-motion": "^11.15.0",
+    "next": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "sonner": "^2.0.3",
+    "zod": "^4.0.0",
+    "zustand": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.10",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@workspace/eslint-config": "workspace:*",
+    "eslint": "^9.23.0",
+    "typescript": "catalog:",
+    "vitest": "^3.0.0"
+  }
+}

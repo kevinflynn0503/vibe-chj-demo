@@ -1,0 +1,263 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * 漕河泾智能驾驶舱 — 飞书风格设计系统
+ * 浅色 / 紧凑 / 蓝色系 / 操作导向
+ */
+
+@layer base {
+  :root {
+    /* 飞书色彩系统 */
+    --primary: #3370FF;
+    --primary-hover: #2860E1;
+    --primary-active: #1F4FBF;
+    --primary-light: #EEF3FF;
+    --primary-light-hover: #DEE8FF;
+
+    /* 背景 */
+    --bg-body: #F5F6F7;
+    --bg-card: #FFFFFF;
+    --bg-hover: #F0F1F3;
+    --bg-active: #E8E9EB;
+    --bg-mask: rgba(0, 0, 0, 0.6);
+
+    /* 文字 */
+    --text-primary: #1F2329;
+    --text-secondary: #646A73;
+    --text-placeholder: #8F959E;
+    --text-disabled: #BBBFC4;
+    --text-link: #3370FF;
+
+    /* 边框 */
+    --border: #DEE0E3;
+    --border-hover: #C9CCD0;
+    --divider: #F0F1F3;
+
+    /* 语义色 */
+    --success: #34C724;
+    --success-light: #EDFEE8;
+    --warning: #FF7D00;
+    --warning-light: #FFF3E8;
+    --danger: #F53F3F;
+    --danger-light: #FFECE8;
+    --info: #3370FF;
+    --info-light: #EEF3FF;
+
+    /* 圆角 */
+    --radius-sm: 4px;
+    --radius: 6px;
+    --radius-lg: 8px;
+
+    /* 阴影 */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.12);
+  }
+
+  * {
+    border-color: var(--border);
+  }
+
+  body {
+    background: var(--bg-body);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* 紧凑滚动条 */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #C9CCD0; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #8F959E; }
+}
+
+/* ── 飞书组件样式 ── */
+
+@layer components {
+  /* 卡片 */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+  }
+
+  /* 指标卡片 */
+  .stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 16px 20px;
+  }
+  .stat-card:hover {
+    border-color: var(--border-hover);
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* 表格 */
+  .ftable {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .ftable thead th {
+    background: var(--bg-body);
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .ftable tbody td {
+    padding: 10px 12px;
+    font-size: 13px;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--divider);
+  }
+  .ftable tbody tr:hover {
+    background: var(--bg-hover);
+  }
+  .ftable tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  /* 标签 */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 1px 8px;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: var(--radius-sm);
+    line-height: 20px;
+  }
+  .tag-blue { background: var(--primary-light); color: var(--primary); }
+  .tag-green { background: var(--success-light); color: var(--success); }
+  .tag-orange { background: var(--warning-light); color: var(--warning); }
+  .tag-red { background: var(--danger-light); color: var(--danger); }
+  .tag-gray { background: var(--bg-hover); color: var(--text-secondary); }
+
+  /* 按钮 */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 5px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 1px solid transparent;
+    line-height: 22px;
+  }
+  .btn-primary {
+    background: var(--primary);
+    color: #fff;
+  }
+  .btn-primary:hover { background: var(--primary-hover); }
+  .btn-primary:active { background: var(--primary-active); }
+
+  .btn-default {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border-color: var(--border);
+  }
+  .btn-default:hover { background: var(--bg-hover); border-color: var(--border-hover); }
+
+  .btn-text {
+    background: transparent;
+    color: var(--text-link);
+    padding: 5px 8px;
+  }
+  .btn-text:hover { background: var(--primary-light); }
+
+  .btn-sm { padding: 2px 12px; font-size: 13px; }
+  .btn-lg { padding: 8px 24px; font-size: 14px; }
+
+  /* 输入框 */
+  .input {
+    width: 100%;
+    padding: 5px 12px;
+    font-size: 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-card);
+    color: var(--text-primary);
+    outline: none;
+    transition: border-color 0.15s;
+    line-height: 22px;
+  }
+  .input::placeholder { color: var(--text-placeholder); }
+  .input:hover { border-color: var(--border-hover); }
+  .input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(51, 112, 255, 0.1); }
+
+  /* 待办提醒栏 */
+  .alert-bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 8px 16px;
+    font-size: 13px;
+    border-radius: var(--radius);
+  }
+  .alert-bar-warning {
+    background: var(--warning-light);
+    color: #8B4513;
+    border: 1px solid #FFD6A5;
+  }
+  .alert-bar-info {
+    background: var(--info-light);
+    color: var(--primary);
+    border: 1px solid #B8D0FF;
+  }
+
+  /* 数据来源标注 */
+  .source-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--text-placeholder);
+  }
+
+  /* 漏斗条 */
+  .funnel-bar {
+    height: 24px;
+    border-radius: var(--radius-sm);
+    transition: width 0.6s ease;
+  }
+
+  /* 空状态 */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 48px 0;
+    color: var(--text-placeholder);
+  }
+}
+
+/* ── 工具类 ── */
+
+@layer utilities {
+  .text-primary { color: var(--text-primary); }
+  .text-secondary { color: var(--text-secondary); }
+  .text-placeholder { color: var(--text-placeholder); }
+  .text-link { color: var(--text-link); }
+
+  .bg-body { background: var(--bg-body); }
+  .bg-card { background: var(--bg-card); }
+  .bg-hover { background: var(--bg-hover); }
+
+  .border-default { border-color: var(--border); }
+  .border-divider { border-color: var(--divider); }
+
+  .shadow-card { box-shadow: var(--shadow); }
+  .shadow-card-sm { box-shadow: var(--shadow-sm); }
+}

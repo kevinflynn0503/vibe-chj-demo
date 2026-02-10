@@ -1,0 +1,39 @@
+# ============================================
+# 小北main 工作区 .gitignore
+# ============================================
+
+# === 子仓库（各自有独立的 git 管理）===
+north-deer-flow/
+northau-xiaobei/
+north-app-core/
+openclaw-cn/
+Vide FDE/
+product manager/
+
+# === macOS ===
+.DS_Store
+**/.DS_Store
+
+# === IDE ===
+.vscode/
+.idea/
+
+# === Node.js ===
+node_modules/
+.next/
+
+# === Python ===
+__pycache__/
+*.py[oc]
+.venv/
+venv/
+
+# === 环境变量 ===
+.env
+.env.local
+.env.*.local
+
+# === 临时文件 ===
+tmp/
+*.tmp
+*.log
