@@ -11,7 +11,7 @@
 
 @layer base {
   :root {
-    --bg-primary: #FFFFFF;
+    --bg-primary: #F7F8FA;
     --bg-card: #FFFFFF;
     --text-primary: #0F172A;
     --text-secondary: #64748B;
@@ -64,7 +64,7 @@
     border-collapse: collapse;
   }
   .dtable thead th {
-    background: #F8FAFC;
+    background: #FFFFFF;
     padding: 10px 16px;
     font-size: 12px;
     font-weight: 600;
@@ -81,7 +81,7 @@
     border-bottom: 1px solid #F1F5F9;
   }
   .dtable tbody tr:hover {
-    background: #F8FAFC;
+    background: #F8FAFC; /* hover 保留微弱背景区分 */
   }
   .dtable tbody tr:last-child td {
     border-bottom: none;

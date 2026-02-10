@@ -59,26 +59,28 @@ export default function VisitWorkbench() {
   const total = prepareList.length + visitList.length + confirmList.length + followList.length;
 
   return (
-    <div className="h-full flex flex-col bg-white overflow-hidden">
-      {/* 工具栏 */}
-      <div className="shrink-0 bg-white border-b border-slate-200">
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-          <div>
-            <h1 className="text-lg font-bold text-slate-900">走访任务看板</h1>
-            <p className="text-xs text-slate-500 mt-0.5">走访全流程：准备 → 走访 → 确认 → 跟进 · {total} 项任务</p>
-          </div>
-          <div className="flex items-center gap-2 w-full sm:w-auto">
-            <div className="relative flex-1 sm:w-56">
-              <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
-              <input type="text" placeholder="搜索..." value={search} onChange={e => setSearch(e.target.value)}
-                className="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded hover:border-slate-300 focus:border-[#3370FF] focus:outline-none transition-colors" />
+    <div className="h-full flex flex-col overflow-hidden">
+      {/* 头部卡片 */}
+      <div className="shrink-0 px-4 sm:px-6 pt-4">
+        <div className="max-w-[1200px] mx-auto bg-white rounded-lg border border-slate-200 shadow-sm p-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-3">
+            <div>
+              <h1 className="text-lg font-bold text-slate-900">走访任务看板</h1>
+              <p className="text-xs text-slate-500 mt-0.5">走访全流程：准备 → 走访 → 确认 → 跟进 · {total} 项任务</p>
             </div>
-            <button className="btn btn-default btn-sm shrink-0" onClick={() => router.push('/visit/records')}>
-              <FileText className="h-3.5 w-3.5" /> 走访记录
-            </button>
-            <button className="btn btn-primary btn-sm shrink-0" onClick={() => router.push('/enterprises')}>
-              <Plus className="h-3.5 w-3.5" /> 新增走访
-            </button>
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <div className="relative flex-1 sm:w-56">
+                <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
+                <input type="text" placeholder="搜索..." value={search} onChange={e => setSearch(e.target.value)}
+                  className="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded hover:border-slate-300 focus:border-[#3370FF] focus:outline-none transition-colors" />
+              </div>
+              <button className="btn btn-default btn-sm shrink-0" onClick={() => router.push('/visit/records')}>
+                <FileText className="h-3.5 w-3.5" /> 走访记录
+              </button>
+              <button className="btn btn-primary btn-sm shrink-0" onClick={() => router.push('/enterprises')}>
+                <Plus className="h-3.5 w-3.5" /> 新增走访
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -253,7 +255,7 @@ function Col({ title, count, color, children }: { title: string; count: number; 
 
 function Card({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
   return (
-    <div className="bg-white border border-slate-200 rounded-lg p-3 hover:border-[#3370FF] transition-colors cursor-pointer" onClick={onClick}>
+    <div className="bg-white border border-slate-200 rounded-lg p-3 hover:border-[#3370FF] transition-colors cursor-pointer shadow-sm" onClick={onClick}>
       {children}
     </div>
   );

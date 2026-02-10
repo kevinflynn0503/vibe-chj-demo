@@ -66,14 +66,14 @@ export default function EnterprisesPage() {
   const incubated = enterprises.filter(e => e.is_incubated).length;
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* 头部 */}
-      <div className="bg-white border-b border-slate-200">
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-4 sm:py-5">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-3">
+    <div className="min-h-screen">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-4 space-y-4">
+        {/* 头部卡片 */}
+        <div className="bg-white rounded-lg border border-slate-200 shadow p-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div>
-              <h1 className="text-lg sm:text-xl font-bold text-slate-900">企业画像库</h1>
-              <p className="text-xs sm:text-sm text-slate-500 mt-0.5">共 {totalEnterprises} 家园区企业</p>
+              <h1 className="text-lg font-bold text-slate-900">企业画像库</h1>
+              <p className="text-xs text-slate-500 mt-0.5">共 {totalEnterprises} 家园区企业</p>
             </div>
             <div className="flex items-center gap-2">
               <button className="btn btn-default btn-sm"
@@ -86,57 +86,59 @@ export default function EnterprisesPage() {
               </button>
             </div>
           </div>
+        </div>
 
-          {/* AI 洞察概要 */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
-            <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg border border-slate-100">
-              <Building2 className="h-4 w-4 text-slate-400 shrink-0" />
-              <div>
-                <div className="text-lg font-bold font-mono text-slate-900">{totalEnterprises}</div>
-                <div className="text-[10px] text-slate-500">园区企业</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-100">
-              <Shield className="h-4 w-4 text-[#3370FF] shrink-0" />
-              <div>
-                <div className="text-lg font-bold font-mono text-[#3370FF]">{withPolicy}</div>
-                <div className="text-[10px] text-slate-500">已AI筛选</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 p-3 bg-emerald-50 rounded-lg border border-emerald-100">
-              <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
-              <div>
-                <div className="text-lg font-bold font-mono text-emerald-600">{gradeA}</div>
-                <div className="text-[10px] text-slate-500">A级企业</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 p-3 bg-violet-50 rounded-lg border border-violet-100">
-              <Zap className="h-4 w-4 text-violet-500 shrink-0" />
-              <div>
-                <div className="text-lg font-bold font-mono text-violet-600">{incubated}</div>
-                <div className="text-[10px] text-slate-500">在孵企业</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 p-3 bg-amber-50 rounded-lg border border-amber-100">
-              <Briefcase className="h-4 w-4 text-amber-500 shrink-0" />
-              <div>
-                <div className="text-lg font-bold font-mono text-amber-600">{recentVisited}</div>
-                <div className="text-[10px] text-slate-500">已走访</div>
-              </div>
+        {/* AI 洞察概要 */}
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+          <div className="flex items-center gap-3 p-3 bg-white rounded-lg border border-slate-200 shadow">
+            <Building2 className="h-4 w-4 text-slate-400 shrink-0" />
+            <div>
+              <div className="text-lg font-bold font-mono text-slate-900">{totalEnterprises}</div>
+              <div className="text-[10px] text-slate-500">园区企业</div>
             </div>
           </div>
+          <div className="flex items-center gap-3 p-3 bg-white rounded-lg border border-blue-100 shadow">
+            <Shield className="h-4 w-4 text-[#3370FF] shrink-0" />
+            <div>
+              <div className="text-lg font-bold font-mono text-[#3370FF]">{withPolicy}</div>
+              <div className="text-[10px] text-slate-500">已AI筛选</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-3 p-3 bg-white rounded-lg border border-emerald-100 shadow">
+            <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+            <div>
+              <div className="text-lg font-bold font-mono text-emerald-600">{gradeA}</div>
+              <div className="text-[10px] text-slate-500">A级企业</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-3 p-3 bg-white rounded-lg border border-violet-100 shadow">
+            <Zap className="h-4 w-4 text-violet-500 shrink-0" />
+            <div>
+              <div className="text-lg font-bold font-mono text-violet-600">{incubated}</div>
+              <div className="text-[10px] text-slate-500">在孵企业</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-3 p-3 bg-white rounded-lg border border-amber-100 shadow">
+            <Briefcase className="h-4 w-4 text-amber-500 shrink-0" />
+            <div>
+              <div className="text-lg font-bold font-mono text-amber-600">{recentVisited}</div>
+              <div className="text-[10px] text-slate-500">已走访</div>
+            </div>
+          </div>
+        </div>
 
-          {/* 搜索 + 筛选 */}
+        {/* 搜索 + 筛选 */}
+        <div className="bg-white rounded-lg border border-slate-200 shadow p-4">
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
               <input type="text" placeholder="搜索企业名称、赛道..."
-                className="w-full pl-10 pr-4 py-2 text-sm border border-slate-200 rounded-md focus:outline-none focus:border-[#3370FF] transition-colors"
+                className="w-full pl-10 pr-4 py-2 text-sm border border-slate-200 rounded-md focus:outline-none focus:border-[#3370FF] transition-colors bg-slate-50"
                 value={search} onChange={e => setSearch(e.target.value)} />
             </div>
             <div className="relative w-full sm:w-40">
               <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-              <select className="w-full pl-10 pr-8 py-2 text-sm border border-slate-200 rounded-md focus:outline-none focus:border-[#3370FF] appearance-none bg-white"
+              <select className="w-full pl-10 pr-8 py-2 text-sm border border-slate-200 rounded-md focus:outline-none focus:border-[#3370FF] appearance-none bg-slate-50"
                 value={industryFilter} onChange={e => setIndustryFilter(e.target.value)}>
                 <option value="">全部赛道</option>
                 {industries.map(i => <option key={i} value={i}>{i}</option>)}
@@ -159,12 +161,10 @@ export default function EnterprisesPage() {
             </div>
           </div>
         </div>
-      </div>
 
-      {/* 卡片网格 */}
-      <div className="max-w-[1200px] mx-auto p-4 sm:p-6">
+        {/* AI 推荐提示 */}
         {sortMode === 'ai_recommend' && (
-          <div className="flex items-center gap-2 mb-4 p-3 bg-gradient-to-r from-blue-50 to-white border border-blue-100 rounded-lg">
+          <div className="flex items-center gap-2 p-3 bg-gradient-to-r from-blue-50 to-white border border-blue-100 rounded-lg">
             <Bot className="h-4 w-4 text-[#3370FF] shrink-0" />
             <span className="text-xs text-slate-600">
               AI 综合走访频率、政策匹配度、发展潜力推荐优先关注的企业。
@@ -172,6 +172,7 @@ export default function EnterprisesPage() {
           </div>
         )}
 
+        {/* 卡片网格 */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map(ent => {
             const policy = entPolicyMap[ent.id];
@@ -184,7 +185,7 @@ export default function EnterprisesPage() {
 
             return (
               <div key={ent.id}
-                className="bg-white border border-slate-200 rounded-lg p-4 hover:border-[#3370FF] transition-colors cursor-pointer group"
+                className="bg-white border border-slate-200 rounded-lg p-4 hover:border-[#3370FF] transition-all hover:shadow-md cursor-pointer group shadow"
                 onClick={() => router.push(`/enterprises/${ent.id}`)}>
                 {/* 头部 */}
                 <div className="flex items-start gap-3 mb-3">
@@ -258,6 +259,7 @@ export default function EnterprisesPage() {
           })}
         </div>
 
+        {/* 空状态 */}
         {filtered.length === 0 && (
           <div className="text-center py-16">
             <Building2 className="h-12 w-12 text-slate-200 mx-auto mb-3" />

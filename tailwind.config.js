@@ -15,10 +15,10 @@ export default {
           muted: 'rgba(51, 112, 255, 0.08)',
         },
         surface: {
-          primary: '#F8FAFC',
+          primary: '#FFFFFF',
           card: '#FFFFFF',
-          elevated: '#F1F5F9',
-          hover: '#F1F5F9',
+          elevated: '#FFFFFF',
+          hover: '#F8FAFC',
         },
         data: {
           blue: '#3B82F6',

@@ -30,24 +30,23 @@ export default function IncubatorPage() {
   const entIdToIncId = Object.fromEntries(enterprises.map(e => [e.enterprise_id, e.id]));
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* 头部 */}
-      <div className="bg-white border-b border-slate-200">
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-          <div>
-            <h1 className="text-lg font-bold text-slate-900">孵化器运营</h1>
-            <p className="text-xs text-slate-500 mt-0.5">A6 奇岱松校友中心 · {stats.total_enterprises} 家在孵</p>
+    <div className="min-h-screen">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-4 space-y-4">
+        {/* 头部卡片 */}
+        <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-3">
+            <div>
+              <h1 className="text-lg font-bold text-slate-900">孵化器运营</h1>
+              <p className="text-xs text-slate-500 mt-0.5">A6 奇岱松校友中心 · {stats.total_enterprises} 家在孵</p>
+            </div>
+            <button className="btn btn-primary btn-sm" onClick={() => router.push('/incubator/match')}>
+              <Sparkles className="h-3.5 w-3.5" /> AI 订单匹配
+            </button>
           </div>
-          <button className="btn btn-primary btn-sm" onClick={() => router.push('/incubator/match')}>
-            <Sparkles className="h-3.5 w-3.5" /> AI 订单匹配
-          </button>
         </div>
-      </div>
-
-      <div className="max-w-[1200px] mx-auto p-4 sm:p-6 space-y-6">
 
         {/* ═══ 运营指标 + AI 状态 ═══ */}
-        <div className="bg-white border border-slate-200 rounded-lg p-4">
+        <div className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4 text-[#3370FF]" />
@@ -89,7 +88,7 @@ export default function IncubatorPage() {
         {/* ═══ 三大场景入口 ═══ */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* 异常预警 */}
-          <div className="bg-white border border-slate-200 rounded-lg overflow-hidden hover:border-red-300 transition-colors cursor-pointer group"
+          <div className="bg-white border border-slate-200 rounded-lg overflow-hidden hover:border-red-300 transition-colors cursor-pointer group shadow-sm"
             onClick={() => router.push('/incubator/alerts')}>
             <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -115,7 +114,7 @@ export default function IncubatorPage() {
           </div>
 
           {/* 订单匹配 */}
-          <div className="bg-white border border-slate-200 rounded-lg overflow-hidden hover:border-[#3370FF] transition-colors cursor-pointer group"
+          <div className="bg-white border border-slate-200 rounded-lg overflow-hidden hover:border-[#3370FF] transition-colors cursor-pointer group shadow-sm"
             onClick={() => router.push('/incubator/match')}>
             <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -137,7 +136,7 @@ export default function IncubatorPage() {
           </div>
 
           {/* 反向推荐 */}
-          <div className="bg-white border border-slate-200 rounded-lg overflow-hidden hover:border-emerald-400 transition-colors cursor-pointer group"
+          <div className="bg-white border border-slate-200 rounded-lg overflow-hidden hover:border-emerald-400 transition-colors cursor-pointer group shadow-sm"
             onClick={() => router.push('/incubator/recommend')}>
             <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -162,7 +161,7 @@ export default function IncubatorPage() {
         {/* ═══ 两栏：高活跃 + 最近动态 ═══ */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* 高活跃企业 */}
-          <div className="bg-white border border-slate-200 rounded-lg">
+          <div className="bg-white border border-slate-200 rounded-lg shadow-sm">
             <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Activity className="h-4 w-4 text-emerald-500" />
@@ -194,7 +193,7 @@ export default function IncubatorPage() {
           </div>
 
           {/* 最近动态 */}
-          <div className="bg-white border border-slate-200 rounded-lg">
+          <div className="bg-white border border-slate-200 rounded-lg shadow-sm">
             <div className="px-4 py-3 border-b border-slate-100 flex items-center gap-2">
               <Clock className="h-4 w-4 text-slate-400" />
               <h2 className="text-sm font-bold text-slate-900">最近动态</h2>
@@ -230,7 +229,7 @@ export default function IncubatorPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {enterprises.map(ent => (
               <div key={ent.id}
-                className="bg-white border border-slate-200 rounded-lg p-4 hover:border-[#3370FF] transition-colors cursor-pointer group"
+                className="bg-white border border-slate-200 rounded-lg p-4 hover:border-[#3370FF] transition-colors cursor-pointer group shadow-sm"
                 onClick={() => router.push(`/incubator/${ent.id}`)}>
                 <div className="flex items-start gap-3 mb-2">
                   <div className="w-9 h-9 bg-violet-50 text-violet-600 border border-violet-100 rounded-lg flex items-center justify-center text-sm font-bold shrink-0">

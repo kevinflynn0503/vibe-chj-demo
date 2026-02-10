@@ -61,7 +61,7 @@ export default function ConfirmPage() {
   };
 
   return (
-    <div className="min-h-screen p-8 bg-slate-50">
+    <div className="min-h-screen p-8 bg-white">
       <div className="max-w-[1400px] mx-auto space-y-6">
         {/* 顶部 */}
         <div className="flex items-center justify-between">

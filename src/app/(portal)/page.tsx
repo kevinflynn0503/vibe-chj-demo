@@ -1,21 +1,16 @@
 /**
- * 首页 — 员工今日工作台
+ * 首页 — 员工今日工作台（适配 iframe 嵌入小北）
  * 
- * 聚焦"今天要做什么"：
- * 1. 今日重点（AI 提炼的最重要事项）
- * 2. 我的待办（按优先级排列）
- * 3. AI 动态（AI 后台完成的事情）
- * 4. 场景入口
+ * 微灰背景 + 白卡片层次 + 内联导航
  */
 'use client';
 
 import { useRouter } from 'next/navigation';
 import {
   Briefcase, Shield, Rocket, Building2,
-  ArrowRight, TrendingUp,
-  CheckCircle2, AlertCircle, FileText, ChevronRight,
-  Bot, Sparkles, Calendar, Target, Clock, Eye, MessageSquare,
-  Star, Zap, Phone
+  AlertCircle, FileText, ChevronRight,
+  Bot, Calendar, Target, Clock, MessageSquare,
+  Star, Zap,
 } from 'lucide-react';
 import { getStats, getPolicyStats, getIncubatorStats, getVisitRecords, getDemands, getAssessments } from '@/lib/mock-data';
 import { cn } from '@/lib/utils';
@@ -35,6 +30,8 @@ export default function HomePage() {
   const today = new Date().toLocaleDateString('zh-CN', {
     year: 'numeric', month: 'long', day: 'numeric', weekday: 'long',
   });
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? '早上好' : hour < 18 ? '下午好' : '晚上好';
 
   // 今日重点
   const todayFocus = [
@@ -158,49 +155,44 @@ export default function HomePage() {
     },
   ];
 
-  const hour = new Date().getHours();
-  const greeting = hour < 12 ? '早上好' : hour < 18 ? '下午好' : '晚上好';
-
   return (
-    <div className="min-h-screen bg-white">
-      {/* 头部 — 渐变头图 */}
-      <div className="bg-gradient-to-br from-[#3370FF] via-[#4B83FF] to-[#6B9AFF] text-white">
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 pt-6 pb-8">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-blue-200 text-xs mb-1">{today}</p>
-              <h1 className="text-2xl font-bold">{greeting}，薛坤</h1>
-              <p className="text-blue-100 text-sm mt-2">今天有 <span className="text-white font-bold">{pendingVisits.length}</span> 个走访任务 · <span className="text-white font-bold">{records.filter(r => !r.is_confirmed).length}</span> 条记录待确认</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white/15 backdrop-blur-sm rounded-full border border-white/20">
-                <Bot className="h-3.5 w-3.5" />
-                <span className="text-xs font-medium">AI 助手就绪</span>
-              </div>
-            </div>
-          </div>
+    <div className="min-h-screen">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-4 space-y-4">
 
-          {/* 嵌入头图的快捷统计 */}
-          <div className="grid grid-cols-4 gap-3 mt-5">
-            {[
-              { label: '待处理', value: aiActivities.length, icon: Clock, bg: 'bg-white/15' },
-              { label: '本月走访', value: records.length, icon: Briefcase, bg: 'bg-white/15' },
-              { label: '政策任务', value: myTasks.length, icon: Shield, bg: 'bg-white/15' },
-              { label: '需求跟进', value: demands.filter(d => d.status === 'pending').length, icon: MessageSquare, bg: 'bg-white/15' },
-            ].map((s, i) => (
-              <div key={i} className={cn("rounded-lg p-3 backdrop-blur-sm border border-white/10", s.bg)}>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs text-blue-100">{s.label}</span>
-                  <s.icon className="h-3.5 w-3.5 text-blue-200" />
-                </div>
-                <div className="text-xl font-bold font-mono">{s.value}</div>
-              </div>
-            ))}
+        {/* ═══ 头部摘要 ═══ */}
+        <div className="bg-white rounded-lg border border-slate-200 shadow p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-lg font-bold text-slate-900">{greeting}，薛坤</h1>
+              <p className="text-xs text-slate-500 mt-0.5">{today}</p>
+            </div>
+            <div className="flex items-center gap-3 text-xs text-slate-500">
+              <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5 text-amber-500" /><strong className="text-slate-900">{pendingVisits.length}</strong> 走访任务</span>
+              <span className="flex items-center gap-1"><FileText className="h-3.5 w-3.5 text-blue-500" /><strong className="text-slate-900">{records.filter(r => !r.is_confirmed).length}</strong> 待确认</span>
+              <span className="flex items-center gap-1"><MessageSquare className="h-3.5 w-3.5 text-violet-500" /><strong className="text-slate-900">{demands.filter(d => d.status === 'pending').length}</strong> 需求跟进</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="max-w-[1200px] mx-auto p-4 sm:p-6 space-y-6">
+        {/* ═══ 统计概览 ═══ */}
+        <div className="grid grid-cols-4 gap-3">
+          {[
+            { label: '待处理', value: aiActivities.length, icon: Clock, color: 'text-[#3370FF]', bg: 'bg-blue-50' },
+            { label: '本月走访', value: records.length, icon: Briefcase, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+            { label: '政策任务', value: myTasks.length, icon: Shield, color: 'text-amber-600', bg: 'bg-amber-50' },
+            { label: '需求跟进', value: demands.filter(d => d.status === 'pending').length, icon: MessageSquare, color: 'text-violet-600', bg: 'bg-violet-50' },
+          ].map((s, i) => (
+            <div key={i} className="bg-white border border-slate-200 rounded-lg p-3 flex items-center gap-3 shadow">
+              <div className={cn("p-2 rounded-lg shrink-0", s.bg)}>
+                <s.icon className={cn("h-4 w-4", s.color)} />
+              </div>
+              <div>
+                <div className={cn("text-xl font-bold font-mono", s.color)}>{s.value}</div>
+                <div className="text-xs text-slate-500">{s.label}</div>
+              </div>
+            </div>
+          ))}
+        </div>
 
         {/* ═══ 今日重点 ═══ */}
         <div>
@@ -211,7 +203,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {todayFocus.map((item, i) => (
               <div key={i} className={cn(
-                "bg-white border rounded-lg p-4 cursor-pointer transition-all hover:shadow-sm",
+                "bg-white border rounded-lg p-4 cursor-pointer transition-all hover:shadow-md shadow",
                 item.priority === 'urgent' ? 'border-red-200 hover:border-red-300' :
                 item.priority === 'high' ? 'border-amber-200 hover:border-amber-300' :
                 'border-slate-200 hover:border-[#3370FF]'
@@ -248,10 +240,10 @@ export default function HomePage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {scenarios.map(s => (
             <div key={s.title}
-              className="group bg-white border border-slate-200 rounded-lg p-4 cursor-pointer hover:border-[#3370FF] transition-colors"
+              className="group bg-white border border-slate-200 rounded-lg p-4 cursor-pointer hover:border-[#3370FF] hover:shadow-md transition-all shadow"
               onClick={() => router.push(s.href)}>
               <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 bg-slate-50 rounded-lg text-slate-500 group-hover:bg-blue-50 group-hover:text-[#3370FF] transition-colors">
+                <div className="p-2 bg-blue-50 rounded-lg text-[#3370FF]/60 group-hover:text-[#3370FF] transition-colors">
                   <s.icon className="h-4 w-4" />
                 </div>
                 <div>
@@ -268,7 +260,7 @@ export default function HomePage() {
         </div>
 
         {/* ═══ AI 动态 ═══ */}
-        <div className="bg-white border border-slate-200 rounded-lg">
+        <div className="bg-white border border-slate-200 rounded-lg shadow">
           <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Zap className="h-4 w-4 text-[#3370FF]" />
@@ -299,7 +291,6 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* 底部留白 */}
         <div className="h-4" />
       </div>
     </div>
