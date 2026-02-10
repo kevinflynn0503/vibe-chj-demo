@@ -23,7 +23,7 @@ export default function ReportPage() {
 
   if (!report) {
     return (
-      <div className="min-h-screen bg-[#F5F6F7] flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <FileText className="h-12 w-12 text-slate-200 mx-auto mb-3" />
           <p className="text-sm text-slate-500">暂无背调报告</p>
@@ -38,7 +38,7 @@ export default function ReportPage() {
   const checklist = report.communication_checklist;
 
   return (
-    <div className="min-h-screen bg-[#F5F6F7]">
+    <div className="min-h-screen bg-white">
       {/* 头部 — 统一模板B */}
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-4">

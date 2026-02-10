@@ -58,7 +58,7 @@ export default function IncubatorEnterprisePage() {
 
   if (!ent) {
     return (
-      <div className="min-h-screen bg-[#F5F6F7] flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <p className="text-slate-500 text-sm">未找到该在孵企业</p>
           <button className="btn btn-primary btn-sm mt-4" onClick={() => router.push('/incubator')}>
@@ -77,7 +77,7 @@ export default function IncubatorEnterprisePage() {
   const scoreBg = ent.activity_score >= 80 ? 'bg-emerald-500' : ent.activity_score >= 50 ? 'bg-blue-500' : 'bg-red-500';
 
   return (
-    <div className="min-h-screen bg-[#F5F6F7]">
+    <div className="min-h-screen bg-white">
       {/* Header */}
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-4">

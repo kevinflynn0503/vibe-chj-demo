@@ -66,7 +66,7 @@ export default function EnterprisesPage() {
   const incubated = enterprises.filter(e => e.is_incubated).length;
 
   return (
-    <div className="min-h-screen bg-[#F5F6F7]">
+    <div className="min-h-screen bg-white">
       {/* 头部 */}
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-4 sm:py-5">

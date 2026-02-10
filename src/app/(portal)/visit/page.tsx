@@ -59,7 +59,7 @@ export default function VisitWorkbench() {
   const total = prepareList.length + visitList.length + confirmList.length + followList.length;
 
   return (
-    <div className="h-full flex flex-col bg-[#F5F6F7] overflow-hidden">
+    <div className="h-full flex flex-col bg-white overflow-hidden">
       {/* 工具栏 */}
       <div className="shrink-0 bg-white border-b border-slate-200">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">

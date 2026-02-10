@@ -34,11 +34,41 @@ function Navigation() {
   const searchParams = useSearchParams();
   const activeTab = getActiveTab(pathname);
   
-  // 如果有 ?embed=true 参数，或者是移动端小屏幕（可选），则隐藏导航
-  const isEmbed = searchParams.get('embed') === 'true';
+  // 检测是否在 iframe 中
+  const isEmbed = searchParams.get('embed') === 'true' || (typeof window !== 'undefined' && window.self !== window.top);
 
-  if (isEmbed) return null;
+  // iframe 模式：只显示简洁的 Tab 导航，不显示 Logo 和标题
+  if (isEmbed) {
+    return (
+      <nav className="shrink-0 bg-white border-b border-slate-200 z-50">
+        <div className="flex items-center h-12 px-4 overflow-x-auto no-scrollbar">
+          {TABS.map(tab => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => router.push(tab.href)}
+                className={cn(
+                  'relative flex items-center gap-1.5 px-3 h-12 text-xs font-medium transition-colors cursor-pointer shrink-0 whitespace-nowrap',
+                  isActive
+                    ? 'text-[#3370FF]'
+                    : 'text-slate-500 hover:text-slate-900'
+                )}
+              >
+                <tab.icon className={cn("h-3.5 w-3.5", isActive ? "text-[#3370FF]" : "text-slate-400")} />
+                <span className="hidden sm:inline">{tab.label}</span>
+                {isActive && (
+                  <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#3370FF]" />
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </nav>
+    );
+  }
 
+  // 正常模式：完整导航栏
   return (
     <nav className="shrink-0 bg-white border-b border-slate-200 z-50">
       <div className="flex items-center h-14 px-4 sm:px-6 justify-between max-w-[1200px] mx-auto w-full">
@@ -86,13 +116,13 @@ function Navigation() {
 
 export default function PortalLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-[#F5F6F7]">
+    <div className="flex h-screen flex-col overflow-hidden bg-white">
       <Suspense fallback={<div className="h-14 bg-white border-b border-slate-200" />}>
         <Navigation />
       </Suspense>
 
       {/* 内容区 */}
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 overflow-y-auto bg-white">
         {children}
       </main>
     </div>

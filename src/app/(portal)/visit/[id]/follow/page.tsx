@@ -65,7 +65,7 @@ function FollowPageContent() {
 
   if (!enterprise) {
     return (
-      <div className="min-h-screen bg-[#F5F6F7] flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <div className="text-slate-400 text-sm">企业不存在</div>
           <button className="text-[#3370FF] text-sm mt-2" onClick={() => router.push('/visit')}>返回看板</button>
@@ -81,7 +81,7 @@ function FollowPageContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F6F7]">
+    <div className="min-h-screen bg-white">
       {/* 头部 */}
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-4">
@@ -311,7 +311,7 @@ function FollowPageContent() {
 
 export default function FollowPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#F5F6F7] flex items-center justify-center"><div className="text-sm text-slate-400">加载中...</div></div>}>
+    <Suspense fallback={<div className="min-h-screen bg-white flex items-center justify-center"><div className="text-sm text-slate-400">加载中...</div></div>}>
       <FollowPageContent />
     </Suspense>
   );

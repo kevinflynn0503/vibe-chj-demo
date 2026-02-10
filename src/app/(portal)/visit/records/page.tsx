@@ -4,7 +4,7 @@
  * 统一规范：
  * - 头部：bg-white border-b → max-w-[1200px] mx-auto px-4 sm:px-6 py-4
  * - 内容：max-w-[1200px] mx-auto p-4 sm:p-6 space-y-6
- * - 背景：min-h-screen bg-[#F5F6F7]
+ * - 背景：min-h-screen bg-white
  * - 返回按钮：text-xs text-slate-500 hover:text-[#3370FF], ArrowLeft h-3.5
  */
 'use client';
@@ -39,7 +39,7 @@ function VisitRecordsContent() {
   }), [records, statusFilter, deptFilter]);
 
   return (
-    <div className="min-h-screen bg-[#F5F6F7]">
+    <div className="min-h-screen bg-white">
       {/* 头部 — 统一模板B */}
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-4">
@@ -164,7 +164,7 @@ function VisitRecordsContent() {
 export default function VisitRecordsPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-[#F5F6F7]">
+      <div className="min-h-screen bg-white">
         <div className="bg-white border-b border-slate-200">
           <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-4">
             <div className="h-4 w-24 bg-slate-100 rounded animate-pulse" />

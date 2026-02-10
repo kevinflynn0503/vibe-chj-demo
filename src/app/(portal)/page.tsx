@@ -162,7 +162,7 @@ export default function HomePage() {
   const greeting = hour < 12 ? '早上好' : hour < 18 ? '下午好' : '晚上好';
 
   return (
-    <div className="min-h-screen bg-[#F5F6F7]">
+    <div className="min-h-screen bg-white">
       {/* 头部 — 渐变头图 */}
       <div className="bg-gradient-to-br from-[#3370FF] via-[#4B83FF] to-[#6B9AFF] text-white">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 pt-6 pb-8">

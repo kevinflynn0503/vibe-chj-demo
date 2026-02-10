@@ -43,7 +43,7 @@ function VisitPrepContent() {
 
   if (!enterprise) {
     return (
-      <div className="min-h-screen bg-[#F5F6F7] flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <p className="text-sm text-slate-500">未找到企业 {id}</p>
           <button className="btn btn-primary btn-sm mt-4" onClick={() => router.push('/visit')}>返回看板</button>
@@ -56,7 +56,7 @@ function VisitPrepContent() {
   const checklist = report?.communication_checklist;
 
   return (
-    <div className="min-h-screen bg-[#F5F6F7]">
+    <div className="min-h-screen bg-white">
       {/* 头部 */}
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-4">
@@ -303,7 +303,7 @@ function VisitPrepContent() {
 
 export default function VisitPrepPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#F5F6F7] flex items-center justify-center"><p className="text-sm text-slate-400">加载中...</p></div>}>
+    <Suspense fallback={<div className="min-h-screen bg-white flex items-center justify-center"><p className="text-sm text-slate-400">加载中...</p></div>}>
       <VisitPrepContent />
     </Suspense>
   );

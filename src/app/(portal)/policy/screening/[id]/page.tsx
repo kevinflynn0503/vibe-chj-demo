@@ -32,7 +32,7 @@ export default function ScreeningDetailPage() {
 
   if (!assessment) {
     return (
-      <div className="min-h-screen bg-[#F5F6F7] flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <p className="text-sm text-slate-500">未找到评估记录 {id}</p>
           <button className="btn btn-primary btn-sm mt-4" onClick={() => router.back()}>返回</button>
@@ -51,7 +51,7 @@ export default function ScreeningDetailPage() {
   const missingFields = assessment.screening_details.filter(d => d.result === 'pending');
 
   return (
-    <div className="min-h-screen bg-[#F5F6F7]">
+    <div className="min-h-screen bg-white">
       {/* 头部 */}
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-4">
