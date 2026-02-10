@@ -1,0 +1,7 @@
+{
+  "buildCommand": "cd projects/漕河泾/apps/visit-app && npm install && npm run build",
+  "outputDirectory": "projects/漕河泾/apps/visit-app/.next",
+  "installCommand": "cd projects/漕河泾/apps/visit-app && npm install",
+  "framework": "nextjs",
+  "rootDirectory": "projects/漕河泾/apps/visit-app"
+}
