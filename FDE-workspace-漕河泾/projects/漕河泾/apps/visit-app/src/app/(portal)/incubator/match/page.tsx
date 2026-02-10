@@ -218,12 +218,26 @@ export default function MatchPage() {
                             </>
                           )}
                           {isAccepted && (
-                            <button
-                              className="flex items-center gap-1 text-xs font-medium text-[#3370FF] hover:underline"
-                              onClick={() => router.push(`/enterprises/${m.enterprise_id}`)}
-                            >
-                              查看企业详情 <ChevronRight className="h-3.5 w-3.5" />
-                            </button>
+                            <div className="flex items-center gap-2">
+                              <button
+                                className="flex items-center gap-1 text-xs font-medium text-[#3370FF] bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded border border-blue-200 transition-colors"
+                                onClick={() => sendChat(`请为「${m.name}」与需求方之间起草一封对接邮件，包含双方业务概况、合作切入点和建议会议时间。`)}
+                              >
+                                <Send className="h-3 w-3" /> 起草对接邮件
+                              </button>
+                              <button
+                                className="flex items-center gap-1 text-xs font-medium text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded border border-emerald-200 transition-colors"
+                                onClick={() => sendChat(`请安排与「${m.name}」的对接会议，生成会议议程和准备材料清单。`)}
+                              >
+                                安排见面
+                              </button>
+                              <button
+                                className="flex items-center gap-1 text-xs text-slate-500 hover:text-[#3370FF]"
+                                onClick={() => router.push(`/enterprises/${m.enterprise_id}`)}
+                              >
+                                企业详情 <ChevronRight className="h-3.5 w-3.5" />
+                              </button>
+                            </div>
                           )}
                           {isIgnored && (
                             <button

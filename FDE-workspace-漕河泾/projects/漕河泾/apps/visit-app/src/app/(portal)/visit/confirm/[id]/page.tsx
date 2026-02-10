@@ -6,7 +6,7 @@
 
 import { useRouter, useParams } from 'next/navigation';
 import { useState } from 'react';
-import { ArrowLeft, CheckCircle2, XCircle, Edit3, FileVideo, AlertCircle, Eye, FileText, Save } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, XCircle, Edit3, FileVideo, AlertCircle, Eye, FileText, Save, Bot, Sparkles } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { cn, formatVisitRecordAsMarkdown } from '@/lib/utils';
@@ -155,7 +155,10 @@ export default function ConfirmPage() {
             {/* 赛道问题覆盖 */}
             {coverage?.track_questions && (
               <div className="card p-6">
-                <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">赛道问题覆盖</h3>
+                <div className="flex items-center gap-2 mb-4">
+                <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">赛道问题覆盖</h3>
+                <span className="flex items-center gap-0.5 text-[10px] text-[#3370FF] bg-blue-50 px-1.5 py-0.5 rounded"><Bot className="h-3 w-3" /> AI 检测</span>
+              </div>
                 <div className="flex items-baseline gap-3 mb-3">
                   <span className={cn(
                     'text-3xl font-bold tabular-nums',
@@ -192,7 +195,10 @@ export default function ConfirmPage() {
             {/* 政策问题覆盖 */}
             {coverage?.policy_questions && (
               <div className="card p-6">
-                <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">政策问题覆盖</h3>
+                <div className="flex items-center gap-2 mb-4">
+                <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">政策问题覆盖</h3>
+                <span className="flex items-center gap-0.5 text-[10px] text-[#3370FF] bg-blue-50 px-1.5 py-0.5 rounded"><Bot className="h-3 w-3" /> AI 检测</span>
+              </div>
                 <div className="flex items-baseline gap-3 mb-3">
                   <span className={cn(
                     'text-3xl font-bold tabular-nums',

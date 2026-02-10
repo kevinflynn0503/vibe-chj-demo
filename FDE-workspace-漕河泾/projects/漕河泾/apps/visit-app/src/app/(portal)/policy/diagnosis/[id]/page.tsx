@@ -11,10 +11,13 @@ import { useRouter, useParams } from 'next/navigation';
 import {
   ArrowLeft, CheckCircle2, AlertCircle, XCircle, Clock,
   FileText, Upload, MessageCircle, ChevronRight, Shield,
-  Lightbulb, BarChart3
+  Lightbulb, BarChart3, Bot, Sparkles
 } from 'lucide-react';
+import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { getAssessment, getEnterprise } from '@/lib/mock-data';
+import { sendChat } from '@/lib/host-api';
+import { toast } from 'sonner';
 import type { ScreeningDetail } from '@/lib/schema';
 
 // 模拟诊断材料清单
@@ -74,6 +77,7 @@ export default function DiagnosisPage() {
   const id = params.id as string;
   const assessment = getAssessment(id);
   const enterprise = assessment ? getEnterprise(assessment.enterprise_id) : null;
+  const [reviewStatus, setReviewStatus] = useState<'pending' | 'approved' | 'returned' | 'rejected'>('pending');
 
   if (!assessment) {
     return (
@@ -121,8 +125,11 @@ export default function DiagnosisPage() {
                 <span className={cn("text-[10px] px-1.5 py-0.5 rounded border font-medium", conclusion.cls)}>
                   {conclusion.label}
                 </span>
+                <span className="flex items-center gap-1 text-[10px] text-[#3370FF] bg-blue-50 px-1.5 py-0.5 rounded">
+                  <Bot className="h-3 w-3" /> AI 诊断
+                </span>
               </div>
-              <p className="text-xs text-slate-500 mt-0.5">{assessment.policy_type} · 综合得分 {scorePercent}%</p>
+              <p className="text-xs text-slate-500 mt-0.5">{assessment.policy_type} · 综合得分 {scorePercent}% · AI 置信度: 中高</p>
             </div>
             <div className="flex items-center gap-2">
               <button className="btn btn-default btn-sm" onClick={() => router.push(`/policy/screening/${id}`)}>
@@ -142,12 +149,28 @@ export default function DiagnosisPage() {
         <div className={cn("rounded-lg border p-4", conclusion.cls)}>
           <div className="flex items-start gap-3">
             <Shield className="h-5 w-5 shrink-0 mt-0.5" />
-            <div>
-              <div className="font-bold text-sm">{conclusion.label}</div>
+            <div className="flex-1">
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-sm">{conclusion.label}</span>
+                <span className="flex items-center gap-0.5 text-[10px] opacity-70"><Bot className="h-3 w-3" /> AI 综合评估</span>
+              </div>
               <p className="text-xs mt-0.5 opacity-80">{conclusion.desc}</p>
             </div>
           </div>
         </div>
+
+        {/* 审核状态 */}
+        {reviewStatus !== 'pending' && (
+          <div className={cn("rounded-lg border p-3 flex items-center gap-2 text-sm font-medium",
+            reviewStatus === 'approved' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+            reviewStatus === 'returned' ? 'bg-amber-50 text-amber-700 border-amber-200' :
+            'bg-red-50 text-red-700 border-red-200'
+          )}>
+            {reviewStatus === 'approved' && <><CheckCircle2 className="h-4 w-4" /> 已审核通过，可进入申报流程</>}
+            {reviewStatus === 'returned' && <><AlertCircle className="h-4 w-4" /> 已退回补充，已通知企业补齐材料</>}
+            {reviewStatus === 'rejected' && <><XCircle className="h-4 w-4" /> 已驳回，建议暂缓申报</>}
+          </div>
+        )}
 
         {/* 概览指标 */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -261,6 +284,7 @@ export default function DiagnosisPage() {
               <div className="px-4 py-3 border-b border-slate-100 flex items-center gap-2">
                 <Lightbulb className="h-4 w-4 text-[#3370FF]" />
                 <h2 className="text-sm font-bold text-slate-900">改进建议</h2>
+                <span className="flex items-center gap-0.5 text-[10px] text-[#3370FF] bg-blue-50 px-1.5 py-0.5 rounded"><Bot className="h-3 w-3" /> AI 生成</span>
               </div>
               <div className="p-4 space-y-3">
                 <div className="p-3 bg-blue-50/50 border border-blue-100 rounded-lg text-xs text-slate-700 leading-relaxed">
@@ -300,6 +324,41 @@ export default function DiagnosisPage() {
             </div>
           </div>
         </div>
+
+        {/* ── 底部审核操作栏 ── */}
+        {reviewStatus === 'pending' && (
+          <div className="bg-white border border-slate-200 rounded-lg p-4 flex items-center justify-between sticky bottom-4 shadow-lg">
+            <div className="flex items-center gap-2 text-sm text-slate-500">
+              <Bot className="h-4 w-4 text-[#3370FF]" />
+              审核 AI 诊断结果，决定是否推进申报
+            </div>
+            <div className="flex items-center gap-2">
+              <button className="btn btn-default btn-sm" onClick={() => {
+                sendChat(`请为「${name}」进行更深入的高新认定申报诊断分析，重点确认得分较低的指标项。`);
+              }}>
+                <Sparkles className="h-3.5 w-3.5" /> AI 深度诊断
+              </button>
+              <button className="btn btn-default btn-sm text-red-600 hover:bg-red-50" onClick={() => {
+                setReviewStatus('rejected');
+                toast.info('已驳回，建议暂缓申报');
+              }}>
+                <XCircle className="h-3.5 w-3.5" /> 驳回
+              </button>
+              <button className="btn btn-default btn-sm text-amber-600 hover:bg-amber-50" onClick={() => {
+                setReviewStatus('returned');
+                toast.info('已退回，通知企业补充材料');
+              }}>
+                <AlertCircle className="h-3.5 w-3.5" /> 退回补充
+              </button>
+              <button className="btn btn-primary btn-sm" onClick={() => {
+                setReviewStatus('approved');
+                toast.success('审核通过，可进入申报流程');
+              }}>
+                <CheckCircle2 className="h-3.5 w-3.5" /> 审核通过
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

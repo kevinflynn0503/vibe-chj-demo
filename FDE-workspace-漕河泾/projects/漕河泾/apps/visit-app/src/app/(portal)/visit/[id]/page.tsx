@@ -6,23 +6,40 @@
  */
 'use client';
 
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 import {
   ArrowLeft, FileText, Building2, Users, MapPin, Briefcase,
   MessageCircle, HelpCircle, Lightbulb, CheckCircle2, ChevronRight,
-  Calendar, Phone, ExternalLink
+  Calendar, Phone, ExternalLink, Shield, Bot
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getEnterprise, getBackgroundReport, getVisitRecords } from '@/lib/mock-data';
 import { generateReport } from '@/lib/host-api';
 
-export default function VisitPrepPage() {
+// 科创7条必问话术（政策服务场景）
+const POLICY_MUST_ASK = [
+  '贵司目前有多少研发人员？占员工总数比例？',
+  '近三年研发费用投入分别是多少？占营收比例？',
+  '目前持有多少项自主知识产权（发明专利/实用新型/软著）？',
+  '高新技术产品（服务）收入占总收入比例？',
+  '是否有意愿申报高新技术企业认定？此前是否申报过？',
+  '目前是否有完整的研发管理制度文件？',
+  '近三年是否有税务处罚记录？',
+];
+
+function VisitPrepContent() {
   const router = useRouter();
   const params = useParams();
+  const searchParams = useSearchParams();
   const id = params.id as string;
   const enterprise = getEnterprise(id);
   const report = getBackgroundReport(id);
   const visits = getVisitRecords(id);
+
+  // 政策联动参数
+  const fromPolicy = searchParams.get('from') === 'policy';
+  const policyName = searchParams.get('policy') || '高新技术企业认定';
 
   if (!enterprise) {
     return (
@@ -84,6 +101,20 @@ export default function VisitPrepPage() {
 
       <div className="max-w-[1200px] mx-auto p-4 sm:p-6 space-y-6">
 
+        {/* 政策联动提示 */}
+        {fromPolicy && (
+          <div className="flex items-center gap-3 px-4 py-3 bg-violet-50 border border-violet-200 rounded-lg">
+            <Shield className="h-5 w-5 text-violet-600 shrink-0" />
+            <div className="flex-1">
+              <p className="text-sm font-medium text-violet-900">政策触达走访 · {policyName}</p>
+              <p className="text-xs text-violet-700 mt-0.5">本次走访同时承担政策触达任务，请务必询问下方"政策必问问题"</p>
+            </div>
+            <span className="flex items-center gap-1 text-[10px] text-violet-600 bg-violet-100 px-2 py-1 rounded border border-violet-200">
+              <Bot className="h-3 w-3" /> 科创部门 · 7 条必问
+            </span>
+          </div>
+        )}
+
         {/* ── 企业快照 ── */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div className="bg-white border border-slate-200 rounded-lg p-4">
@@ -143,6 +174,25 @@ export default function VisitPrepPage() {
                     ))}
                   </div>
                 </div>
+
+                {/* 政策必问问题（政策×走访联动） */}
+                {fromPolicy && (
+                  <div className="bg-white border-2 border-violet-200 rounded-lg">
+                    <div className="px-4 py-3 border-b border-violet-100 bg-violet-50/50 flex items-center gap-2">
+                      <Shield className="h-4 w-4 text-violet-600" />
+                      <h2 className="text-sm font-bold text-violet-900">政策必问问题</h2>
+                      <span className="text-[10px] px-1.5 py-0.5 bg-violet-100 text-violet-600 rounded border border-violet-200">科创7条 · {policyName}</span>
+                    </div>
+                    <div className="p-4 space-y-2">
+                      {POLICY_MUST_ASK.map((q, i) => (
+                        <div key={i} className="flex items-start gap-2 text-xs text-slate-700">
+                          <span className="shrink-0 w-4 h-4 rounded bg-violet-50 text-violet-600 text-[10px] font-bold flex items-center justify-center border border-violet-100">{i + 1}</span>
+                          <span>{q}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {/* 关键洞察 */}
                 {checklist.key_insights.length > 0 && (
@@ -248,5 +298,13 @@ export default function VisitPrepPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function VisitPrepPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#F5F6F7] flex items-center justify-center"><p className="text-sm text-slate-400">加载中...</p></div>}>
+      <VisitPrepContent />
+    </Suspense>
   );
 }
