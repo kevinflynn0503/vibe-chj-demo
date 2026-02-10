@@ -1,63 +1,93 @@
 /**
- * App 内部布局 — 飞书风格轻量标签页
- * 3 个场景 Tab：客户拜访 / 政策服务 / 孵化器
+ * Portal Layout — Modern SaaS 风格
+ * 浅色顶栏 + Tab 导航 + 企业库入口
  */
 'use client';
 
-import { usePathname, useRouter } from 'next/navigation';
-import { Briefcase, Shield, Rocket } from 'lucide-react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { Home, Briefcase, Shield, Rocket, Building2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Suspense } from 'react';
 
 const TABS = [
+  { id: 'home', label: '首页', icon: Home, href: '/' },
   { id: 'visit', label: '客户拜访', icon: Briefcase, href: '/visit' },
   { id: 'policy', label: '政策服务', icon: Shield, href: '/policy' },
-  { id: 'incubator', label: '孵化器管理', icon: Rocket, href: '/incubator' },
+  { id: 'incubator', label: '孵化器', icon: Rocket, href: '/incubator' },
+  { id: 'enterprises', label: '企业库', icon: Building2, href: '/enterprises' },
 ];
 
 function getActiveTab(pathname: string): string {
+  if (pathname === '/') return 'home';
   if (pathname.startsWith('/policy')) return 'policy';
   if (pathname.startsWith('/incubator')) return 'incubator';
-  return 'visit'; // /visit, /enterprises, / 都归客户拜访
+  if (pathname.startsWith('/enterprises')) return 'enterprises';
+  if (pathname.startsWith('/visit')) return 'visit';
+  return 'home';
+}
+
+function Navigation() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const activeTab = getActiveTab(pathname);
+  
+  // 如果有 ?embed=true 参数，或者是移动端小屏幕（可选），则隐藏导航
+  const isEmbed = searchParams.get('embed') === 'true';
+
+  if (isEmbed) return null;
+
+  return (
+    <nav className="shrink-0 bg-white border-b border-slate-200 z-50">
+      <div className="flex items-center h-14 px-4 sm:px-6 justify-between max-w-[1200px] mx-auto w-full">
+        {/* Logo / Brand */}
+        <div className="flex items-center gap-2 mr-4 sm:mr-8 shrink-0">
+          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">漕</div>
+          <span className="font-bold text-slate-900 text-lg hidden sm:block">智能驾驶舱</span>
+        </div>
+
+        {/* Tab 导航 - 移动端支持水平滚动 */}
+        <div className="flex items-center gap-1 flex-1 overflow-x-auto no-scrollbar mask-gradient">
+          {TABS.map(tab => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => router.push(tab.href)}
+                className={cn(
+                  'relative flex items-center gap-2 px-3 sm:px-4 h-14 text-sm font-medium transition-colors cursor-pointer shrink-0 whitespace-nowrap',
+                  isActive
+                    ? 'text-[#3370FF]'
+                    : 'text-slate-500 hover:text-slate-900'
+                )}
+              >
+                <tab.icon className={cn("h-4 w-4", isActive ? "text-[#3370FF]" : "text-slate-400")} />
+                {tab.label}
+                {isActive && (
+                  <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#3370FF]" />
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* User Profile */}
+        <div className="flex items-center gap-3 shrink-0 ml-4">
+          <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 text-xs">
+            FDE
+          </div>
+        </div>
+      </div>
+    </nav>
+  );
 }
 
 export default function PortalLayout({ children }: { children: React.ReactNode }) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const activeTab = getActiveTab(pathname);
-
-  // 企业画像等子页面不显示 Tab 栏
-  const isSubPage = pathname.startsWith('/enterprises/');
-
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-body">
-      {/* Tab 导航栏 */}
-      {!isSubPage && (
-        <nav className="shrink-0 bg-card border-b border-default">
-          <div className="flex items-center h-10 px-4 gap-0">
-            {TABS.map(tab => {
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => router.push(tab.href)}
-                  className={cn(
-                    'relative flex items-center gap-1.5 px-4 h-10 text-[13px] font-medium transition-colors cursor-pointer',
-                    isActive
-                      ? 'text-[var(--primary)]'
-                      : 'text-secondary hover:text-primary'
-                  )}
-                >
-                  <tab.icon className="h-3.5 w-3.5" />
-                  {tab.label}
-                  {isActive && (
-                    <span className="absolute bottom-0 left-4 right-4 h-[2px] bg-[var(--primary)] rounded-full" />
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </nav>
-      )}
+    <div className="flex h-screen flex-col overflow-hidden bg-[#F5F6F7]">
+      <Suspense fallback={<div className="h-14 bg-white border-b border-slate-200" />}>
+        <Navigation />
+      </Suspense>
 
       {/* 内容区 */}
       <main className="flex-1 overflow-y-auto">

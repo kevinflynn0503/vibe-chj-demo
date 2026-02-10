@@ -1,239 +1,217 @@
 /**
- * 政策服务 — 完整版工作台
+ * 政策服务工作台
+ * 
+ * 核心动线：筛选 → 触达 → 诊断
+ * 
+ * 布局优化：
+ * - 流水线：均匀撑满宽度，数字可点击跳转
+ * - 待办：放入统一卡片容器，不独立散落
+ * - 两栏：1:1 而非 3:2，视觉更平衡
+ * - 统一规范：bg-white border, max-w-[1200px], 无 shadow
  */
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { Shield, ChevronRight, Users, TrendingUp, Send, Award, AlertTriangle, BarChart3, Zap, ArrowUpRight } from 'lucide-react';
+import {
+  ChevronRight, AlertCircle, TrendingUp, CheckCircle2,
+  ListFilter, Send, FileText, ArrowRight, Users
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { getAssessments, getPolicyStats, getPMProgress } from '@/lib/mock-data';
-import { GRADE_STYLES, TOUCH_STATUS_LABELS, type Grade } from '@/lib/schema';
+import { getPolicyStats, getAssessments, getPMProgress } from '@/lib/mock-data';
+import { startScreening, dispatchTasks } from '@/lib/host-api';
 
-/* ──── 漏斗 ──── */
-function Funnel() {
-  const s = getPolicyStats();
-  const steps = [
-    { label: '已筛选', value: s.total_screened, color: 'from-slate-400 to-slate-500' },
-    { label: 'A+B 级', value: s.grade_a + s.grade_b, color: 'from-blue-400 to-blue-600' },
-    { label: '已分发', value: s.touch_assigned, color: 'from-indigo-400 to-indigo-600' },
-    { label: '已走访', value: s.touch_visited, color: 'from-purple-400 to-purple-600' },
-    { label: '有意愿', value: s.touch_willing, color: 'from-emerald-400 to-emerald-600' },
-    { label: '已获批', value: s.approved, color: 'from-emerald-500 to-emerald-700' },
-  ];
-  const max = Math.max(...steps.map(x => x.value), 1);
-  return (
-    <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-card">
-      <div className="flex items-center gap-2 mb-5">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg grad-green shadow-lg shadow-emerald-500/20">
-          <TrendingUp className="h-4 w-4 text-white" />
-        </div>
-        <div>
-          <h3 className="text-[14px] font-bold text-gray-900">触达漏斗</h3>
-          <p className="text-[11px] text-gray-400">高新技术企业认定 · 2026</p>
-        </div>
-      </div>
-      <div className="space-y-3">
-        {steps.map(step => (
-          <div key={step.label} className="flex items-center gap-3">
-            <span className="w-12 text-right text-[12px] font-medium text-gray-400">{step.label}</span>
-            <div className="flex-1">
-              <div className={cn('flex h-8 items-center rounded-lg bg-gradient-to-r px-3 text-[12px] font-bold text-white shadow-sm', step.color)}
-                style={{ width: `${Math.max((step.value / max) * 100, 5)}%`, transition: 'width 1s ease' }}>
-                {step.value}
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ──── PM 进度 ──── */
-function PMTable() {
-  const progress = getPMProgress();
-  return (
-    <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-card">
-      <div className="flex items-center gap-2 mb-5">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg grad-blue shadow-lg shadow-blue-500/20">
-          <Users className="h-4 w-4 text-white" />
-        </div>
-        <div>
-          <h3 className="text-[14px] font-bold text-gray-900">项目经理进度</h3>
-          <p className="text-[11px] text-gray-400">触达任务分配与执行</p>
-        </div>
-      </div>
-      <div className="space-y-4">
-        {progress.map(pm => (
-          <div key={pm.name} className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 text-[11px] font-bold text-white">
-                {pm.name.charAt(0)}
-              </div>
-              <div>
-                <p className="text-[13px] font-semibold text-gray-900">{pm.name}</p>
-                <div className="flex gap-2 text-[11px]">
-                  <span className="text-gray-400">{pm.assigned} 分发</span>
-                  <span className="text-blue-500">{pm.visited} 走访</span>
-                  <span className="text-emerald-500">{pm.willing} 意愿</span>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="h-2 w-24 rounded-full bg-gray-100">
-                <div className="h-2 rounded-full grad-blue transition-all duration-1000" style={{ width: `${pm.assigned > 0 ? (pm.visited / pm.assigned) * 100 : 0}%` }} />
-              </div>
-              <span className="w-10 text-right text-[12px] font-bold tabular-nums text-gray-500">
-                {pm.assigned > 0 ? Math.round((pm.visited / pm.assigned) * 100) : 0}%
-              </span>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ──── 主页面 ──── */
 export default function PolicyPage() {
   const router = useRouter();
-  const [gradeFilter, setGradeFilter] = useState<Grade | ''>('');
-  const s = getPolicyStats();
-  const assessments = getAssessments(gradeFilter || undefined);
+  const stats = getPolicyStats();
+  const assessments = getAssessments();
+  const pmProgress = getPMProgress();
 
-  const gradeCards = [
-    { grade: 'A', count: s.grade_a, label: '高概率符合', grad: 'grad-green', shadow: 'shadow-emerald-500/20', bg: 'bg-emerald-50', text: 'text-emerald-600' },
-    { grade: 'B', count: s.grade_b, label: '需补充材料', grad: 'grad-blue', shadow: 'shadow-blue-500/20', bg: 'bg-blue-50', text: 'text-blue-600' },
-    { grade: 'C', count: s.grade_c, label: '待进一步评估', grad: 'grad-amber', shadow: 'shadow-amber-500/20', bg: 'bg-amber-50', text: 'text-amber-600' },
+  // 漏斗阶段数据 — 数字可点击
+  const pipeline = [
+    { label: '全部企业', value: '17,000', sub: '园区总量', done: true, href: '/enterprises' },
+    { label: '已筛选', value: stats.total_screened, sub: `A${stats.grade_a} / B${stats.grade_b} / C${stats.grade_c}`, done: true, href: '/policy/screening' },
+    { label: '已触达', value: stats.touch_visited, sub: `已分发 ${stats.touch_assigned}`, done: stats.touch_visited > 0, href: '/policy/tasks' },
+    { label: '有意愿', value: stats.touch_willing, sub: '确认参与申报', done: stats.touch_willing > 0, href: '/policy/tasks' },
+    { label: '已获批', value: stats.approved, sub: '审批通过', done: stats.approved > 0, href: null },
   ];
 
+  // 待办任务
+  const todoItems = [
+    {
+      title: `${stats.grade_a} 家 A 级企业待触达`,
+      desc: '高概率符合高新认定条件，建议 3 天内安排走访',
+      action: () => dispatchTasks('A', stats.grade_a),
+      actionLabel: '分发任务',
+      priority: 'high' as const,
+    },
+    {
+      title: `${stats.grade_b} 家 B 级企业待确认`,
+      desc: '需进一步确认 1-2 项条件，建议 1 周内走访',
+      action: () => router.push('/policy/tasks'),
+      actionLabel: '查看列表',
+      priority: 'medium' as const,
+    },
+    {
+      title: `${stats.touch_willing} 家有意愿企业待诊断`,
+      desc: '已确认有申报意愿，需收集材料进行前置审核',
+      action: () => {
+        // 找到第一个 willing 的 assessment 跳转诊断
+        const willing = assessments.find(a => a.touch_status === 'willing');
+        router.push(willing ? `/policy/diagnosis/${willing.id}` : '/policy/tasks');
+      },
+      actionLabel: '开始诊断',
+      priority: 'medium' as const,
+    },
+  ];
+
+  // 最近进展
+  const recentActivity = [
+    { icon: CheckCircle2, text: '薛坤 完成「强生医疗」走访触达', time: '10分钟前', type: 'success' as const },
+    { icon: FileText, text: '系统完成新一轮高新初筛，A级12家', time: '2小时前', type: 'info' as const },
+    { icon: TrendingUp, text: 'PM-A 反馈「芯视科技」有申报意愿', time: '昨天', type: 'success' as const },
+    { icon: AlertCircle, text: '「蔚来汽车」缺少研发费用占比数据', time: '昨天', type: 'warning' as const },
+  ];
+
+  const typeColor = {
+    success: 'bg-emerald-50 text-emerald-600',
+    info: 'bg-blue-50 text-blue-600',
+    warning: 'bg-amber-50 text-amber-600',
+  };
+
   return (
-    <div className="min-h-full">
-      {/* 页头 */}
-      <div className="bg-white border-b border-gray-100">
-        <div className="mx-auto max-w-[1200px] px-8 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl grad-green shadow-lg shadow-emerald-500/20">
-                <Shield className="h-5 w-5 text-white" />
-              </div>
-              <div>
-                <h1 className="text-[20px] font-extrabold text-gray-900">政策服务</h1>
-                <p className="text-[13px] text-gray-400">高新技术企业认定 · 2026 年度</p>
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <button className="inline-flex h-10 items-center gap-2 rounded-xl border border-gray-200 px-4 text-[13px] font-medium text-gray-600 transition-all duration-200 hover:bg-gray-50 cursor-pointer">
-                <Send className="h-3.5 w-3.5" />一键分发 A 级
-              </button>
-              <button className="inline-flex h-10 items-center gap-2 rounded-xl grad-green px-5 text-[13px] font-semibold text-white shadow-lg shadow-emerald-500/20 transition-all duration-200 hover:shadow-emerald-500/30 hover:scale-[1.02] cursor-pointer">
-                开始新一轮筛选
-              </button>
-            </div>
+    <div className="min-h-screen bg-[#F5F6F7]">
+      {/* 头部 */}
+      <div className="bg-white border-b border-slate-200">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div>
+            <h1 className="text-lg font-bold text-slate-900">政策服务工作台</h1>
+            <p className="text-xs text-slate-500 mt-0.5">高新技术企业认定 · 筛选 → 触达 → 诊断</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <button className="btn btn-default btn-sm" onClick={() => router.push('/policy/tasks')}>
+              <FileText className="h-3.5 w-3.5" /> 任务列表
+            </button>
+            <button className="btn btn-primary btn-sm" onClick={() => startScreening()}>
+              <ListFilter className="h-3.5 w-3.5" /> 开始新一轮筛选
+            </button>
           </div>
         </div>
       </div>
 
-      <div className="mx-auto max-w-[1200px] px-8 py-6 space-y-6">
-        {/* 统计卡片 */}
-        <div className="grid grid-cols-6 gap-4">
-          <div className="col-span-2 rounded-2xl border border-gray-100 bg-white p-5 shadow-card">
-            <p className="text-[11px] font-bold uppercase tracking-wider text-gray-400">已筛选</p>
-            <p className="mt-2 text-[36px] font-extrabold tabular-nums text-gray-900 leading-none">{s.total_screened}</p>
-            <p className="mt-1 text-[12px] text-gray-400">家企业</p>
-          </div>
-          {gradeCards.map(g => (
-            <div key={g.grade} className="rounded-2xl border border-gray-100 bg-white p-5 shadow-card transition-all duration-200 hover:shadow-card-hover hover:-translate-y-px cursor-pointer"
-              onClick={() => setGradeFilter(g.grade as Grade)}>
-              <div className={cn('inline-flex h-8 w-8 items-center justify-center rounded-lg text-[14px] font-extrabold text-white', g.grad)}>
-                {g.grade}
-              </div>
-              <p className="mt-3 text-[28px] font-extrabold tabular-nums text-gray-900 leading-none">{g.count}</p>
-              <p className="mt-1 text-[11px] text-gray-400">{g.label}</p>
-            </div>
-          ))}
-          <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-card">
-            <p className="text-[11px] font-bold uppercase tracking-wider text-gray-400">有意愿</p>
-            <p className="mt-2 text-[28px] font-extrabold tabular-nums text-emerald-600 leading-none">{s.touch_willing}</p>
-            <p className="mt-1 text-[12px] text-gray-400">转化率 {s.touch_visited > 0 ? ((s.touch_willing / s.touch_visited) * 100).toFixed(0) : 0}%</p>
-          </div>
-        </div>
+      <div className="max-w-[1200px] mx-auto p-4 sm:p-6 space-y-6">
 
-        {/* 漏斗 + PM */}
-        <div className="grid grid-cols-2 gap-6">
-          <Funnel />
-          <PMTable />
-        </div>
-
-        {/* 筛选结果 */}
-        <div>
-          <div className="mb-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <h2 className="text-[16px] font-bold text-gray-900">筛选结果</h2>
-              <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-[11px] font-medium text-gray-500">{assessments.length} 家</span>
-            </div>
-            <div className="flex gap-1.5">
-              {(['', 'A', 'B', 'C'] as const).map(g => (
-                <button key={g} onClick={() => setGradeFilter(g as Grade | '')}
+        {/* ── 转化流水线 — 均匀分布，数字可点击 ── */}
+        <div className="bg-white border border-slate-200 rounded-lg p-4 sm:p-6">
+          <h2 className="text-sm font-bold text-slate-900 mb-4">申报转化流水线</h2>
+          <div className="grid grid-cols-5 gap-0">
+            {pipeline.map((stage, i) => (
+              <div key={i} className="flex items-center">
+                <div
                   className={cn(
-                    'rounded-lg px-4 py-2 text-[12px] font-semibold transition-all duration-200 cursor-pointer',
-                    gradeFilter === g
-                      ? 'bg-gray-900 text-white shadow-lg'
-                      : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                    "flex-1 text-center py-2 rounded-lg transition-colors",
+                    stage.href && "cursor-pointer hover:bg-slate-50"
+                  )}
+                  onClick={() => stage.href && router.push(stage.href)}
+                >
+                  <div className={cn(
+                    "text-2xl sm:text-3xl font-bold font-mono mb-1 leading-none",
+                    i === 0 ? 'text-slate-400' : stage.done ? 'text-slate-900' : 'text-slate-300',
+                    stage.href && 'group-hover:text-[#3370FF]'
                   )}>
-                  {g === '' ? '全部' : `${g} 级`}
-                </button>
+                    {stage.value}
+                  </div>
+                  <div className="text-xs font-medium text-slate-700">{stage.label}</div>
+                  <div className="text-[10px] text-slate-400 mt-0.5">{stage.sub}</div>
+                </div>
+                {i < pipeline.length - 1 && (
+                  <div className="shrink-0 px-1">
+                    <ArrowRight className={cn("h-4 w-4", stage.done ? 'text-slate-400' : 'text-slate-200')} />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── 两栏：待办（卡片容器内） + PM进度 — 1:1 均分 ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+          {/* 左：待办任务 — 放入统一卡片 */}
+          <div className="bg-white border border-slate-200 rounded-lg">
+            <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+              <h2 className="text-sm font-bold text-slate-900">待办事项</h2>
+              <span className="text-xs text-slate-400">{todoItems.length} 项</span>
+            </div>
+            <div className="divide-y divide-slate-100">
+              {todoItems.map((item, i) => (
+                <div key={i} className="px-4 py-3 flex items-start gap-3">
+                  <div className={cn(
+                    "w-2 h-2 rounded-full mt-1.5 shrink-0",
+                    item.priority === 'high' ? 'bg-red-500' : 'bg-amber-400'
+                  )} />
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-semibold text-slate-900">{item.title}</div>
+                    <div className="text-xs text-slate-500 mt-0.5">{item.desc}</div>
+                  </div>
+                  <button onClick={item.action}
+                    className="btn btn-default btn-sm shrink-0 mt-0.5">
+                    {item.actionLabel} <ChevronRight className="h-3.5 w-3.5" />
+                  </button>
+                </div>
               ))}
             </div>
           </div>
 
-          <div className="space-y-3">
-            {assessments.map(a => {
-              const gs = GRADE_STYLES[a.grade];
-              const passRate = a.screening_details.length > 0 ? Math.round((a.screening_details.filter(d => d.result === 'pass').length / a.screening_details.length) * 100) : 0;
-              const pendingN = a.screening_details.filter(d => d.result === 'pending').length;
-              const gradeGrad = a.grade === 'A' ? 'grad-green' : a.grade === 'B' ? 'grad-blue' : 'grad-amber';
-              const touchStyle = a.touch_status === 'willing' ? 'bg-emerald-50 text-emerald-600' : a.touch_status === 'assigned' ? 'bg-blue-50 text-blue-600' : 'bg-gray-100 text-gray-500';
-
-              return (
-                <div key={a.id} onClick={() => router.push(`/policy/screening/${a.id}`)}
-                  className="group flex items-center gap-5 rounded-2xl border border-gray-100 bg-white p-5 transition-all duration-200 cursor-pointer hover:border-blue-100 hover:shadow-card-hover hover:-translate-y-px">
-                  {/* 评级 */}
-                  <div className={cn('flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-[16px] font-extrabold text-white shadow-lg', gradeGrad)}>
-                    {a.grade === 'unqualified' ? '-' : a.grade}
+          {/* 右：PM工作进度 */}
+          <div className="bg-white border border-slate-200 rounded-lg">
+            <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+              <h2 className="text-sm font-bold text-slate-900">项目经理工作量</h2>
+              <Users className="h-4 w-4 text-slate-400" />
+            </div>
+            <div className="divide-y divide-slate-100">
+              {pmProgress.map((pm, i) => (
+                <div key={i} className="px-4 py-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-slate-900">{pm.name}</span>
+                    <span className="text-xs text-slate-500">
+                      {pm.visited}/{pm.assigned} 已走访 · 转化 {(pm.conversion_rate * 100).toFixed(0)}%
+                    </span>
                   </div>
-
-                  {/* 信息 */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <p className="text-[15px] font-bold text-gray-900 truncate">{a.enterprise_name?.replace(/上海|有限公司/g, '')}</p>
-                      {pendingN > 0 && <span className="shrink-0 rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-600">{pendingN} 项待确认</span>}
-                    </div>
-                    <div className="mt-1.5 flex items-center gap-3 text-[12px]">
-                      <span className="text-gray-400">评分 <strong className="text-gray-700">{a.grade_score}</strong></span>
-                      <span className="text-gray-400">通过率 <strong className="text-gray-700">{passRate}%</strong></span>
-                      <span className={cn('rounded-full px-2.5 py-0.5 text-[10px] font-semibold', touchStyle)}>
-                        {TOUCH_STATUS_LABELS[a.touch_status]}
-                      </span>
-                      {a.assigned_to && <span className="text-gray-400">{a.assigned_to}</span>}
-                    </div>
+                  <div className="flex gap-1 h-1.5">
+                    <div className="bg-emerald-500 rounded-full" style={{ width: `${(pm.willing / pm.assigned) * 100}%` }} />
+                    <div className="bg-blue-500 rounded-full" style={{ width: `${((pm.visited - pm.willing) / pm.assigned) * 100}%` }} />
+                    <div className="bg-slate-100 rounded-full flex-1" />
                   </div>
-
-                  {/* 进度条 */}
-                  <div className="shrink-0 w-24">
-                    <div className="h-2 w-full rounded-full bg-gray-100">
-                      <div className={cn('h-2 rounded-full', a.grade_score >= 80 ? 'bg-emerald-500' : a.grade_score >= 60 ? 'bg-blue-500' : 'bg-amber-500')}
-                        style={{ width: `${a.grade_score}%` }} />
-                    </div>
+                  <div className="flex items-center gap-3 mt-1.5 text-[10px] text-slate-400">
+                    <span className="flex items-center gap-1"><span className="w-2 h-2 bg-emerald-500 rounded-full" />有意愿 {pm.willing}</span>
+                    <span className="flex items-center gap-1"><span className="w-2 h-2 bg-blue-500 rounded-full" />已走访 {pm.visited}</span>
+                    <span className="flex items-center gap-1"><span className="w-2 h-2 bg-slate-200 rounded-full" />待处理 {pm.assigned - pm.visited}</span>
                   </div>
-
-                  <ArrowUpRight className="h-4 w-4 shrink-0 text-gray-200 transition-all duration-200 group-hover:text-blue-500" />
                 </div>
-              );
-            })}
+              ))}
+            </div>
           </div>
         </div>
+
+        {/* ── 最近进展 ── */}
+        <div className="bg-white border border-slate-200 rounded-lg">
+          <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+            <h2 className="text-sm font-bold text-slate-900">最近进展</h2>
+            <button className="text-xs text-[#3370FF] hover:underline">查看全部</button>
+          </div>
+          <div className="divide-y divide-slate-100">
+            {recentActivity.map((a, i) => (
+              <div key={i} className="px-4 py-3 flex items-center gap-3 hover:bg-slate-50 transition-colors">
+                <div className={cn("p-1.5 rounded-full shrink-0", typeColor[a.type])}>
+                  <a.icon className="h-3.5 w-3.5" />
+                </div>
+                <div className="flex-1 min-w-0"><p className="text-sm text-slate-700 truncate">{a.text}</p></div>
+                <div className="text-xs text-slate-400 font-mono whitespace-nowrap">{a.time}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
       </div>
     </div>
   );

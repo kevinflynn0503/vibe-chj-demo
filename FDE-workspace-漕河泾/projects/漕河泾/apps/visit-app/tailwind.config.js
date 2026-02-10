@@ -1,59 +1,56 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   content: ['./src/**/*.{js,ts,jsx,tsx,mdx}'],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'PingFang SC', 'sans-serif'],
+      },
       colors: {
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
-        primary: {
-          DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))',
+        brand: {
+          DEFAULT: '#3370FF',
+          hover: '#2860E1',
+          active: '#1D4ED8',
+          light: '#EBF2FF',
+          muted: 'rgba(51, 112, 255, 0.08)',
         },
-        secondary: {
-          DEFAULT: 'hsl(var(--secondary))',
-          foreground: 'hsl(var(--secondary-foreground))',
+        surface: {
+          primary: '#F8FAFC',
+          card: '#FFFFFF',
+          elevated: '#F1F5F9',
+          hover: '#F1F5F9',
         },
-        destructive: {
-          DEFAULT: 'hsl(var(--destructive))',
-          foreground: 'hsl(var(--destructive-foreground))',
-        },
-        muted: {
-          DEFAULT: 'hsl(var(--muted))',
-          foreground: 'hsl(var(--muted-foreground))',
-        },
-        accent: {
-          DEFAULT: 'hsl(var(--accent))',
-          foreground: 'hsl(var(--accent-foreground))',
-        },
-        card: {
-          DEFAULT: 'hsl(var(--card))',
-          foreground: 'hsl(var(--card-foreground))',
+        data: {
+          blue: '#3B82F6',
+          green: '#10B981',
+          orange: '#F59E0B',
+          red: '#EF4444',
+          purple: '#8B5CF6',
+          cyan: '#06B6D4',
         },
       },
       borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
+        'sm': '6px',
+        'DEFAULT': '8px',
+        'lg': '12px',
+        'xl': '16px',
+      },
+      boxShadow: {
+        'sm': '0 1px 2px rgba(0, 0, 0, 0.05)',
+        'DEFAULT': '0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06)',
+        'md': '0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1)',
+        'lg': '0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1)',
       },
       keyframes: {
         'fade-in': {
-          from: { opacity: '0' },
-          to: { opacity: '1' },
-        },
-        'slide-up': {
-          from: { transform: 'translateY(4px)', opacity: '0' },
-          to: { transform: 'translateY(0)', opacity: '1' },
+          from: { opacity: '0', transform: 'translateY(4px)' },
+          to: { opacity: '1', transform: 'translateY(0)' },
         },
       },
       animation: {
-        'fade-in': 'fade-in 0.2s ease-out',
-        'slide-up': 'slide-up 0.2s ease-out',
+        'fade-in': 'fade-in 0.3s ease-out',
       },
     },
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [],
 };

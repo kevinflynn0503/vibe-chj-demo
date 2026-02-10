@@ -22,6 +22,10 @@ product manager/
 node_modules/
 .next/
 
+# === pnpm ===
+.pnpm-store/
+.pnpm-debug.log
+
 # === Python ===
 __pycache__/
 *.py[oc]

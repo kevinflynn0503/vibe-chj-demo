@@ -1,176 +1,207 @@
 /**
- * 客户拜访 — 企业列表（首页）
- * 操作导向：搜索/筛选企业 → 生成背调 / 查看画像 / 新建走访
+ * 走访工作台 — 飞书看板风格
+ * 
+ * 统一规范同其他页面（头部白底 + border-b）
+ * 看板区域撑满剩余高度，支持横向滚动
  */
 'use client';
 
 import { useRouter } from 'next/navigation';
 import { useState, useMemo } from 'react';
-import { Search, Filter, AlertCircle, FileText, Eye, Plus, ChevronRight } from 'lucide-react';
+import {
+  Search, AlertCircle, FileText, CheckCircle2, Target, Clock,
+  ChevronRight, Building2, Calendar, User, Plus, MoreHorizontal,
+  MapPin, Users, Phone
+} from 'lucide-react';
+import { getEnterprises, getVisitRecords, getDemands } from '@/lib/mock-data';
 import { cn } from '@/lib/utils';
-import { getEnterprises, getStats } from '@/lib/mock-data';
-import { generateReport } from '@/lib/host-api';
 
-export default function VisitPage() {
+export default function VisitWorkbench() {
   const router = useRouter();
   const enterprises = getEnterprises();
-  const stats = getStats();
+  const records = getVisitRecords();
+  const demands = getDemands();
   const [search, setSearch] = useState('');
-  const [industryFilter, setIndustryFilter] = useState('');
 
-  const industries = useMemo(() =>
-    Array.from(new Set(enterprises.map(e => e.industry).filter(Boolean))) as string[],
-    [enterprises]
-  );
+  const prepareList = useMemo(() => {
+    const visitedIds = new Set(records.map(r => r.enterprise_id));
+    return enterprises
+      .filter(e => !visitedIds.has(e.id))
+      .slice(0, 6);
+  }, [enterprises, records]);
 
-  const filtered = useMemo(() => enterprises.filter(e => {
-    if (search && !e.name.includes(search) && !e.short_name?.includes(search)) return false;
-    if (industryFilter && e.industry !== industryFilter) return false;
-    return true;
-  }), [enterprises, search, industryFilter]);
+  const visitList = useMemo(() => [
+    { ent: enterprises[0], time: '10:00', date: '今天', type: '首次拜访', contact: '周敏 CEO', owner: '蔡建' },
+    { ent: enterprises[1], time: '14:00', date: '今天', type: '政策宣讲', contact: '张伟 供应链总监', owner: '薛坤' },
+    { ent: enterprises[2], time: '09:30', date: '明天', type: '需求对接', contact: '王磊 CEO', owner: '赵婧' },
+  ], [enterprises]);
 
-  const hasPending = stats.pending_confirmations > 0 || stats.pending_demands > 0;
+  const confirmList = useMemo(() => records
+    .filter(r => !r.is_confirmed)
+    .map(r => ({
+      ...r,
+      enterprise: enterprises.find(e => e.id === r.enterprise_id),
+    })), [records, enterprises]);
+
+  const followList = useMemo(() => demands
+    .filter(d => d.status === 'pending')
+    .slice(0, 6)
+    .map(d => ({
+      enterprise: enterprises.find(e => e.id === d.enterprise_id)!,
+      demand: d,
+    })), [demands, enterprises]);
+
+  const total = prepareList.length + visitList.length + confirmList.length + followList.length;
 
   return (
-    <div className="p-5 space-y-4">
-      {/* 待办提醒栏 */}
-      {hasPending && (
-        <div className="alert-bar alert-bar-warning">
-          <AlertCircle className="h-4 w-4 shrink-0" />
-          <div className="flex items-center gap-4 text-[13px]">
-            {stats.pending_confirmations > 0 && (
-              <button
-                onClick={() => router.push('/visit/records?status=pending')}
-                className="font-medium underline underline-offset-2 cursor-pointer hover:opacity-80"
-              >
-                {stats.pending_confirmations} 条走访记录待确认
-              </button>
-            )}
-            {stats.pending_demands > 0 && (
-              <span className="font-medium">
-                {stats.pending_demands} 条企业需求待处理
-              </span>
-            )}
+    <div className="h-full flex flex-col bg-[#F5F6F7] overflow-hidden">
+      {/* 工具栏 — 统一规范：bg-white border-b, 内层 max-w-[1200px] */}
+      <div className="shrink-0 bg-white border-b border-slate-200">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div>
+            <h1 className="text-lg font-bold text-slate-900">走访任务看板</h1>
+            <p className="text-xs text-slate-500 mt-0.5">走访全流程：准备 → 走访 → 确认 → 跟进 · {total} 项任务</p>
           </div>
-        </div>
-      )}
-
-      {/* 搜索筛选栏 */}
-      <div className="flex items-center gap-3">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-placeholder)]" />
-          <input
-            type="text"
-            placeholder="搜索企业名称..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="input pl-9"
-          />
-        </div>
-        <div className="flex items-center gap-2">
-          <Filter className="h-4 w-4 text-secondary" />
-          <select
-            value={industryFilter}
-            onChange={e => setIndustryFilter(e.target.value)}
-            className="input w-auto min-w-[120px] cursor-pointer"
-          >
-            <option value="">全部赛道</option>
-            {industries.map(i => <option key={i} value={i}>{i}</option>)}
-          </select>
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <div className="relative flex-1 sm:w-56">
+              <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
+              <input type="text" placeholder="搜索..." value={search} onChange={e => setSearch(e.target.value)}
+                className="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded hover:border-slate-300 focus:border-[#3370FF] focus:outline-none transition-colors" />
+            </div>
+            <button className="btn btn-primary btn-sm shrink-0" onClick={() => router.push('/visit/records')}>
+              <FileText className="h-3.5 w-3.5" /> 走访记录
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* 企业列表 — 表格 */}
-      <div className="card overflow-hidden">
-        <div className="flex items-center justify-between px-4 py-3 border-b border-divider">
-          <div className="flex items-center gap-2">
-            <h2 className="text-[14px] font-semibold text-primary">企业列表</h2>
-            <span className="tag tag-gray">{filtered.length} 家</span>
-          </div>
-          <button
-            onClick={() => router.push('/visit/records')}
-            className="btn btn-text btn-sm"
-          >
-            走访记录
-            <ChevronRight className="h-3.5 w-3.5" />
-          </button>
-        </div>
+      {/* 看板 — 撑满剩余高度，max-w-[1200px] 居中 */}
+      <div className="flex-1 overflow-x-auto overflow-y-hidden">
+        <div className="max-w-[1200px] mx-auto h-full flex gap-4 p-4 sm:p-6" style={{ minWidth: '1100px' }}>
 
-        <table className="ftable">
-          <thead>
-            <tr>
-              <th>企业名称</th>
-              <th>赛道</th>
-              <th className="text-right">员工</th>
-              <th>最近走访</th>
-              <th className="text-center">走访次数</th>
-              <th className="text-right">操作</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map(ent => (
-              <tr key={ent.id} className="cursor-pointer" onClick={() => router.push(`/enterprises/${ent.id}`)}>
-                <td>
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium text-primary">{ent.short_name ?? ent.name}</span>
-                    {ent.is_incubated && <span className="tag tag-blue">孵化</span>}
-                  </div>
-                  {ent.short_name && (
-                    <div className="text-[12px] text-secondary mt-0.5">{ent.name}</div>
-                  )}
-                </td>
-                <td>
-                  <div className="flex items-center gap-1">
-                    {ent.industry && <span className="tag tag-blue">{ent.industry}</span>}
-                    {ent.industry_sub && <span className="tag tag-gray">{ent.industry_sub}</span>}
-                  </div>
-                </td>
-                <td className="text-right tabular-nums text-secondary">
-                  {ent.employee_count?.toLocaleString() ?? '-'}
-                </td>
-                <td className="text-secondary text-[13px]">
-                  {ent.last_visited_at ?? <span className="text-placeholder">未走访</span>}
-                </td>
-                <td className="text-center tabular-nums">
-                  -
-                </td>
-                <td className="text-right" onClick={e => e.stopPropagation()}>
-                  <div className="flex items-center justify-end gap-1">
-                    <button
-                      className="btn btn-text btn-sm"
-                      onClick={() => router.push(`/enterprises/${ent.id}`)}
-                    >
-                      <Eye className="h-3.5 w-3.5" />
-                      画像
-                    </button>
-                    <button
-                      className="btn btn-text btn-sm"
-                      onClick={() => generateReport(ent.short_name ?? ent.name)}
-                    >
-                      <FileText className="h-3.5 w-3.5" />
-                      背调
-                    </button>
-                    <button
-                      className="btn btn-text btn-sm"
-                      onClick={() => router.push(`/visit/records`)}
-                    >
-                      <Plus className="h-3.5 w-3.5" />
-                      走访
-                    </button>
-                  </div>
-                </td>
-              </tr>
+          {/* ─── 准备阶段 ─── */}
+          <Col title="准备阶段" count={prepareList.length} color="bg-blue-500">
+            {prepareList.map(ent => (
+              <Card key={ent.id} onClick={() => router.push(`/visit/${ent.id}`)}>
+                <div className="flex items-start justify-between mb-2">
+                  <div className="text-sm font-semibold text-slate-900 leading-snug">{ent.short_name ?? ent.name}</div>
+                  <div className={cn("w-8 h-8 rounded flex items-center justify-center text-xs font-bold shrink-0 ml-2",
+                    ent.is_incubated ? "bg-violet-50 text-violet-600" : "bg-blue-50 text-blue-600"
+                  )}>{(ent.short_name ?? ent.name).charAt(0)}</div>
+                </div>
+                <div className="flex flex-wrap gap-1 mb-2">
+                  {ent.industry && <span className="text-[10px] px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded">{ent.industry}</span>}
+                  {ent.development_stage && <span className="text-[10px] px-1.5 py-0.5 bg-slate-50 text-slate-500 rounded">{ent.development_stage}</span>}
+                </div>
+                <div className="space-y-1 text-[11px] text-slate-500">
+                  {ent.employee_count && <div className="flex items-center gap-1"><Users className="h-3 w-3" />{ent.employee_count.toLocaleString()} 人</div>}
+                  {ent.legal_person && <div className="flex items-center gap-1"><User className="h-3 w-3" />法人: {ent.legal_person}</div>}
+                  {ent.office_address && <div className="flex items-center gap-1 truncate"><MapPin className="h-3 w-3 shrink-0" /><span className="truncate">{ent.office_address}</span></div>}
+                </div>
+                <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between text-[10px]">
+                  <button
+                    className="text-[#3370FF] font-medium hover:underline"
+                    onClick={(e) => { e.stopPropagation(); router.push(`/enterprises/${ent.id}/report`); }}
+                  >查看背调报告 →</button>
+                  <span className="text-slate-400">准备阶段</span>
+                </div>
+              </Card>
             ))}
-          </tbody>
-        </table>
+          </Col>
 
-        {filtered.length === 0 && (
-          <div className="empty-state">
-            <p className="text-[14px]">没有匹配的企业</p>
-            <p className="text-[12px] mt-1">尝试调整搜索条件</p>
-          </div>
-        )}
+          {/* ─── 走访阶段 ─── */}
+          <Col title="走访阶段" count={visitList.length} color="bg-violet-500">
+            {visitList.map((item, i) => (
+              <Card key={i} onClick={() => router.push(`/visit/${item.ent.id}`)}>
+                <div className="text-sm font-semibold text-slate-900 mb-2">{item.ent.short_name ?? item.ent.name}</div>
+                <div className="flex items-center gap-2 mb-2 p-2 bg-violet-50 rounded border border-violet-100">
+                  <Calendar className="h-4 w-4 text-violet-500 shrink-0" />
+                  <div>
+                    <div className="text-xs font-bold text-violet-700">{item.date} {item.time}</div>
+                    <div className="text-[10px] text-violet-500">{item.type}</div>
+                  </div>
+                </div>
+                <div className="space-y-1 text-[11px] text-slate-500 mb-2">
+                  <div className="flex items-center gap-1"><Phone className="h-3 w-3" />对接人: {item.contact}</div>
+                  <div className="flex items-center gap-1"><User className="h-3 w-3" />负责人: {item.owner}</div>
+                </div>
+                <div className="flex flex-wrap gap-1">
+                  {item.ent.industry && <span className="text-[10px] px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded">{item.ent.industry}</span>}
+                  <span className="text-[10px] px-1.5 py-0.5 bg-violet-50 text-violet-600 rounded">{item.type}</span>
+                </div>
+              </Card>
+            ))}
+          </Col>
+
+          {/* ─── 确认阶段 ─── */}
+          <Col title="确认阶段" count={confirmList.length} color="bg-amber-500">
+            {confirmList.map(item => (
+              <Card key={item.id} onClick={() => router.push(`/visit/confirm/${item.id}`)}>
+                <div className="text-sm font-semibold text-slate-900 mb-2">{item.enterprise?.short_name ?? item.enterprise?.name}</div>
+                <div className="p-2 bg-amber-50 rounded border border-amber-100 mb-2">
+                  <div className="text-xs font-medium text-amber-700 mb-1">走访日期: {item.visit_date}</div>
+                  {item.key_findings && item.key_findings.length > 0 && (
+                    <div className="text-[11px] text-amber-600 line-clamp-2">{item.key_findings[0]}</div>
+                  )}
+                </div>
+                <div className="space-y-1 text-[11px] text-slate-500">
+                  <div className="flex items-center gap-1"><User className="h-3 w-3" />访客: {item.visitor_name} · {item.visitor_department}</div>
+                  {item.demands && item.demands.length > 0 && (
+                    <div className="flex items-center gap-1"><Target className="h-3 w-3 text-amber-500" />{item.demands.length} 条诉求待确认</div>
+                  )}
+                </div>
+                <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between text-[10px]">
+                  <span className="text-amber-600 font-medium flex items-center gap-1"><AlertCircle className="h-3 w-3" />待确认</span>
+                  <span className="text-slate-400">{item.visit_type}</span>
+                </div>
+              </Card>
+            ))}
+          </Col>
+
+          {/* ─── 跟进阶段 ─── */}
+          <Col title="跟进阶段" count={followList.length} color="bg-emerald-500">
+            {followList.map((item, i) => (
+              <Card key={i} onClick={() => router.push(`/enterprises/${item.enterprise.id}`)}>
+                <div className="text-sm font-semibold text-slate-900 mb-2">{item.enterprise.short_name ?? item.enterprise.name}</div>
+                <div className="p-2 bg-slate-50 rounded border border-slate-100 mb-2">
+                  <div className="text-xs text-slate-700 leading-relaxed line-clamp-2">{item.demand.demand_content}</div>
+                </div>
+                <div className="flex flex-wrap gap-1 mb-2">
+                  {item.demand.demand_type && <span className="text-[10px] px-1.5 py-0.5 bg-emerald-50 text-emerald-600 rounded border border-emerald-100">{item.demand.demand_type}</span>}
+                  <span className="text-[10px] px-1.5 py-0.5 bg-red-50 text-red-600 rounded border border-red-100">待处理</span>
+                </div>
+                <div className="text-[11px] text-slate-500 flex items-center gap-1">
+                  <Building2 className="h-3 w-3" />分配: {item.demand.assigned_department || '待分配'}
+                </div>
+              </Card>
+            ))}
+          </Col>
+
+        </div>
       </div>
+    </div>
+  );
+}
+
+/* ── 组件 ── */
+
+function Col({ title, count, color, children }: { title: string; count: number; color: string; children: React.ReactNode }) {
+  return (
+    <div className="flex-1 min-w-[260px] max-w-[320px] flex flex-col h-full">
+      <div className="flex items-center gap-2 mb-3 px-1">
+        <div className={cn("w-2 h-2 rounded-full", color)} />
+        <span className="text-sm font-semibold text-slate-700">{title}</span>
+        <span className="text-xs text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">{count}</span>
+      </div>
+      <div className="flex-1 overflow-y-auto space-y-2 pr-1 pb-4">{children}</div>
+    </div>
+  );
+}
+
+function Card({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
+  return (
+    <div className="bg-white border border-slate-200 rounded-lg p-3 hover:border-[#3370FF] transition-colors cursor-pointer" onClick={onClick}>
+      {children}
     </div>
   );
 }

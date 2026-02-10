@@ -128,6 +128,7 @@ export function getAssessment(id: string) { return mockAssessments.find(a => a.i
 export function getPolicyStats() { return mockPolicyStats; }
 export function getPMProgress() { return mockPMProgress; }
 export function getIncubatorEnterprises() { return mockIncubatorEnterprises; }
+export function getIncubatorEnterprise(id: string) { return mockIncubatorEnterprises.find(e => e.id === id); }
 export function getActivityReports() { return mockActivityReports; }
 export function getChatMessages() { return mockChatMessages; }
 export function getIncubatorStats() {
