@@ -106,26 +106,23 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="min-h-screen">
-      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-4 space-y-4">
-        {/* 头部卡片 */}
-        <div className="bg-white rounded-[10px] border border-slate-200 p-4"
-          style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="section-title mb-1">管理看板</div>
-              <p className="text-xs text-slate-500 ml-[13px]">{today} · 管理者视图</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <button className="btn btn-default btn-sm"
-                onClick={() => sendChat('请生成本周团队周报：走访完成情况、政策推进进度、孵化器运营要点、AI 处理统计。')}>
-                <Bot className="h-3.5 w-3.5" /> AI 周报
-              </button>
-              <button className="btn btn-primary btn-sm"
-                onClick={() => sendChat('请分析团队工作状况，给出管理优化建议：任务分配、员工关注、流程优化。')}>
-                <Sparkles className="h-3.5 w-3.5" /> AI 建议
-              </button>
-            </div>
+    <div className="min-h-full">
+      <div className="page-container space-y-4">
+        {/* ═══ 头部 ═══ */}
+        <div className="flex items-center justify-between pt-1">
+          <div>
+            <h1 className="text-base font-bold text-slate-900">管理看板</h1>
+            <p className="text-xs text-slate-400 mt-0.5">{today} · 管理者视图</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <button className="btn btn-default btn-sm"
+              onClick={() => sendChat('请生成本周团队周报：走访完成情况、政策推进进度、孵化器运营要点、AI 处理统计。')}>
+              <Bot className="h-3.5 w-3.5" /> AI 周报
+            </button>
+            <button className="btn btn-primary btn-sm"
+              onClick={() => sendChat('请分析团队工作状况，给出管理优化建议：任务分配、员工关注、流程优化。')}>
+              <Sparkles className="h-3.5 w-3.5" /> AI 建议
+            </button>
           </div>
         </div>
 

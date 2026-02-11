@@ -74,10 +74,10 @@ export default function EnterprisePage() {
   });
 
   return (
-    <div className="min-h-screen pb-10">
+    <div className="min-h-full pb-10">
       {/* 顶部头卡 */}
-      <div className="bg-white border-b border-slate-200">
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-4">
+      <div className="detail-header">
+        <div className="detail-header-inner">
           {/* 返回 + 操作 */}
           <div className="flex items-center justify-between mb-4">
             <button onClick={() => router.back()} className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-[#3370FF] transition-colors">
@@ -157,7 +157,7 @@ export default function EnterprisePage() {
       </div>
 
       {/* 内容区 */}
-      <div className="max-w-[1200px] mx-auto p-4 sm:p-6">
+      <div className="page-container space-y-4">
         {activeTab === 'ai' && <AITab enterprise={enterprise} report={report} assessments={assessments} />}
         {activeTab === 'basic' && <BasicTab enterprise={enterprise} report={report} />}
         {activeTab === 'finance' && <FinanceTab enterprise={enterprise} />}

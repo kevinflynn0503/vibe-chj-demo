@@ -38,10 +38,10 @@ export default function ReportPage() {
   const checklist = report.communication_checklist;
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-full">
       {/* 头部 — 统一模板B */}
-      <div className="bg-white border-b border-slate-200">
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-4">
+      <div className="detail-header">
+        <div className="detail-header-inner">
           <button onClick={() => router.back()} className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-[#3370FF] transition-colors mb-3">
             <ArrowLeft className="h-3.5 w-3.5" />
             返回企业详情
@@ -85,7 +85,7 @@ export default function ReportPage() {
       </div>
 
       {/* 内容 — 两栏：报告 + 沟通清单 */}
-      <div className="max-w-[1200px] mx-auto p-4 sm:p-6">
+      <div className="page-container space-y-4">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
 
           {/* 左：报告章节 (3/5) */}

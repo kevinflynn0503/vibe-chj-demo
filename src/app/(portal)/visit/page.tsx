@@ -59,36 +59,33 @@ export default function VisitWorkbench() {
   const total = prepareList.length + visitList.length + confirmList.length + followList.length;
 
   return (
-    <div className="h-full flex flex-col overflow-hidden">
-      {/* 头部卡片 */}
-      <div className="shrink-0 px-4 sm:px-6 pt-4">
-        <div className="max-w-[1200px] mx-auto bg-white rounded-[10px] border border-slate-200 p-4"
-          style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-3">
-            <div>
-              <div className="section-title mb-1">走访任务看板</div>
-              <p className="text-xs text-slate-500 ml-[13px]">走访全流程：准备 → 走访 → 确认 → 跟进 · {total} 项任务</p>
+    <div className="min-h-full">
+      <div className="page-container space-y-4">
+
+        {/* ═══ 头部 — 与首页风格统一 ═══ */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-1">
+          <div>
+            <h1 className="text-base font-bold text-slate-900">走访任务看板</h1>
+            <p className="text-xs text-slate-400 mt-0.5">走访全流程：准备 → 走访 → 确认 → 跟进 · {total} 项任务</p>
+          </div>
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <div className="relative flex-1 sm:w-56">
+              <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
+              <input type="text" placeholder="搜索..." value={search} onChange={e => setSearch(e.target.value)}
+                className="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg hover:border-slate-300 focus:border-[#3370FF] focus:outline-none focus:shadow-[0_0_0_3px_rgba(51,112,255,0.06)] transition-all" />
             </div>
-            <div className="flex items-center gap-2 w-full sm:w-auto">
-              <div className="relative flex-1 sm:w-56">
-                <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
-                <input type="text" placeholder="搜索..." value={search} onChange={e => setSearch(e.target.value)}
-                  className="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg hover:border-slate-300 focus:border-[#3370FF] focus:outline-none focus:shadow-[0_0_0_3px_rgba(51,112,255,0.06)] transition-all" />
-              </div>
-              <button className="btn btn-default btn-sm shrink-0" onClick={() => router.push('/visit/records')}>
-                <FileText className="h-3.5 w-3.5" /> 走访记录
-              </button>
-              <button className="btn btn-primary btn-sm shrink-0" onClick={() => router.push('/enterprises')}>
-                <Plus className="h-3.5 w-3.5" /> 新增走访
-              </button>
-            </div>
+            <button className="btn btn-default btn-sm shrink-0" onClick={() => router.push('/visit/records')}>
+              <FileText className="h-3.5 w-3.5" /> 走访记录
+            </button>
+            <button className="btn btn-primary btn-sm shrink-0" onClick={() => router.push('/enterprises')}>
+              <Plus className="h-3.5 w-3.5" /> 新增走访
+            </button>
           </div>
         </div>
-      </div>
 
-      {/* 看板 */}
-      <div className="flex-1 overflow-x-auto overflow-y-hidden">
-        <div className="max-w-[1200px] mx-auto h-full flex gap-4 p-4 sm:p-6" style={{ minWidth: '1100px' }}>
+        {/* ═══ 看板 ═══ */}
+        <div className="overflow-x-auto -mx-4 sm:-mx-6">
+          <div className="flex gap-4 px-4 sm:px-6 pb-4" style={{ minWidth: '1100px' }}>
 
           {/* ─── 准备阶段 ─── */}
           <Col title="准备阶段" count={prepareList.length} color="bg-blue-500">
@@ -233,6 +230,7 @@ export default function VisitWorkbench() {
             ))}
           </Col>
 
+          </div>
         </div>
       </div>
     </div>

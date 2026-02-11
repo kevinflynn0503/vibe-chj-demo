@@ -59,9 +59,9 @@ export default function HomePage() {
   ];
 
   const priorityConfig = {
-    urgent: { label: '紧急', color: 'text-red-600', border: 'border-l-red-400', iconBg: 'bg-red-50 text-red-500' },
-    high: { label: '重要', color: 'text-amber-600', border: 'border-l-amber-400', iconBg: 'bg-amber-50 text-amber-500' },
-    medium: { label: '常规', color: 'text-blue-600', border: 'border-l-blue-400', iconBg: 'bg-blue-50 text-[#3370FF]' },
+    urgent: { label: '紧急', color: 'text-red-600', tagBg: 'bg-red-50', iconBg: 'bg-red-50 text-red-500' },
+    high: { label: '重要', color: 'text-amber-600', tagBg: 'bg-amber-50', iconBg: 'bg-amber-50 text-amber-500' },
+    medium: { label: '常规', color: 'text-slate-500', tagBg: 'bg-slate-50', iconBg: 'bg-blue-50 text-[#3370FF]' },
   };
 
   // AI 后台动态
@@ -163,7 +163,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-full">
-      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 pt-2 pb-6 space-y-5">
+      <div className="page-container space-y-4">
 
         {/* ═══ 头部问候 ═══ */}
         <div className="flex items-center justify-between pt-1">
@@ -202,7 +202,7 @@ export default function HomePage() {
           ))}
         </div>
 
-        {/* ═══ 今日重点 — 左侧彩色边条 ═══ */}
+        {/* ═══ 今日重点 ═══ */}
         <div>
           <div className="section-title mb-3">
             <Star className="h-4 w-4 text-amber-400" />
@@ -212,10 +212,8 @@ export default function HomePage() {
             {todayFocus.map((item, i) => {
               const config = priorityConfig[item.priority];
               return (
-                <div key={i} className={cn(
-                  "bg-white border border-slate-200 border-l-[3px] rounded-[10px] p-4 cursor-pointer transition-all group hover:shadow-md",
-                  config.border
-                )}
+                <div key={i}
+                  className="bg-white border border-slate-200 rounded-[10px] p-4 cursor-pointer transition-all group hover:shadow-md"
                   onClick={item.action}>
                   <div className="flex items-start gap-3">
                     <div className={cn("p-2 rounded-lg shrink-0", config.iconBg)}>
@@ -223,7 +221,7 @@ export default function HomePage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className={cn("text-[10px] font-medium px-1.5 py-0.5 rounded", config.color, config.iconBg)}>
+                        <span className={cn("text-[10px] font-medium px-1.5 py-0.5 rounded", config.color, config.tagBg)}>
                           {config.label}
                         </span>
                       </div>
@@ -238,7 +236,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* ═══ 场景入口 — 顶部色条 ═══ */}
+        {/* ═══ 场景入口 ═══ */}
         <div>
           <div className="section-title mb-3">
             场景入口
@@ -246,24 +244,20 @@ export default function HomePage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {scenarios.map(s => (
               <div key={s.title}
-                className="group bg-white border border-slate-200 rounded-[10px] overflow-hidden cursor-pointer hover:shadow-md transition-all"
+                className="group bg-white border border-slate-200 rounded-[10px] p-4 cursor-pointer hover:shadow-md transition-all"
                 onClick={() => router.push(s.href)}>
-                {/* 顶部色条 */}
-                <div className="h-[3px]" style={{ background: s.accentColor }} />
-                <div className="p-4">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="p-2 rounded-lg" style={{ background: `${s.accentColor}12` }}>
-                      <s.icon className="h-4 w-4" style={{ color: s.accentColor }} />
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-semibold text-slate-900 group-hover:text-[#3370FF] transition-colors">{s.title}</h3>
-                      <p className="text-[10px] text-slate-400">{s.desc}</p>
-                    </div>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="p-2 rounded-lg" style={{ background: `${s.accentColor}12` }}>
+                    <s.icon className="h-4 w-4" style={{ color: s.accentColor }} />
                   </div>
-                  <div className="flex items-baseline gap-2 pt-3 border-t border-slate-100">
-                    <span className="text-xl font-bold font-mono" style={{ color: s.accentColor }}>{s.stat}</span>
-                    <span className="text-xs text-slate-500">{s.statLabel}</span>
+                  <div>
+                    <h3 className="text-sm font-semibold text-slate-900 group-hover:text-[#3370FF] transition-colors">{s.title}</h3>
+                    <p className="text-[10px] text-slate-400">{s.desc}</p>
                   </div>
+                </div>
+                <div className="flex items-baseline gap-2 pt-3 border-t border-slate-100">
+                  <span className="text-xl font-bold font-mono" style={{ color: s.accentColor }}>{s.stat}</span>
+                  <span className="text-xs text-slate-500">{s.statLabel}</span>
                 </div>
               </div>
             ))}

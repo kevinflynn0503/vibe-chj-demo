@@ -5,6 +5,11 @@
  * - 不是独立 header，是内容区的一部分
  * - sticky 吸顶，滚动时带 backdrop-blur
  * - 不占全宽，居中浮动，像内容内嵌的控件
+ * 
+ * 统一布局规范：
+ * - 外层 h-screen + flex col，导航固定高度
+ * - 内容区 flex-1 overflow-y-auto，每个 Tab 页自己滚动
+ * - 所有页面共用同一套外壳，避免切换时跳动
  */
 'use client';
 
@@ -37,10 +42,10 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
   const activeTab = getActiveTab(pathname);
 
   return (
-    <div className="relative h-screen overflow-y-auto bg-white">
-      {/* 浮动胶囊导航 — sticky 吸顶，居中，不占全宽 */}
-      <div className="sticky top-0 z-50 flex justify-center py-2 pointer-events-none">
-        <nav className="pointer-events-auto flex items-center gap-0.5 px-1.5 py-1 bg-white/85 backdrop-blur-lg border border-slate-200/60 rounded-full shadow-sm">
+    <div className="h-screen flex flex-col bg-white">
+      {/* 浮动胶囊导航 — 固定高度，不参与滚动 */}
+      <div className="shrink-0 flex justify-center py-2 z-50 bg-white/85 backdrop-blur-lg border-b border-transparent">
+        <nav className="flex items-center gap-0.5 px-1.5 py-1 bg-white/85 backdrop-blur-lg border border-slate-200/60 rounded-full shadow-sm">
           {TABS.map(tab => {
             const isActive = activeTab === tab.id;
             return (
@@ -62,8 +67,8 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
         </nav>
       </div>
 
-      {/* 内容区 — 导航是内容的一部分，负 margin 补偿 */}
-      <main className="-mt-1">
+      {/* 内容区 — flex-1 占满剩余高度，自己滚动 */}
+      <main className="flex-1 overflow-y-auto overflow-x-hidden">
         {children}
       </main>
     </div>

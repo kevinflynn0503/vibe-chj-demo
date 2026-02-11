@@ -3,7 +3,7 @@
  * 
  * 统一规范：
  * - 头部：bg-white border-b → max-w-[1200px] mx-auto px-4 sm:px-6 py-4
- * - 内容：max-w-[1200px] mx-auto p-4 sm:p-6 space-y-6
+ * - 内容：max-w-[1200px] mx-auto px-4 sm:px-6 py-4 space-y-4
  * - 背景：min-h-screen（由父 layout 提供 #F7F8FA）
  * - 返回按钮：text-xs text-slate-500 hover:text-[#3370FF], ArrowLeft h-3.5
  */
@@ -39,10 +39,10 @@ function VisitRecordsContent() {
   }), [records, statusFilter, deptFilter]);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-full">
       {/* 头部 — 统一模板B */}
-      <div className="bg-white border-b border-slate-200">
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-4">
+      <div className="detail-header">
+        <div className="detail-header-inner">
           <button onClick={() => router.back()} className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-[#3370FF] transition-colors mb-3">
             <ArrowLeft className="h-3.5 w-3.5" />
             返回走访工作台
@@ -76,7 +76,7 @@ function VisitRecordsContent() {
       </div>
 
       {/* 内容 — 统一 max-w-[1200px] */}
-      <div className="max-w-[1200px] mx-auto p-4 sm:p-6 space-y-6">
+      <div className="page-container space-y-4">
         <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
           {filtered.length === 0 ? (
             <div className="py-16 text-center">

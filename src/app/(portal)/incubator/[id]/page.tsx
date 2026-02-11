@@ -77,10 +77,10 @@ export default function IncubatorEnterprisePage() {
   const scoreBg = ent.activity_score >= 80 ? 'bg-emerald-500' : ent.activity_score >= 50 ? 'bg-blue-500' : 'bg-red-500';
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-full">
       {/* Header */}
-      <div className="bg-white border-b border-slate-200">
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-4">
+      <div className="detail-header">
+        <div className="detail-header-inner">
           <button onClick={() => router.push('/incubator')} className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-[#3370FF] transition-colors mb-3">
             <ArrowLeft className="h-3.5 w-3.5" />
             返回孵化管理
@@ -115,7 +115,7 @@ export default function IncubatorEnterprisePage() {
         </div>
       </div>
 
-      <div className="max-w-[1200px] mx-auto p-4 sm:p-6 space-y-6">
+      <div className="page-container space-y-4">
 
         {/* AI 画像摘要 */}
         <div className="bg-gradient-to-r from-blue-50 to-white border border-blue-100 rounded-lg p-4">

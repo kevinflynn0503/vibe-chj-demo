@@ -16,6 +16,7 @@
 
 @layer base {
   :root {
+    /* ── 颜色 ── */
     --bg-primary: #FFFFFF;
     --bg-card: #FFFFFF;
     --bg-section: #F8F9FB;
@@ -28,6 +29,19 @@
     --brand-hover: #2860E1;
     --brand-subtle: rgba(51, 112, 255, 0.06);
     --brand-muted: rgba(51, 112, 255, 0.12);
+
+    /* ── 布局标准 (Design Tokens) ── */
+    --page-max-w: 1200px;
+    --page-px: 1rem;       /* 16px, sm 以上用 1.5rem */
+    --page-py: 1rem;       /* 16px */
+    --content-gap: 1rem;   /* 16px = space-y-4 */
+    --detail-gap: 1.5rem;  /* 24px = space-y-6 (二级页面内容间距) */
+    --card-radius: 10px;
+    --card-shadow: 0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02);
+
+    /* ── 动效 ── */
+    --transition-fast: 150ms ease;
+    --transition-normal: 200ms ease;
   }
 
   body {
@@ -262,6 +276,55 @@
     gap: 4px;
     font-size: 11px;
     color: var(--text-muted);
+  }
+
+  /* ═══ 统一布局工具类 ═══ */
+
+  /* 页面容器 — 所有 Tab 页面 & 二级页面内容区统一使用 */
+  .page-container {
+    max-width: var(--page-max-w);
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--page-px);
+    padding-right: var(--page-px);
+    padding-top: var(--page-py);
+    padding-bottom: var(--page-py);
+  }
+  @media (min-width: 640px) {
+    .page-container {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+
+  /* 二级页面头部栏 — bg-white border-b 标准模式 */
+  .detail-header {
+    background: white;
+    border-bottom: 1px solid var(--border);
+  }
+  .detail-header-inner {
+    max-width: var(--page-max-w);
+    margin-left: auto;
+    margin-right: auto;
+    padding: var(--page-py) var(--page-px);
+  }
+  @media (min-width: 640px) {
+    .detail-header-inner {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+
+  /* 骨架屏 shimmer 动画 */
+  .skeleton {
+    background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s ease-in-out infinite;
+    border-radius: 6px;
+  }
+  @keyframes skeleton-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
   }
 
   /* Markdown 样式 */

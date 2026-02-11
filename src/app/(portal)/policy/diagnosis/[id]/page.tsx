@@ -110,10 +110,10 @@ export default function DiagnosisPage() {
   const conclusion = diagConclusion[diagLevel];
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-full">
       {/* 头部 */}
-      <div className="bg-white border-b border-slate-200">
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-4">
+      <div className="detail-header">
+        <div className="detail-header-inner">
           <button onClick={() => router.push('/policy/tasks')} className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-[#3370FF] transition-colors mb-3">
             <ArrowLeft className="h-3.5 w-3.5" />
             返回触达任务
@@ -143,7 +143,7 @@ export default function DiagnosisPage() {
         </div>
       </div>
 
-      <div className="max-w-[1200px] mx-auto p-4 sm:p-6 space-y-6">
+      <div className="page-container space-y-4">
 
         {/* 诊断结论 */}
         <div className={cn("rounded-lg border p-4", conclusion.cls)}>

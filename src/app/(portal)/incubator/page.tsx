@@ -30,20 +30,17 @@ export default function IncubatorPage() {
   const entIdToIncId = Object.fromEntries(enterprises.map(e => [e.enterprise_id, e.id]));
 
   return (
-    <div className="min-h-screen">
-      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-4 space-y-4">
-        {/* 头部卡片 */}
-        <div className="bg-white rounded-[10px] border border-slate-200 p-4"
-          style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-3">
-            <div>
-              <div className="section-title mb-1">孵化器运营</div>
-              <p className="text-xs text-slate-500 ml-[13px]">A6 奇岱松校友中心 · {stats.total_enterprises} 家在孵</p>
-            </div>
-            <button className="btn btn-primary btn-sm" onClick={() => router.push('/incubator/match')}>
-              <Sparkles className="h-3.5 w-3.5" /> AI 订单匹配
-            </button>
+    <div className="min-h-full">
+      <div className="page-container space-y-4">
+        {/* ═══ 头部 ═══ */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-1">
+          <div>
+            <h1 className="text-base font-bold text-slate-900">孵化器运营</h1>
+            <p className="text-xs text-slate-400 mt-0.5">A6 奇岱松校友中心 · {stats.total_enterprises} 家在孵</p>
           </div>
+          <button className="btn btn-primary btn-sm" onClick={() => router.push('/incubator/match')}>
+            <Sparkles className="h-3.5 w-3.5" /> AI 订单匹配
+          </button>
         </div>
 
         {/* ═══ 运营指标 + AI 状态 ═══ */}

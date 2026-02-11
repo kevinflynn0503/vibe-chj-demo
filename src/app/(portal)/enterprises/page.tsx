@@ -66,26 +66,23 @@ export default function EnterprisesPage() {
   const incubated = enterprises.filter(e => e.is_incubated).length;
 
   return (
-    <div className="min-h-screen">
-      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-4 space-y-4">
-        {/* 头部卡片 */}
-        <div className="bg-white rounded-[10px] border border-slate-200 p-4"
-          style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <div>
-              <div className="section-title mb-1">企业画像库</div>
-              <p className="text-xs text-slate-500 ml-[13px]">共 {totalEnterprises} 家园区企业</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <button className="btn btn-default btn-sm"
-                onClick={() => sendChat(`请分析园区 ${totalEnterprises} 家企业的整体情况：行业分布、发展阶段分布、政策覆盖率、高潜力企业推荐，并给出本月重点关注建议。`)}>
-                <Bot className="h-3.5 w-3.5" /> AI 园区分析
-              </button>
-              <button className="btn btn-primary btn-sm"
-                onClick={() => sendChat('请推荐本月应优先走访的企业，考虑：近期未走访、政策匹配度高、发展阶段需关注、有活跃需求等因素。')}>
-                <Sparkles className="h-3.5 w-3.5" /> AI 推荐走访
-              </button>
-            </div>
+    <div className="min-h-full">
+      <div className="page-container space-y-4">
+        {/* ═══ 头部 ═══ */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-1">
+          <div>
+            <h1 className="text-base font-bold text-slate-900">企业画像库</h1>
+            <p className="text-xs text-slate-400 mt-0.5">共 {totalEnterprises} 家园区企业</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <button className="btn btn-default btn-sm"
+              onClick={() => sendChat(`请分析园区 ${totalEnterprises} 家企业的整体情况：行业分布、发展阶段分布、政策覆盖率、高潜力企业推荐，并给出本月重点关注建议。`)}>
+              <Bot className="h-3.5 w-3.5" /> AI 园区分析
+            </button>
+            <button className="btn btn-primary btn-sm"
+              onClick={() => sendChat('请推荐本月应优先走访的企业，考虑：近期未走访、政策匹配度高、发展阶段需关注、有活跃需求等因素。')}>
+              <Sparkles className="h-3.5 w-3.5" /> AI 推荐走访
+            </button>
           </div>
         </div>
 
