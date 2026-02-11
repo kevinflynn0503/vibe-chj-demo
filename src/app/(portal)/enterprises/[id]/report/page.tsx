@@ -38,7 +38,7 @@ export default function ReportPage() {
   const checklist = report.communication_checklist;
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen">
       {/* 头部 — 统一模板B */}
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-4">

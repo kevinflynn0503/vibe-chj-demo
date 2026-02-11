@@ -4,7 +4,7 @@
  * 统一规范：
  * - 头部：bg-white border-b → max-w-[1200px] mx-auto px-4 sm:px-6 py-4
  * - 内容：max-w-[1200px] mx-auto p-4 sm:p-6 space-y-6
- * - 背景：min-h-screen bg-white
+ * - 背景：min-h-screen（由父 layout 提供 #F7F8FA）
  * - 返回按钮：text-xs text-slate-500 hover:text-[#3370FF], ArrowLeft h-3.5
  */
 'use client';
@@ -39,7 +39,7 @@ function VisitRecordsContent() {
   }), [records, statusFilter, deptFilter]);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen">
       {/* 头部 — 统一模板B */}
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-4">

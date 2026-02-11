@@ -109,11 +109,12 @@ export default function DashboardPage() {
     <div className="min-h-screen">
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-4 space-y-4">
         {/* 头部卡片 */}
-        <div className="bg-white rounded-lg border border-slate-200 shadow p-4">
+        <div className="bg-white rounded-[10px] border border-slate-200 p-4"
+          style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-lg font-bold text-slate-900">管理看板</h1>
-              <p className="text-xs text-slate-500 mt-0.5">{today} · 管理者视图</p>
+              <div className="section-title mb-1">管理看板</div>
+              <p className="text-xs text-slate-500 ml-[13px]">{today} · 管理者视图</p>
             </div>
             <div className="flex items-center gap-2">
               <button className="btn btn-default btn-sm"
@@ -128,21 +129,22 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* 子 Tab */}
-        <div className="bg-white rounded-lg border border-slate-200 shadow px-4">
-          <div className="flex items-center gap-6 overflow-x-auto">
-            {tabs.map(tab => (
-              <button key={tab.key} onClick={() => setActiveTab(tab.key)}
-                className={cn("relative py-3 text-sm font-medium transition-colors border-b-2 whitespace-nowrap",
-                  activeTab === tab.key ? 'text-[#3370FF] border-[#3370FF]' : 'text-slate-500 border-transparent hover:text-slate-900'
-                )}>
-                {tab.label}
-                {tab.count !== undefined && tab.count > 0 && (
-                  <span className="ml-1.5 text-xs bg-red-500 text-white px-1.5 py-0.5 rounded-full">{tab.count}</span>
-                )}
-              </button>
-            ))}
-          </div>
+        {/* 子 Tab — pill 样式 */}
+        <div className="flex items-center gap-1 p-1 bg-white rounded-[10px] border border-slate-200 overflow-x-auto"
+          style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
+          {tabs.map(tab => (
+            <button key={tab.key} onClick={() => setActiveTab(tab.key)}
+              className={cn("px-3 py-1.5 text-xs font-medium rounded-md transition-all whitespace-nowrap",
+                activeTab === tab.key ? 'bg-[#3370FF] text-white shadow-sm' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
+              )}>
+              {tab.label}
+              {tab.count !== undefined && tab.count > 0 && (
+                <span className={cn("ml-1.5 text-[10px] px-1.5 py-0.5 rounded-full",
+                  activeTab === tab.key ? 'bg-white/20 text-white' : 'bg-red-500 text-white'
+                )}>{tab.count}</span>
+              )}
+            </button>
+          ))}
         </div>
 
         {/* ═══ 总览 ═══ */}
@@ -151,7 +153,8 @@ export default function DashboardPage() {
             {/* KPI */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {kpis.map((kpi, i) => (
-              <div key={i} className="bg-white border border-slate-200 rounded-lg shadow p-4">
+              <div key={i} className="bg-white border border-slate-200 rounded-[10px] p-4"
+                style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
                 <div className="flex items-center justify-between mb-2">
                     <span className="text-xs text-slate-500">{kpi.label}</span>
                     <kpi.icon className="h-4 w-4 text-slate-300" />
@@ -168,7 +171,8 @@ export default function DashboardPage() {
             </div>
 
             {/* 政策漏斗 */}
-            <div className="bg-white border border-slate-200 rounded-lg shadow p-4">
+            <div className="bg-white border border-slate-200 rounded-[10px] p-4"
+              style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
               <div className="flex items-center gap-2 mb-3">
                 <BarChart3 className="h-4 w-4 text-slate-400" />
                 <h2 className="text-sm font-bold text-slate-900">政策转化漏斗</h2>
@@ -187,7 +191,8 @@ export default function DashboardPage() {
             </div>
 
             {/* 员工工作状态概览 */}
-            <div className="bg-white border border-slate-200 rounded-lg shadow">
+            <div className="bg-white border border-slate-200 rounded-[10px]"
+              style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
               <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Users className="h-4 w-4 text-slate-400" />
@@ -225,7 +230,8 @@ export default function DashboardPage() {
             </div>
 
             {/* 需要关注 */}
-            <div className="bg-white border border-slate-200 rounded-lg shadow">
+            <div className="bg-white border border-slate-200 rounded-[10px]"
+              style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
               <div className="px-4 py-3 border-b border-slate-100 flex items-center gap-2">
                 <AlertTriangle className="h-4 w-4 text-amber-500" />
                 <h2 className="text-sm font-bold text-slate-900">需要关注</h2>
@@ -254,7 +260,8 @@ export default function DashboardPage() {
             </div>
 
             {/* 孵化器概况 */}
-            <div className="bg-white border border-slate-200 rounded-lg shadow p-4">
+            <div className="bg-white border border-slate-200 rounded-[10px] p-4"
+              style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <Rocket className="h-4 w-4 text-slate-400" />
@@ -308,7 +315,8 @@ export default function DashboardPage() {
               </div>
             )}
 
-            <div className="bg-white border border-slate-200 rounded-lg shadow overflow-hidden">
+            <div className="bg-white border border-slate-200 rounded-[10px] overflow-hidden"
+              style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
               {assessments.filter(a => a.grade === 'A').map(a => {
                 const passCount = a.screening_details.filter(d => d.result === 'pass').length;
                 const total = a.screening_details.length;
@@ -382,7 +390,8 @@ export default function DashboardPage() {
             {/* PM 当前负荷 */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {pmProgress.map((pm, i) => (
-                <div key={i} className="bg-white border border-slate-200 rounded-lg shadow p-4">
+                <div key={i} className="bg-white border border-slate-200 rounded-[10px] p-4"
+                  style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-bold text-slate-900">{pm.name}</span>
                     <span className="text-xs text-slate-400 font-mono">{(pm.conversion_rate * 100).toFixed(0)}%</span>
@@ -409,7 +418,8 @@ export default function DashboardPage() {
             </div>
 
             {/* 任务列表 */}
-            <div className="bg-white border border-slate-200 rounded-lg shadow overflow-hidden">
+            <div className="bg-white border border-slate-200 rounded-[10px] overflow-hidden"
+              style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
               <div className="overflow-x-auto">
                 <table className="dtable">
                   <thead>
@@ -479,7 +489,8 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-lg shadow">
+            <div className="bg-white border border-slate-200 rounded-[10px]"
+              style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
               <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Users className="h-4 w-4 text-slate-400" />

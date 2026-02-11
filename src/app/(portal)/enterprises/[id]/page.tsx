@@ -74,7 +74,7 @@ export default function EnterprisePage() {
   });
 
   return (
-    <div className="min-h-screen bg-white pb-10">
+    <div className="min-h-screen pb-10">
       {/* 顶部头卡 */}
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-4">

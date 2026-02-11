@@ -110,7 +110,7 @@ export default function DiagnosisPage() {
   const conclusion = diagConclusion[diagLevel];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen">
       {/* 头部 */}
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-4">

@@ -1,16 +1,16 @@
 /**
- * 首页 — 员工今日工作台（适配 iframe 嵌入小北）
+ * 首页 — 员工今日工作台
  * 
- * 微灰背景 + 白卡片层次 + 内联导航
+ * 视觉：白底 + 彩色统计卡片 + 场景顶部色条 + section 蓝色竖条
  */
 'use client';
 
 import { useRouter } from 'next/navigation';
 import {
   Briefcase, Shield, Rocket, Building2,
-  AlertCircle, FileText, ChevronRight,
+  AlertCircle, FileText,
   Bot, Calendar, Target, Clock, MessageSquare,
-  Star, Zap,
+  Star, Zap, ArrowUpRight,
 } from 'lucide-react';
 import { getStats, getPolicyStats, getIncubatorStats, getVisitRecords, getDemands, getAssessments } from '@/lib/mock-data';
 import { cn } from '@/lib/utils';
@@ -36,30 +36,33 @@ export default function HomePage() {
   // 今日重点
   const todayFocus = [
     {
-      priority: 'urgent',
+      priority: 'urgent' as const,
       title: '14:00 走访蔚来汽车',
       detail: '背调已就绪 · 沟通话术已生成 · 3 个必问问题',
       action: () => router.push('/visit/ent-002'),
-      actionLabel: '查看准备',
       icon: Calendar,
     },
     {
-      priority: 'high',
+      priority: 'high' as const,
       title: `${pendingVisits.length} 家企业待走访触达`,
       detail: '政策服务分配的高新认定企业',
       action: () => router.push('/policy'),
-      actionLabel: '去处理',
       icon: Target,
     },
     {
-      priority: 'medium',
+      priority: 'medium' as const,
       title: `${records.filter(r => !r.is_confirmed).length} 条走访记录待确认`,
       detail: 'AI 已提取关键信息，需你确认',
       action: () => router.push('/visit'),
-      actionLabel: '去确认',
       icon: FileText,
     },
   ];
+
+  const priorityConfig = {
+    urgent: { label: '紧急', color: 'text-red-600', border: 'border-l-red-400', iconBg: 'bg-red-50 text-red-500' },
+    high: { label: '重要', color: 'text-amber-600', border: 'border-l-amber-400', iconBg: 'bg-amber-50 text-amber-500' },
+    medium: { label: '常规', color: 'text-blue-600', border: 'border-l-blue-400', iconBg: 'bg-blue-50 text-[#3370FF]' },
+  };
 
   // AI 后台动态
   const aiActivities = [
@@ -71,7 +74,6 @@ export default function HomePage() {
       time: '2分钟前',
       action: () => router.push('/enterprises/ent-002/report'),
       actionLabel: '审核',
-      badge: '✦ AI 完成',
     },
     {
       icon: FileText,
@@ -81,7 +83,6 @@ export default function HomePage() {
       time: '30分钟前',
       action: () => router.push(`/visit/confirm/${records[0]?.id || 'rec-001'}`),
       actionLabel: '确认',
-      badge: '✦ AI 提取',
     },
     {
       icon: Target,
@@ -91,7 +92,6 @@ export default function HomePage() {
       time: '1小时前',
       action: () => router.push('/incubator/match'),
       actionLabel: '查看',
-      badge: '✦ AI 推荐',
     },
     {
       icon: Shield,
@@ -101,7 +101,6 @@ export default function HomePage() {
       time: '2小时前',
       action: () => router.push('/policy/screening'),
       actionLabel: '查看',
-      badge: '✦ AI 完成',
     },
     {
       icon: AlertCircle,
@@ -111,7 +110,6 @@ export default function HomePage() {
       time: '3小时前',
       action: () => router.push('/incubator/alerts'),
       actionLabel: '查看',
-      badge: '✦ AI 预警',
     },
   ];
 
@@ -119,175 +117,184 @@ export default function HomePage() {
   const scenarios = [
     {
       title: '客户拜访',
-      desc: '走访看板',
+      desc: '走访全流程管理',
       icon: Briefcase,
       href: '/visit',
       stat: visitStats.pending_confirmations,
       statLabel: '待确认',
-      statColor: 'text-amber-600',
+      accentColor: '#3370FF',
     },
     {
       title: '政策服务',
-      desc: '我的任务',
+      desc: 'AI 筛选 + 触达',
       icon: Shield,
       href: '/policy',
       stat: myTasks.length,
       statLabel: '分配给我',
-      statColor: 'text-[#3370FF]',
+      accentColor: '#10B981',
     },
     {
-      title: '孵化器',
-      desc: '企业运营',
+      title: '孵化管理',
+      desc: '企业运营监控',
       icon: Rocket,
       href: '/incubator',
       stat: incubatorStats.pending_orders,
       statLabel: '待匹配',
-      statColor: 'text-violet-600',
+      accentColor: '#8B5CF6',
     },
     {
       title: '企业库',
-      desc: '园区企业',
+      desc: '园区企业画像',
       icon: Building2,
       href: '/enterprises',
       stat: '326',
       statLabel: '园区企业',
-      statColor: 'text-slate-700',
+      accentColor: '#F59E0B',
     },
   ];
 
-  return (
-    <div className="min-h-screen">
-      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-4 space-y-4">
+  // 统计卡片配色 — 每张卡片有自己的底色
+  const statCards = [
+    { label: '待处理', value: aiActivities.length, icon: Clock, color: 'text-[#3370FF]', bg: 'bg-blue-50/80', iconBg: 'bg-blue-100/60' },
+    { label: '本月走访', value: records.length, icon: Briefcase, color: 'text-emerald-600', bg: 'bg-emerald-50/80', iconBg: 'bg-emerald-100/60' },
+    { label: '政策任务', value: myTasks.length, icon: Shield, color: 'text-amber-600', bg: 'bg-amber-50/80', iconBg: 'bg-amber-100/60' },
+    { label: '需求跟进', value: demands.filter(d => d.status === 'pending').length, icon: MessageSquare, color: 'text-violet-600', bg: 'bg-violet-50/80', iconBg: 'bg-violet-100/60' },
+  ];
 
-        {/* ═══ 头部摘要 ═══ */}
-        <div className="bg-white rounded-lg border border-slate-200 shadow p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-lg font-bold text-slate-900">{greeting}，薛坤</h1>
-              <p className="text-xs text-slate-500 mt-0.5">{today}</p>
-            </div>
-            <div className="flex items-center gap-3 text-xs text-slate-500">
-              <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5 text-amber-500" /><strong className="text-slate-900">{pendingVisits.length}</strong> 走访任务</span>
-              <span className="flex items-center gap-1"><FileText className="h-3.5 w-3.5 text-blue-500" /><strong className="text-slate-900">{records.filter(r => !r.is_confirmed).length}</strong> 待确认</span>
-              <span className="flex items-center gap-1"><MessageSquare className="h-3.5 w-3.5 text-violet-500" /><strong className="text-slate-900">{demands.filter(d => d.status === 'pending').length}</strong> 需求跟进</span>
-            </div>
+  return (
+    <div className="min-h-full">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 pt-2 pb-6 space-y-5">
+
+        {/* ═══ 头部问候 ═══ */}
+        <div className="flex items-center justify-between pt-1">
+          <div>
+            <h1 className="text-base font-bold text-slate-900">{greeting}，薛坤</h1>
+            <p className="text-xs text-slate-400 mt-0.5">{today}</p>
+          </div>
+          <div className="flex items-center gap-4 text-xs text-slate-500">
+            <span className="flex items-center gap-1.5">
+              <Clock className="h-3.5 w-3.5 text-[#3370FF]" />
+              <strong className="text-slate-800">{pendingVisits.length}</strong> 走访任务
+            </span>
+            <span className="flex items-center gap-1.5">
+              <FileText className="h-3.5 w-3.5 text-amber-500" />
+              <strong className="text-slate-800">{records.filter(r => !r.is_confirmed).length}</strong> 待确认
+            </span>
+            <span className="flex items-center gap-1.5">
+              <MessageSquare className="h-3.5 w-3.5 text-violet-500" />
+              <strong className="text-slate-800">{demands.filter(d => d.status === 'pending').length}</strong> 需求跟进
+            </span>
           </div>
         </div>
 
-        {/* ═══ 统计概览 ═══ */}
+        {/* ═══ 统计卡片 — 彩色底色 ═══ */}
         <div className="grid grid-cols-4 gap-3">
-          {[
-            { label: '待处理', value: aiActivities.length, icon: Clock, color: 'text-[#3370FF]', bg: 'bg-blue-50' },
-            { label: '本月走访', value: records.length, icon: Briefcase, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-            { label: '政策任务', value: myTasks.length, icon: Shield, color: 'text-amber-600', bg: 'bg-amber-50' },
-            { label: '需求跟进', value: demands.filter(d => d.status === 'pending').length, icon: MessageSquare, color: 'text-violet-600', bg: 'bg-violet-50' },
-          ].map((s, i) => (
-            <div key={i} className="bg-white border border-slate-200 rounded-lg p-3 flex items-center gap-3 shadow">
-              <div className={cn("p-2 rounded-lg shrink-0", s.bg)}>
+          {statCards.map((s, i) => (
+            <div key={i} className={cn("rounded-[10px] p-3.5 flex items-center gap-3 border border-transparent", s.bg)}>
+              <div className={cn("p-2 rounded-lg shrink-0", s.iconBg)}>
                 <s.icon className={cn("h-4 w-4", s.color)} />
               </div>
               <div>
                 <div className={cn("text-xl font-bold font-mono", s.color)}>{s.value}</div>
-                <div className="text-xs text-slate-500">{s.label}</div>
+                <div className="text-xs text-slate-600">{s.label}</div>
               </div>
             </div>
           ))}
         </div>
 
-        {/* ═══ 今日重点 ═══ */}
+        {/* ═══ 今日重点 — 左侧彩色边条 ═══ */}
         <div>
-          <div className="flex items-center gap-2 mb-3">
+          <div className="section-title mb-3">
             <Star className="h-4 w-4 text-amber-400" />
-            <h2 className="text-sm font-bold text-slate-900">今日重点</h2>
+            今日重点
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            {todayFocus.map((item, i) => (
-              <div key={i} className={cn(
-                "bg-white border rounded-lg p-4 cursor-pointer transition-all hover:shadow-md shadow",
-                item.priority === 'urgent' ? 'border-red-200 hover:border-red-300' :
-                item.priority === 'high' ? 'border-amber-200 hover:border-amber-300' :
-                'border-slate-200 hover:border-[#3370FF]'
-              )} onClick={item.action}>
-                <div className="flex items-start gap-3">
-                  <div className={cn("p-2 rounded-lg shrink-0",
-                    item.priority === 'urgent' ? 'bg-red-50 text-red-500' :
-                    item.priority === 'high' ? 'bg-amber-50 text-amber-500' :
-                    'bg-blue-50 text-[#3370FF]'
-                  )}>
-                    <item.icon className="h-4 w-4" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className={cn("text-[10px] px-1.5 py-0.5 rounded font-medium",
-                        item.priority === 'urgent' ? 'bg-red-50 text-red-600' :
-                        item.priority === 'high' ? 'bg-amber-50 text-amber-600' :
-                        'bg-blue-50 text-blue-600'
-                      )}>
-                        {item.priority === 'urgent' ? '紧急' : item.priority === 'high' ? '重要' : '常规'}
-                      </span>
+            {todayFocus.map((item, i) => {
+              const config = priorityConfig[item.priority];
+              return (
+                <div key={i} className={cn(
+                  "bg-white border border-slate-200 border-l-[3px] rounded-[10px] p-4 cursor-pointer transition-all group hover:shadow-md",
+                  config.border
+                )}
+                  onClick={item.action}>
+                  <div className="flex items-start gap-3">
+                    <div className={cn("p-2 rounded-lg shrink-0", config.iconBg)}>
+                      <item.icon className="h-4 w-4" />
                     </div>
-                    <p className="text-sm font-bold text-slate-900 mb-1">{item.title}</p>
-                    <p className="text-xs text-slate-500">{item.detail}</p>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className={cn("text-[10px] font-medium px-1.5 py-0.5 rounded", config.color, config.iconBg)}>
+                          {config.label}
+                        </span>
+                      </div>
+                      <p className="text-sm font-semibold text-slate-900 mb-1 leading-snug">{item.title}</p>
+                      <p className="text-xs text-slate-500 leading-relaxed">{item.detail}</p>
+                    </div>
+                    <ArrowUpRight className="h-4 w-4 text-slate-300 shrink-0 mt-1 group-hover:text-slate-500 transition-colors" />
                   </div>
-                  <ChevronRight className="h-4 w-4 text-slate-300 shrink-0 mt-1" />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* ═══ 场景入口 — 顶部色条 ═══ */}
+        <div>
+          <div className="section-title mb-3">
+            场景入口
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {scenarios.map(s => (
+              <div key={s.title}
+                className="group bg-white border border-slate-200 rounded-[10px] overflow-hidden cursor-pointer hover:shadow-md transition-all"
+                onClick={() => router.push(s.href)}>
+                {/* 顶部色条 */}
+                <div className="h-[3px]" style={{ background: s.accentColor }} />
+                <div className="p-4">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="p-2 rounded-lg" style={{ background: `${s.accentColor}12` }}>
+                      <s.icon className="h-4 w-4" style={{ color: s.accentColor }} />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-semibold text-slate-900 group-hover:text-[#3370FF] transition-colors">{s.title}</h3>
+                      <p className="text-[10px] text-slate-400">{s.desc}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-baseline gap-2 pt-3 border-t border-slate-100">
+                    <span className="text-xl font-bold font-mono" style={{ color: s.accentColor }}>{s.stat}</span>
+                    <span className="text-xs text-slate-500">{s.statLabel}</span>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
-        </div>
-
-        {/* ═══ 场景入口 ═══ */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {scenarios.map(s => (
-            <div key={s.title}
-              className="group bg-white border border-slate-200 rounded-lg p-4 cursor-pointer hover:border-[#3370FF] hover:shadow-md transition-all shadow"
-              onClick={() => router.push(s.href)}>
-              <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 bg-blue-50 rounded-lg text-[#3370FF]/60 group-hover:text-[#3370FF] transition-colors">
-                  <s.icon className="h-4 w-4" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-bold text-slate-900">{s.title}</h3>
-                  <p className="text-[10px] text-slate-400">{s.desc}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 pt-2 border-t border-slate-100">
-                <span className={cn("text-lg font-bold font-mono", s.statColor)}>{s.stat}</span>
-                <span className="text-xs text-slate-500">{s.statLabel}</span>
-              </div>
-            </div>
-          ))}
         </div>
 
         {/* ═══ AI 动态 ═══ */}
-        <div className="bg-white border border-slate-200 rounded-lg shadow">
-          <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Zap className="h-4 w-4 text-[#3370FF]" />
-              <h2 className="text-sm font-bold text-slate-900">AI 动态</h2>
-              <span className="text-xs text-slate-400">{aiActivities.length} 条新消息</span>
-            </div>
-            <span className="text-[10px] text-slate-400">AI 在后台为你完成的工作</span>
+        <div>
+          <div className="section-title mb-3">
+            <Zap className="h-4 w-4 text-[#3370FF]" />
+            AI 动态
+            <span className="text-xs text-slate-400 font-normal ml-1">{aiActivities.length} 条新消息</span>
           </div>
-          <div className="divide-y divide-slate-100">
-            {aiActivities.map((item, i) => (
-              <div key={i} className="px-4 py-3 flex items-start gap-3 hover:bg-slate-50/50 transition-colors">
-                <div className={cn("p-1.5 rounded-full shrink-0 mt-0.5", item.iconColor)}>
-                  <item.icon className="h-3.5 w-3.5" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-sm font-medium text-slate-900">{item.title}</span>
-                    <span className="text-[10px] text-[#3370FF] bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100">{item.badge}</span>
+          <div className="bg-white border border-slate-200 rounded-[10px] overflow-hidden">
+            <div className="divide-y divide-slate-100">
+              {aiActivities.map((item, i) => (
+                <div key={i} className="px-4 py-3.5 flex items-start gap-3 hover:bg-slate-50/50 transition-colors">
+                  <div className={cn("p-1.5 rounded-lg shrink-0 mt-0.5", item.iconColor)}>
+                    <item.icon className="h-3.5 w-3.5" />
                   </div>
-                  <p className="text-xs text-slate-500 mt-0.5">{item.detail}</p>
+                  <div className="flex-1 min-w-0">
+                    <span className="text-sm font-medium text-slate-900">{item.title}</span>
+                    <p className="text-xs text-slate-500 mt-0.5">{item.detail}</p>
+                  </div>
+                  <div className="flex items-center gap-3 shrink-0">
+                    <span className="text-[10px] text-slate-400 font-mono">{item.time}</span>
+                    <button onClick={item.action} className="btn btn-default btn-sm text-[11px]">{item.actionLabel}</button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-[10px] text-slate-400 font-mono">{item.time}</span>
-                  <button onClick={item.action} className="btn btn-default btn-sm text-[11px]">{item.actionLabel}</button>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
 

@@ -69,11 +69,12 @@ export default function EnterprisesPage() {
     <div className="min-h-screen">
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-4 space-y-4">
         {/* 头部卡片 */}
-        <div className="bg-white rounded-lg border border-slate-200 shadow p-4">
+        <div className="bg-white rounded-[10px] border border-slate-200 p-4"
+          style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div>
-              <h1 className="text-lg font-bold text-slate-900">企业画像库</h1>
-              <p className="text-xs text-slate-500 mt-0.5">共 {totalEnterprises} 家园区企业</p>
+              <div className="section-title mb-1">企业画像库</div>
+              <p className="text-xs text-slate-500 ml-[13px]">共 {totalEnterprises} 家园区企业</p>
             </div>
             <div className="flex items-center gap-2">
               <button className="btn btn-default btn-sm"
@@ -90,45 +91,27 @@ export default function EnterprisesPage() {
 
         {/* AI 洞察概要 */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-          <div className="flex items-center gap-3 p-3 bg-white rounded-lg border border-slate-200 shadow">
-            <Building2 className="h-4 w-4 text-slate-400 shrink-0" />
-            <div>
-              <div className="text-lg font-bold font-mono text-slate-900">{totalEnterprises}</div>
-              <div className="text-[10px] text-slate-500">园区企业</div>
+          {[
+            { icon: Building2, value: totalEnterprises, label: '园区企业', color: 'text-slate-700', iconColor: 'text-slate-400' },
+            { icon: Shield, value: withPolicy, label: '已AI筛选', color: 'text-[#3370FF]', iconColor: 'text-[#3370FF]' },
+            { icon: CheckCircle2, value: gradeA, label: 'A级企业', color: 'text-emerald-600', iconColor: 'text-emerald-500' },
+            { icon: Zap, value: incubated, label: '在孵企业', color: 'text-violet-600', iconColor: 'text-violet-500' },
+            { icon: Briefcase, value: recentVisited, label: '已走访', color: 'text-amber-600', iconColor: 'text-amber-500' },
+          ].map((item, i) => (
+            <div key={i} className="flex items-center gap-3 p-3 bg-white rounded-[10px] border border-slate-200"
+              style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
+              <item.icon className={cn("h-4 w-4 shrink-0", item.iconColor)} />
+              <div>
+                <div className={cn("text-lg font-bold font-mono", item.color)}>{item.value}</div>
+                <div className="text-[10px] text-slate-500">{item.label}</div>
+              </div>
             </div>
-          </div>
-          <div className="flex items-center gap-3 p-3 bg-white rounded-lg border border-blue-100 shadow">
-            <Shield className="h-4 w-4 text-[#3370FF] shrink-0" />
-            <div>
-              <div className="text-lg font-bold font-mono text-[#3370FF]">{withPolicy}</div>
-              <div className="text-[10px] text-slate-500">已AI筛选</div>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 p-3 bg-white rounded-lg border border-emerald-100 shadow">
-            <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
-            <div>
-              <div className="text-lg font-bold font-mono text-emerald-600">{gradeA}</div>
-              <div className="text-[10px] text-slate-500">A级企业</div>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 p-3 bg-white rounded-lg border border-violet-100 shadow">
-            <Zap className="h-4 w-4 text-violet-500 shrink-0" />
-            <div>
-              <div className="text-lg font-bold font-mono text-violet-600">{incubated}</div>
-              <div className="text-[10px] text-slate-500">在孵企业</div>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 p-3 bg-white rounded-lg border border-amber-100 shadow">
-            <Briefcase className="h-4 w-4 text-amber-500 shrink-0" />
-            <div>
-              <div className="text-lg font-bold font-mono text-amber-600">{recentVisited}</div>
-              <div className="text-[10px] text-slate-500">已走访</div>
-            </div>
-          </div>
+          ))}
         </div>
 
         {/* 搜索 + 筛选 */}
-        <div className="bg-white rounded-lg border border-slate-200 shadow p-4">
+        <div className="bg-white rounded-[10px] border border-slate-200 p-4"
+          style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
@@ -185,7 +168,8 @@ export default function EnterprisesPage() {
 
             return (
               <div key={ent.id}
-                className="bg-white border border-slate-200 rounded-lg p-4 hover:border-[#3370FF] transition-all hover:shadow-md cursor-pointer group shadow"
+                className="bg-white border border-slate-200 rounded-[10px] p-4 hover:border-slate-300 transition-all cursor-pointer group"
+                style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}
                 onClick={() => router.push(`/enterprises/${ent.id}`)}>
                 {/* 头部 */}
                 <div className="flex items-start gap-3 mb-3">

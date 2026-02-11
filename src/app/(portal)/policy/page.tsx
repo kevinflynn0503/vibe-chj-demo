@@ -36,11 +36,12 @@ export default function PolicyPage() {
     <div className="min-h-screen">
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-4 space-y-4">
         {/* 头部卡片 */}
-        <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-4">
+        <div className="bg-white rounded-[10px] border border-slate-200 p-4"
+          style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-3">
             <div>
-              <h1 className="text-lg font-bold text-slate-900">政策服务</h1>
-              <p className="text-xs text-slate-500 mt-0.5">高新技术企业认定 · 我的工作台 · {myTasks.length} 家企业</p>
+              <div className="section-title mb-1">政策服务</div>
+              <p className="text-xs text-slate-500 ml-[13px]">高新技术企业认定 · 我的工作台 · {myTasks.length} 家企业</p>
             </div>
             <button className="btn btn-primary btn-sm" onClick={() => startScreening()}>
               <Sparkles className="h-3.5 w-3.5" /> 发起 AI 筛选
@@ -50,28 +51,32 @@ export default function PolicyPage() {
 
         {/* 我的概览 */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
+          <div className="bg-white border border-slate-200 rounded-[10px] p-4"
+            style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
             <div className="flex items-center justify-between mb-1">
               <span className="text-xs text-slate-500">分配给我</span>
               <Briefcase className="h-3.5 w-3.5 text-slate-300" />
             </div>
             <div className="text-2xl font-bold font-mono text-slate-900">{myTasks.length}</div>
           </div>
-          <div className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
+          <div className="bg-white border border-slate-200 rounded-[10px] p-4"
+            style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
             <div className="flex items-center justify-between mb-1">
               <span className="text-xs text-slate-500">待走访</span>
               <Target className="h-3.5 w-3.5 text-amber-400" />
             </div>
             <div className={cn("text-2xl font-bold font-mono", pendingVisit.length > 0 ? 'text-amber-600' : 'text-slate-300')}>{pendingVisit.length}</div>
           </div>
-          <div className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
+          <div className="bg-white border border-slate-200 rounded-[10px] p-4"
+            style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
             <div className="flex items-center justify-between mb-1">
               <span className="text-xs text-slate-500">有意愿</span>
               <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
             </div>
             <div className="text-2xl font-bold font-mono text-emerald-600">{willing.length}</div>
           </div>
-          <div className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
+          <div className="bg-white border border-slate-200 rounded-[10px] p-4"
+            style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
             <div className="flex items-center justify-between mb-1">
               <span className="text-xs text-slate-500">转化率</span>
               <TrendingUp className="h-3.5 w-3.5 text-blue-400" />
@@ -83,7 +88,8 @@ export default function PolicyPage() {
         </div>
 
         {/* ═══ 待走访 ═══ */}
-        <div className="bg-white border border-slate-200 rounded-lg shadow-sm">
+        <div className="bg-white border border-slate-200 rounded-[10px]"
+          style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
           <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Target className="h-4 w-4 text-amber-500" />
@@ -144,7 +150,8 @@ export default function PolicyPage() {
 
         {/* ═══ 已走访·等待回复 ═══ */}
         {visited.length > 0 && (
-          <div className="bg-white border border-slate-200 rounded-lg shadow-sm">
+          <div className="bg-white border border-slate-200 rounded-[10px]"
+            style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
             <div className="px-4 py-3 border-b border-slate-100 flex items-center gap-2">
               <Clock className="h-4 w-4 text-blue-500" />
               <h2 className="text-sm font-bold text-slate-900">已走访 · 等待回复</h2>
@@ -178,7 +185,8 @@ export default function PolicyPage() {
 
         {/* ═══ 有意愿·待诊断 ═══ */}
         {willing.length > 0 && (
-          <div className="bg-white border border-slate-200 rounded-lg shadow-sm">
+          <div className="bg-white border border-slate-200 rounded-[10px]"
+            style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
             <div className="px-4 py-3 border-b border-slate-100 flex items-center gap-2">
               <Shield className="h-4 w-4 text-emerald-500" />
               <h2 className="text-sm font-bold text-slate-900">有意愿 · 待诊断审核</h2>
@@ -208,7 +216,8 @@ export default function PolicyPage() {
         )}
 
         {myTasks.length === 0 && (
-            <div className="bg-white border border-slate-200 rounded-lg p-8 text-center shadow-sm">
+            <div className="bg-white border border-slate-200 rounded-[10px] p-8 text-center"
+              style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
             <Briefcase className="h-12 w-12 text-slate-200 mx-auto mb-3" />
             <p className="text-sm text-slate-500 mb-1">暂无分配给你的任务</p>
             <p className="text-xs text-slate-400">管理者会通过管理看板将新的企业任务分配给你</p>
