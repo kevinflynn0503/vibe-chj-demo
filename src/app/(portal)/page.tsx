@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { getStats, getPolicyStats, getIncubatorStats, getVisitRecords, getDemands, getAssessments } from '@/lib/mock-data';
 import { cn } from '@/lib/utils';
+import { Card, CardStandard, Tag } from '@/components/ui';
 
 export default function HomePage() {
   const router = useRouter();
@@ -168,21 +169,21 @@ export default function HomePage() {
         {/* ═══ 头部问候 ═══ */}
         <div className="flex items-center justify-between pt-1">
           <div>
-            <h1 className="text-base font-bold text-slate-900">{greeting}，薛坤</h1>
-            <p className="text-xs text-slate-400 mt-0.5">{today}</p>
+            <h1 className="text-lg font-bold text-text-primary">{greeting}，薛坤</h1>
+            <p className="text-xs text-text-muted mt-0.5">{today}</p>
           </div>
-          <div className="flex items-center gap-4 text-xs text-slate-500">
+          <div className="flex items-center gap-4 text-xs text-text-secondary">
             <span className="flex items-center gap-1.5">
-              <Clock className="h-3.5 w-3.5 text-[#3370FF]" />
-              <strong className="text-slate-800">{pendingVisits.length}</strong> 走访任务
+              <Clock className="h-3.5 w-3.5 text-brand" />
+              <strong className="text-text-primary">{pendingVisits.length}</strong> 走访任务
             </span>
             <span className="flex items-center gap-1.5">
               <FileText className="h-3.5 w-3.5 text-amber-500" />
-              <strong className="text-slate-800">{records.filter(r => !r.is_confirmed).length}</strong> 待确认
+              <strong className="text-text-primary">{records.filter(r => !r.is_confirmed).length}</strong> 待确认
             </span>
             <span className="flex items-center gap-1.5">
               <MessageSquare className="h-3.5 w-3.5 text-violet-500" />
-              <strong className="text-slate-800">{demands.filter(d => d.status === 'pending').length}</strong> 需求跟进
+              <strong className="text-text-primary">{demands.filter(d => d.status === 'pending').length}</strong> 需求跟进
             </span>
           </div>
         </div>
@@ -190,13 +191,13 @@ export default function HomePage() {
         {/* ═══ 统计卡片 — 彩色底色 ═══ */}
         <div className="grid grid-cols-4 gap-3">
           {statCards.map((s, i) => (
-            <div key={i} className={cn("rounded-[10px] p-3.5 flex items-center gap-3 border border-transparent", s.bg)}>
+            <div key={i} className={cn("rounded-lg p-3.5 flex items-center gap-3 border border-transparent", s.bg)}>
               <div className={cn("p-2 rounded-lg shrink-0", s.iconBg)}>
                 <s.icon className={cn("h-4 w-4", s.color)} />
               </div>
               <div>
                 <div className={cn("text-xl font-bold font-mono", s.color)}>{s.value}</div>
-                <div className="text-xs text-slate-600">{s.label}</div>
+                <div className="text-xs text-text-secondary">{s.label}</div>
               </div>
             </div>
           ))}
@@ -212,25 +213,23 @@ export default function HomePage() {
             {todayFocus.map((item, i) => {
               const config = priorityConfig[item.priority];
               return (
-                <div key={i}
-                  className="bg-white border border-slate-200 rounded-[10px] p-4 cursor-pointer transition-all group hover:shadow-md"
-                  onClick={item.action}>
+                <CardStandard key={i} className="cursor-pointer group" hover onClick={item.action}>
                   <div className="flex items-start gap-3">
                     <div className={cn("p-2 rounded-lg shrink-0", config.iconBg)}>
                       <item.icon className="h-4 w-4" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className={cn("text-[10px] font-medium px-1.5 py-0.5 rounded", config.color, config.tagBg)}>
+                        <Tag variant={item.priority === 'urgent' ? 'red' : item.priority === 'high' ? 'amber' : 'gray'}>
                           {config.label}
-                        </span>
+                        </Tag>
                       </div>
-                      <p className="text-sm font-semibold text-slate-900 mb-1 leading-snug">{item.title}</p>
-                      <p className="text-xs text-slate-500 leading-relaxed">{item.detail}</p>
+                      <p className="text-sm font-semibold text-text-primary mb-1 leading-snug">{item.title}</p>
+                      <p className="text-xs text-text-secondary leading-relaxed">{item.detail}</p>
                     </div>
                     <ArrowUpRight className="h-4 w-4 text-slate-300 shrink-0 mt-1 group-hover:text-slate-500 transition-colors" />
                   </div>
-                </div>
+                </CardStandard>
               );
             })}
           </div>
@@ -243,23 +242,21 @@ export default function HomePage() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {scenarios.map(s => (
-              <div key={s.title}
-                className="group bg-white border border-slate-200 rounded-[10px] p-4 cursor-pointer hover:shadow-md transition-all"
-                onClick={() => router.push(s.href)}>
+              <CardStandard key={s.title} className="group cursor-pointer" hover onClick={() => router.push(s.href)}>
                 <div className="flex items-center gap-3 mb-3">
                   <div className="p-2 rounded-lg" style={{ background: `${s.accentColor}12` }}>
                     <s.icon className="h-4 w-4" style={{ color: s.accentColor }} />
                   </div>
                   <div>
-                    <h3 className="text-sm font-semibold text-slate-900 group-hover:text-[#3370FF] transition-colors">{s.title}</h3>
-                    <p className="text-[10px] text-slate-400">{s.desc}</p>
+                    <h3 className="text-sm font-semibold text-text-primary group-hover:text-brand transition-colors">{s.title}</h3>
+                    <p className="text-tag text-text-muted">{s.desc}</p>
                   </div>
                 </div>
                 <div className="flex items-baseline gap-2 pt-3 border-t border-slate-100">
                   <span className="text-xl font-bold font-mono" style={{ color: s.accentColor }}>{s.stat}</span>
-                  <span className="text-xs text-slate-500">{s.statLabel}</span>
+                  <span className="text-xs text-text-secondary">{s.statLabel}</span>
                 </div>
-              </div>
+              </CardStandard>
             ))}
           </div>
         </div>
@@ -267,11 +264,11 @@ export default function HomePage() {
         {/* ═══ AI 动态 ═══ */}
         <div>
           <div className="section-title mb-3">
-            <Zap className="h-4 w-4 text-[#3370FF]" />
+            <Zap className="h-4 w-4 text-brand" />
             AI 动态
-            <span className="text-xs text-slate-400 font-normal ml-1">{aiActivities.length} 条新消息</span>
+            <span className="text-xs text-text-muted font-normal ml-1">{aiActivities.length} 条新消息</span>
           </div>
-          <div className="bg-white border border-slate-200 rounded-[10px] overflow-hidden">
+          <Card className="overflow-hidden">
             <div className="divide-y divide-slate-100">
               {aiActivities.map((item, i) => (
                 <div key={i} className="px-4 py-3.5 flex items-start gap-3 hover:bg-slate-50/50 transition-colors">
@@ -279,17 +276,17 @@ export default function HomePage() {
                     <item.icon className="h-3.5 w-3.5" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <span className="text-sm font-medium text-slate-900">{item.title}</span>
-                    <p className="text-xs text-slate-500 mt-0.5">{item.detail}</p>
+                    <span className="text-sm font-medium text-text-primary">{item.title}</span>
+                    <p className="text-xs text-text-secondary mt-0.5">{item.detail}</p>
                   </div>
                   <div className="flex items-center gap-3 shrink-0">
-                    <span className="text-[10px] text-slate-400 font-mono">{item.time}</span>
-                    <button onClick={item.action} className="btn btn-default btn-sm text-[11px]">{item.actionLabel}</button>
+                    <span className="text-tag text-text-muted font-mono">{item.time}</span>
+                    <button onClick={item.action} className="btn btn-default btn-sm">{item.actionLabel}</button>
                   </div>
                 </div>
               ))}
             </div>
-          </div>
+          </Card>
         </div>
 
         <div className="h-4" />

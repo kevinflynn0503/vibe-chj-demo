@@ -20,6 +20,7 @@ import {
 import { getEnterprises, getVisitRecords, getDemands, getBackgroundReport } from '@/lib/mock-data';
 import { generateReport } from '@/lib/host-api';
 import { cn } from '@/lib/utils';
+import { CardCompact, Tag } from '@/components/ui';
 
 export default function VisitWorkbench() {
   const router = useRouter();
@@ -65,8 +66,8 @@ export default function VisitWorkbench() {
         {/* ═══ 头部 — 与首页风格统一 ═══ */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-1">
           <div>
-            <h1 className="text-base font-bold text-slate-900">走访任务看板</h1>
-            <p className="text-xs text-slate-400 mt-0.5">走访全流程：准备 → 走访 → 确认 → 跟进 · {total} 项任务</p>
+            <h1 className="text-lg font-bold text-text-primary">走访任务看板</h1>
+            <p className="text-xs text-text-muted mt-0.5">走访全流程：准备 → 走访 → 确认 → 跟进 · {total} 项任务</p>
           </div>
           <div className="flex items-center gap-2 w-full sm:w-auto">
             <div className="relative flex-1 sm:w-56">
@@ -92,18 +93,18 @@ export default function VisitWorkbench() {
             {prepareList.map(ent => {
               const hasReport = !!getBackgroundReport(ent.id);
               return (
-                <Card key={ent.id} onClick={() => router.push(`/visit/${ent.id}`)}>
+                <CardCompact key={ent.id} onClick={() => router.push(`/visit/${ent.id}`)}>
                   <div className="flex items-start justify-between mb-2">
-                    <div className="text-sm font-semibold text-slate-900 leading-snug">{ent.short_name ?? ent.name}</div>
+                    <div className="text-sm font-semibold text-text-primary leading-snug">{ent.short_name ?? ent.name}</div>
                     <div className={cn("w-8 h-8 rounded flex items-center justify-center text-xs font-bold shrink-0 ml-2",
                       ent.is_incubated ? "bg-violet-50 text-violet-600" : "bg-blue-50 text-blue-600"
                     )}>{(ent.short_name ?? ent.name).charAt(0)}</div>
                   </div>
                   <div className="flex flex-wrap gap-1 mb-2">
-                    {ent.industry && <span className="text-[10px] px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded">{ent.industry}</span>}
-                    {ent.development_stage && <span className="text-[10px] px-1.5 py-0.5 bg-slate-50 text-slate-500 rounded">{ent.development_stage}</span>}
+                    {ent.industry && <Tag variant="blue">{ent.industry}</Tag>}
+                    {ent.development_stage && <Tag variant="gray">{ent.development_stage}</Tag>}
                   </div>
-                  <div className="space-y-1 text-[11px] text-slate-500">
+                  <div className="space-y-1 text-xs text-text-muted">
                     {ent.employee_count && <div className="flex items-center gap-1"><Users className="h-3 w-3" />{ent.employee_count.toLocaleString()} 人</div>}
                     {ent.legal_person && <div className="flex items-center gap-1"><User className="h-3 w-3" />法人: {ent.legal_person}</div>}
                   </div>
@@ -112,19 +113,19 @@ export default function VisitWorkbench() {
                   <div className="mt-2.5 pt-2 border-t border-slate-100">
                     {hasReport ? (
                       <div className="flex items-center justify-between">
-                        <span className="flex items-center gap-1 text-[10px] text-emerald-600">
+                        <span className="flex items-center gap-1 text-tag text-emerald-600">
                           <CheckCircle2 className="h-3 w-3" />
                           <Bot className="h-3 w-3" />
                           AI 已生成背调+清单
                         </span>
                         <button
-                          className="text-[10px] text-[#3370FF] font-medium hover:underline"
+                          className="btn-link"
                           onClick={(e) => { e.stopPropagation(); router.push(`/visit/${ent.id}`); }}
                         >查看准备 →</button>
                       </div>
                     ) : (
                       <button
-                        className="w-full flex items-center justify-center gap-1.5 py-1.5 text-[10px] font-medium text-[#3370FF] bg-blue-50 hover:bg-blue-100 rounded border border-blue-100 transition-colors"
+                        className="btn-ai w-full"
                         onClick={(e) => { e.stopPropagation(); generateReport(ent.short_name ?? ent.name); }}
                       >
                         <Sparkles className="h-3 w-3" />
@@ -132,7 +133,7 @@ export default function VisitWorkbench() {
                       </button>
                     )}
                   </div>
-                </Card>
+                </CardCompact>
               );
             })}
           </Col>
@@ -142,21 +143,21 @@ export default function VisitWorkbench() {
             {visitList.map((item, i) => {
               const hasReport = !!getBackgroundReport(item.ent.id);
               return (
-                <Card key={i} onClick={() => router.push(`/visit/${item.ent.id}`)}>
-                  <div className="text-sm font-semibold text-slate-900 mb-2">{item.ent.short_name ?? item.ent.name}</div>
+                <CardCompact key={i} onClick={() => router.push(`/visit/${item.ent.id}`)}>
+                  <div className="text-sm font-semibold text-text-primary mb-2">{item.ent.short_name ?? item.ent.name}</div>
                   <div className="flex items-center gap-2 mb-2 p-2 bg-violet-50 rounded border border-violet-100">
                     <Calendar className="h-4 w-4 text-violet-500 shrink-0" />
                     <div>
                       <div className="text-xs font-bold text-violet-700">{item.date} {item.time}</div>
-                      <div className="text-[10px] text-violet-500">{item.type}</div>
+                      <div className="text-tag text-violet-500">{item.type}</div>
                     </div>
                   </div>
-                  <div className="space-y-1 text-[11px] text-slate-500 mb-2">
+                  <div className="space-y-1 text-xs text-text-muted mb-2">
                     <div className="flex items-center gap-1"><Phone className="h-3 w-3" />对接人: {item.contact}</div>
                     <div className="flex items-center gap-1"><User className="h-3 w-3" />负责人: {item.owner}</div>
                   </div>
                   {/* AI 就绪状态 */}
-                  <div className="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between text-[10px]">
+                  <div className="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between text-tag">
                     {hasReport ? (
                       <span className="flex items-center gap-1 text-emerald-600">
                         <Bot className="h-3 w-3" /><CheckCircle2 className="h-3 w-3" />背调+清单已就绪
@@ -166,9 +167,9 @@ export default function VisitWorkbench() {
                         <Clock className="h-3 w-3" />背调待生成
                       </span>
                     )}
-                    <span className="text-slate-400">{item.type}</span>
+                    <span className="text-text-muted">{item.type}</span>
                   </div>
-                </Card>
+                </CardCompact>
               );
             })}
           </Col>
@@ -176,57 +177,58 @@ export default function VisitWorkbench() {
           {/* ─── 确认阶段 ─── */}
           <Col title="确认阶段" count={confirmList.length} color="bg-amber-500">
             {confirmList.map(item => (
-              <Card key={item.id} onClick={() => router.push(`/visit/confirm/${item.id}`)}>
-                <div className="text-sm font-semibold text-slate-900 mb-2">{item.enterprise?.short_name ?? item.enterprise?.name}</div>
+              <CardCompact key={item.id} onClick={() => router.push(`/visit/confirm/${item.id}`)}>
+                <div className="text-sm font-semibold text-text-primary mb-2">{item.enterprise?.short_name ?? item.enterprise?.name}</div>
                 <div className="p-2 bg-amber-50 rounded border border-amber-100 mb-2">
                   <div className="text-xs font-medium text-amber-700 mb-1">走访日期: {item.visit_date}</div>
                   {item.key_findings && item.key_findings.length > 0 && (
-                    <div className="text-[11px] text-amber-600 line-clamp-2">{item.key_findings[0]}</div>
+                    <div className="text-xs text-amber-600 line-clamp-2">{item.key_findings[0]}</div>
                   )}
                 </div>
-                <div className="space-y-1 text-[11px] text-slate-500">
+                <div className="space-y-1 text-xs text-text-muted">
                   <div className="flex items-center gap-1"><User className="h-3 w-3" />访客: {item.visitor_name} · {item.visitor_department}</div>
                   {item.demands && item.demands.length > 0 && (
                     <div className="flex items-center gap-1"><Target className="h-3 w-3 text-amber-500" />{item.demands.length} 条诉求待确认</div>
                   )}
                 </div>
                 {/* AI 提取标识 */}
-                <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between text-[10px]">
-                  <span className="flex items-center gap-1 text-[#3370FF]">
+                <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between text-tag">
+                  <span className="flex items-center gap-1 text-brand">
                     <Bot className="h-3 w-3" />AI 已提取，待您确认
                   </span>
-                  <span className="text-slate-400">{item.visit_type}</span>
+                  <span className="text-text-muted">{item.visit_type}</span>
                 </div>
-              </Card>
+              </CardCompact>
             ))}
           </Col>
 
           {/* ─── 跟进阶段 ─── */}
           <Col title="跟进阶段" count={followList.length} color="bg-emerald-500">
             {followList.map((item, i) => (
-              <Card key={i} onClick={() => router.push(`/visit/${item.enterprise.id}/follow?demand=${item.demand.id}`)}>
-                <div className="text-sm font-semibold text-slate-900 mb-2">{item.enterprise.short_name ?? item.enterprise.name}</div>
+              <CardCompact key={i} onClick={() => router.push(`/visit/${item.enterprise.id}/follow?demand=${item.demand.id}`)}>
+                <div className="text-sm font-semibold text-text-primary mb-2">{item.enterprise.short_name ?? item.enterprise.name}</div>
                 <div className="p-2 bg-slate-50 rounded border border-slate-100 mb-2">
                   <div className="text-xs text-slate-700 leading-relaxed line-clamp-2">{item.demand.demand_content}</div>
                 </div>
                 <div className="flex flex-wrap gap-1 mb-2">
-                  {item.demand.demand_type && <span className="text-[10px] px-1.5 py-0.5 bg-emerald-50 text-emerald-600 rounded border border-emerald-100">{item.demand.demand_type}</span>}
-                  <span className="text-[10px] px-1.5 py-0.5 bg-red-50 text-red-600 rounded border border-red-100">待处理</span>
+                  {item.demand.demand_type && <Tag variant="emerald" withBorder>{item.demand.demand_type}</Tag>}
+                  <Tag variant="red" withBorder>待处理</Tag>
                 </div>
-                <div className="text-[11px] text-slate-500 flex items-center gap-1 mb-2">
+                <div className="text-xs text-text-muted flex items-center gap-1 mb-2">
                   <Building2 className="h-3 w-3" />分配: {item.demand.assigned_department || '待分配'}
                 </div>
                 {/* AI 跟进建议入口 */}
                 <div className="mt-2 pt-2 border-t border-slate-100">
                   <button
-                    className="w-full flex items-center justify-center gap-1.5 py-1.5 text-[10px] font-medium text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded border border-emerald-100 transition-colors"
+                    className="btn-ai w-full"
+                    style={{ color: '#059669', background: 'rgba(5, 150, 105, 0.06)', borderColor: 'rgba(5, 150, 105, 0.12)' }}
                     onClick={(e) => { e.stopPropagation(); router.push(`/visit/${item.enterprise.id}/follow?demand=${item.demand.id}`); }}
                   >
                     <Sparkles className="h-3 w-3" />
                     查看 AI 跟进建议
                   </button>
                 </div>
-              </Card>
+              </CardCompact>
             ))}
           </Col>
 
@@ -245,19 +247,9 @@ function Col({ title, count, color, children }: { title: string; count: number; 
       <div className="flex items-center gap-2 mb-3 px-1">
         <div className={cn("w-2 h-2 rounded-full", color)} />
         <span className="text-sm font-semibold text-slate-700">{title}</span>
-        <span className="text-xs text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">{count}</span>
+        <span className="text-xs text-text-muted bg-slate-100 px-1.5 py-0.5 rounded">{count}</span>
       </div>
       <div className="flex-1 overflow-y-auto space-y-2 pr-1 pb-4">{children}</div>
-    </div>
-  );
-}
-
-function Card({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
-  return (
-    <div className="bg-white border border-slate-200 rounded-[10px] p-3 hover:border-slate-300 transition-all cursor-pointer"
-      style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}
-      onClick={onClick}>
-      {children}
     </div>
   );
 }
