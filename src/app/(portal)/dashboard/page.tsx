@@ -23,6 +23,7 @@ import {
 import { cn } from '@/lib/utils';
 import { sendChat, dispatchTasks } from '@/lib/host-api';
 import { toast } from 'sonner';
+import { Card, CardCompact, Tag } from '@/components/ui';
 import {
   getStats, getPolicyStats, getIncubatorStats, getEnterprises,
   getPMProgress, getActivityReports, getAssessments
@@ -61,8 +62,8 @@ export default function DashboardPage() {
 
   // KPI
   const kpis = [
-    { label: '园区企业', value: enterprises.length.toLocaleString(), change: '+2.3%', trend: 'up' as const, icon: Building2, color: 'text-slate-900' },
-    { label: '本月走访', value: visitStats.total_visits, change: '+12.5%', trend: 'up' as const, icon: Briefcase, color: 'text-[#3370FF]' },
+    { label: '园区企业', value: enterprises.length.toLocaleString(), change: '+2.3%', trend: 'up' as const, icon: Building2, color: 'text-text-primary' },
+    { label: '本月走访', value: visitStats.total_visits, change: '+12.5%', trend: 'up' as const, icon: Briefcase, color: 'text-brand' },
     { label: '政策筛选', value: policyStats.total_screened, change: '+8.7%', trend: 'up' as const, icon: Shield, color: 'text-emerald-600' },
     { label: '在孵活跃率', value: `${Math.round((incubatorStats.active_enterprises / incubatorStats.total_enterprises) * 100)}%`, change: '-2.1%', trend: 'down' as const, icon: Rocket, color: 'text-amber-600' },
   ];
@@ -111,8 +112,8 @@ export default function DashboardPage() {
         {/* ═══ 头部 ═══ */}
         <div className="flex items-center justify-between pt-1">
           <div>
-            <h1 className="text-base font-bold text-slate-900">管理看板</h1>
-            <p className="text-xs text-slate-400 mt-0.5">{today} · 管理者视图</p>
+            <h1 className="text-lg font-bold text-text-primary">管理看板</h1>
+            <p className="text-xs text-text-muted mt-0.5">{today} · 管理者视图</p>
           </div>
           <div className="flex items-center gap-2">
             <button className="btn btn-default btn-sm"
@@ -127,22 +128,21 @@ export default function DashboardPage() {
         </div>
 
         {/* 子 Tab — pill 样式 */}
-        <div className="flex items-center gap-1 p-1 bg-white rounded-[10px] border border-slate-200 overflow-x-auto"
-          style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
+        <Card className="flex items-center gap-1 p-1 overflow-x-auto">
           {tabs.map(tab => (
             <button key={tab.key} onClick={() => setActiveTab(tab.key)}
               className={cn("px-3 py-1.5 text-xs font-medium rounded-md transition-all whitespace-nowrap",
-                activeTab === tab.key ? 'bg-[#3370FF] text-white shadow-sm' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
+                activeTab === tab.key ? 'bg-brand text-white shadow-sm' : 'text-text-secondary hover:text-text-primary hover:bg-slate-50'
               )}>
               {tab.label}
               {tab.count !== undefined && tab.count > 0 && (
-                <span className={cn("ml-1.5 text-[10px] px-1.5 py-0.5 rounded-full",
+                <span className={cn("ml-1.5 text-tag px-1.5 py-0.5 rounded-full",
                   activeTab === tab.key ? 'bg-white/20 text-white' : 'bg-red-500 text-white'
                 )}>{tab.count}</span>
               )}
             </button>
           ))}
-        </div>
+        </Card>
 
         {/* ═══ 总览 ═══ */}
         {activeTab === 'overview' && (
@@ -150,10 +150,9 @@ export default function DashboardPage() {
             {/* KPI */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {kpis.map((kpi, i) => (
-              <div key={i} className="bg-white border border-slate-200 rounded-[10px] p-4"
-                style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
+              <CardCompact key={i}>
                 <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs text-slate-500">{kpi.label}</span>
+                    <span className="text-xs text-text-secondary">{kpi.label}</span>
                     <kpi.icon className="h-4 w-4 text-slate-300" />
                   </div>
                   <div className={cn("text-2xl font-bold font-mono", kpi.color)}>{kpi.value}</div>
@@ -163,39 +162,37 @@ export default function DashboardPage() {
                     {kpi.trend === 'up' ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
                     {kpi.change}
                   </div>
-                </div>
+                </CardCompact>
               ))}
             </div>
 
             {/* 政策漏斗 */}
-            <div className="bg-white border border-slate-200 rounded-[10px] p-4"
-              style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
+            <Card>
               <div className="flex items-center gap-2 mb-3">
-                <BarChart3 className="h-4 w-4 text-slate-400" />
-                <h2 className="text-sm font-bold text-slate-900">政策转化漏斗</h2>
+                <BarChart3 className="h-4 w-4 text-text-muted" />
+                <h2 className="text-sm font-bold text-text-primary">政策转化漏斗</h2>
               </div>
               <div className="grid grid-cols-5 gap-0">
                 {pipeline.map((s, i) => (
                   <div key={i} className="flex items-center">
                     <div className="flex-1 text-center py-2">
-                      <div className={cn("text-2xl font-bold font-mono mb-1", i === 0 ? 'text-slate-400' : 'text-slate-900')}>{s.value}</div>
-                      <div className="text-xs text-slate-500">{s.label}</div>
+                      <div className={cn("text-2xl font-bold font-mono mb-1", i === 0 ? 'text-text-muted' : 'text-text-primary')}>{s.value}</div>
+                      <div className="text-xs text-text-secondary">{s.label}</div>
                     </div>
                     {i < 4 && <ArrowRight className="h-4 w-4 text-slate-300 shrink-0" />}
                   </div>
                 ))}
               </div>
-            </div>
+            </Card>
 
             {/* 员工工作状态概览 */}
-            <div className="bg-white border border-slate-200 rounded-[10px]"
-              style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
+            <Card className="p-0">
               <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4 text-slate-400" />
-                  <h2 className="text-sm font-bold text-slate-900">员工工作状态</h2>
+                  <Users className="h-4 w-4 text-text-muted" />
+                  <h2 className="text-sm font-bold text-text-primary">员工工作状态</h2>
                 </div>
-                <button className="text-xs text-[#3370FF] hover:underline" onClick={() => setActiveTab('team')}>详细分析</button>
+                <button className="text-xs text-brand hover:underline" onClick={() => setActiveTab('team')}>详细分析</button>
               </div>
               <div className="divide-y divide-slate-100">
                 {pmAnalysis.map((pm, i) => (
@@ -205,34 +202,31 @@ export default function DashboardPage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium text-slate-900">{pm.name}</span>
-                        <span className={cn("text-[10px] px-1.5 py-0.5 rounded border",
-                          pm.quality === 'excellent' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
-                          pm.quality === 'good' ? 'bg-blue-50 text-blue-600 border-blue-100' :
-                          'bg-amber-50 text-amber-600 border-amber-100'
-                        )}>{pm.qualityLabel}</span>
+                        <span className="text-sm font-medium text-text-primary">{pm.name}</span>
+                        <Tag variant={pm.quality === 'excellent' ? 'success' : pm.quality === 'good' ? 'primary' : 'warning'}>
+                          {pm.qualityLabel}
+                        </Tag>
                       </div>
                     </div>
-                    <div className="flex items-center gap-4 text-xs text-slate-500">
+                    <div className="flex items-center gap-4 text-xs text-text-secondary">
                       <span>走访 {pm.visited}/{pm.assigned}</span>
                       <span>转化 {(pm.conversion_rate * 100).toFixed(0)}%</span>
                       {pm.overdue > 3 && <span className="text-red-500">{pm.overdue} 逾期</span>}
                     </div>
                     <div className="w-20 h-1.5 bg-slate-100 rounded-full overflow-hidden shrink-0">
-                      <div className="h-full bg-[#3370FF] rounded-full" style={{ width: `${(pm.visited / pm.assigned) * 100}%` }} />
+                      <div className="h-full bg-brand rounded-full" style={{ width: `${(pm.visited / pm.assigned) * 100}%` }} />
                     </div>
                   </div>
                 ))}
               </div>
-            </div>
+            </Card>
 
             {/* 需要关注 */}
-            <div className="bg-white border border-slate-200 rounded-[10px]"
-              style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
+            <Card className="p-0">
               <div className="px-4 py-3 border-b border-slate-100 flex items-center gap-2">
                 <AlertTriangle className="h-4 w-4 text-amber-500" />
-                <h2 className="text-sm font-bold text-slate-900">需要关注</h2>
-                <span className="text-xs text-red-500 bg-red-50 px-1.5 py-0.5 rounded">2 紧急</span>
+                <h2 className="text-sm font-bold text-text-primary">需要关注</h2>
+                <Tag variant="danger">2 紧急</Tag>
               </div>
               <div className="divide-y divide-slate-100">
                 {[
@@ -246,25 +240,24 @@ export default function DashboardPage() {
                     <div className={cn("w-2 h-2 rounded-full shrink-0",
                       item.level === 'high' ? 'bg-red-500' : item.level === 'medium' ? 'bg-amber-400' : 'bg-blue-400'
                     )} />
-                    <span className="text-xs text-slate-700 flex-1">{item.text}</span>
-                    <button className="text-[10px] text-[#3370FF] hover:underline" onClick={() => {
+                    <span className="text-xs text-text-primary flex-1">{item.text}</span>
+                    <button className="text-tag text-brand hover:underline" onClick={() => {
                       if (item.action) item.action();
                       else if (item.href !== '#') router.push(item.href);
                     }}>处理</button>
                   </div>
                 ))}
               </div>
-            </div>
+            </Card>
 
             {/* 孵化器概况 */}
-            <div className="bg-white border border-slate-200 rounded-[10px] p-4"
-              style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
+            <div>
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <Rocket className="h-4 w-4 text-slate-400" />
-                  <h2 className="text-sm font-bold text-slate-900">孵化器概况</h2>
+                  <Rocket className="h-4 w-4 text-text-muted" />
+                  <h2 className="text-sm font-bold text-text-primary">孵化器概况</h2>
                 </div>
-                <button className="text-xs text-[#3370FF] hover:underline flex items-center gap-1"
+                <button className="text-xs text-brand hover:underline flex items-center gap-1"
                   onClick={() => router.push('/incubator')}>进入孵化器 <ArrowRight className="h-3 w-3" /></button>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
@@ -275,9 +268,9 @@ export default function DashboardPage() {
                   { v: incubatorStats.total_orders, l: '本月匹配', bg: 'bg-blue-50' },
                   { v: incubatorStats.pending_orders, l: '待处理', bg: 'bg-amber-50' },
                 ].map((s, i) => (
-                  <div key={i} className={cn("text-center p-3 rounded-lg border border-slate-100", s.bg)}>
-                    <div className="text-xl font-bold font-mono text-slate-900">{s.v}</div>
-                    <div className="text-[10px] text-slate-500">{s.l}</div>
+                  <div key={i} className={cn("text-center p-3 rounded-lg", s.bg)}>
+                    <div className="text-xl font-bold font-mono text-text-primary">{s.v}</div>
+                    <div className="text-tag text-text-secondary">{s.l}</div>
                   </div>
                 ))}
               </div>
@@ -290,10 +283,10 @@ export default function DashboardPage() {
           <>
             <div className="bg-gradient-to-r from-blue-50 to-white border border-blue-100 rounded-lg p-4">
               <div className="flex items-start gap-3">
-                <Bot className="h-5 w-5 text-[#3370FF] shrink-0 mt-0.5" />
+                <Bot className="h-5 w-5 text-brand shrink-0 mt-0.5" />
                 <div className="flex-1">
-                  <div className="text-sm font-bold text-slate-900 mb-1">AI 筛选审核</div>
-                  <p className="text-xs text-slate-500">
+                  <div className="text-sm font-bold text-text-primary mb-1">AI 筛选审核</div>
+                  <p className="text-xs text-text-secondary">
                     AI 已完成第 3 轮高新筛选。以下是 A 级企业，请逐一审核：通过→进入触达、降级→等待更多数据、排除→不符合。
                   </p>
                 </div>
@@ -312,8 +305,7 @@ export default function DashboardPage() {
               </div>
             )}
 
-            <div className="bg-white border border-slate-200 rounded-[10px] overflow-hidden"
-              style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
+            <Card className="p-0 overflow-hidden">
               {assessments.filter(a => a.grade === 'A').map(a => {
                 const passCount = a.screening_details.filter(d => d.result === 'pass').length;
                 const total = a.screening_details.length;
@@ -326,18 +318,14 @@ export default function DashboardPage() {
                         <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center text-xs font-bold shrink-0">A</div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
-                            <span className="text-sm font-semibold text-slate-900">{a.enterprise_name}</span>
+                            <span className="text-sm font-semibold text-text-primary">{a.enterprise_name}</span>
                             {review && (
-                              <span className={cn("text-[10px] px-1.5 py-0.5 rounded border font-medium",
-                                review === 'approved' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
-                                review === 'demoted' ? 'bg-amber-50 text-amber-600 border-amber-100' :
-                                'bg-red-50 text-red-600 border-red-100'
-                              )}>
+                              <Tag variant={review === 'approved' ? 'success' : review === 'demoted' ? 'warning' : 'danger'}>
                                 {review === 'approved' ? '已通过' : review === 'demoted' ? '已降级' : '已排除'}
-                              </span>
+                              </Tag>
                             )}
                           </div>
-                          <div className="text-xs text-slate-500 mt-0.5">{a.policy_type} · {passCount}/{total} 项通过 · {a.grade_score}分</div>
+                          <div className="text-xs text-text-secondary mt-0.5">{a.policy_type} · {passCount}/{total} 项通过 · {a.grade_score}分</div>
                         </div>
                       </div>
                       {!review && (
@@ -361,7 +349,7 @@ export default function DashboardPage() {
                   </div>
                 );
               })}
-            </div>
+            </Card>
           </>
         )}
 
@@ -370,10 +358,10 @@ export default function DashboardPage() {
           <>
             <div className="bg-gradient-to-r from-blue-50 to-white border border-blue-100 rounded-lg p-4">
               <div className="flex items-start gap-3">
-                <Bot className="h-5 w-5 text-[#3370FF] shrink-0 mt-0.5" />
+                <Bot className="h-5 w-5 text-brand shrink-0 mt-0.5" />
                 <div className="flex-1">
-                  <div className="text-sm font-bold text-slate-900 mb-1">AI 任务分配</div>
-                  <p className="text-xs text-slate-500">
+                  <div className="text-sm font-bold text-text-primary mb-1">AI 任务分配</div>
+                  <p className="text-xs text-text-secondary">
                     基于各 PM 的赛道专长、历史转化率和当前工作量，AI 为每个任务推荐了最佳负责人。
                     你可以逐个采纳，也可以一键全部采纳。
                   </p>
@@ -387,36 +375,34 @@ export default function DashboardPage() {
             {/* PM 当前负荷 */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {pmProgress.map((pm, i) => (
-                <div key={i} className="bg-white border border-slate-200 rounded-[10px] p-4"
-                  style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
+                <CardCompact key={i}>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-bold text-slate-900">{pm.name}</span>
-                    <span className="text-xs text-slate-400 font-mono">{(pm.conversion_rate * 100).toFixed(0)}%</span>
+                    <span className="text-sm font-bold text-text-primary">{pm.name}</span>
+                    <span className="text-xs text-text-muted font-mono">{(pm.conversion_rate * 100).toFixed(0)}%</span>
                   </div>
                   <div className="grid grid-cols-3 gap-2 text-center text-xs">
                     <div>
-                      <div className="text-base font-bold font-mono text-slate-900">{pm.assigned}</div>
-                      <div className="text-[10px] text-slate-500">分配</div>
+                      <div className="text-base font-bold font-mono text-text-primary">{pm.assigned}</div>
+                      <div className="text-tag text-text-secondary">分配</div>
                     </div>
                     <div>
                       <div className="text-base font-bold font-mono text-blue-600">{pm.visited}</div>
-                      <div className="text-[10px] text-slate-500">走访</div>
+                      <div className="text-tag text-text-secondary">走访</div>
                     </div>
                     <div>
                       <div className="text-base font-bold font-mono text-emerald-600">{pm.willing}</div>
-                      <div className="text-[10px] text-slate-500">意愿</div>
+                      <div className="text-tag text-text-secondary">意愿</div>
                     </div>
                   </div>
                   <div className="w-full h-1.5 bg-slate-100 rounded-full mt-2 overflow-hidden">
-                    <div className="h-full bg-[#3370FF] rounded-full" style={{ width: `${(pm.visited / pm.assigned) * 100}%` }} />
+                    <div className="h-full bg-brand rounded-full" style={{ width: `${(pm.visited / pm.assigned) * 100}%` }} />
                   </div>
-                </div>
+                </CardCompact>
               ))}
             </div>
 
             {/* 任务列表 */}
-            <div className="bg-white border border-slate-200 rounded-[10px] overflow-hidden"
-              style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
+            <Card className="p-0 overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="dtable">
                   <thead>
@@ -435,20 +421,20 @@ export default function DashboardPage() {
                       const gradeLabel = GRADE_STYLES[a.grade]?.label ?? a.grade;
                       return (
                         <tr key={a.id}>
-                          <td className="font-medium text-slate-900">{a.enterprise_name}</td>
+                          <td className="font-medium text-text-primary">{a.enterprise_name}</td>
                           <td><span className={cn('tag pill', gradeTag)}>{gradeLabel}</span></td>
                           <td>
                             {suggestion ? (
                               <div>
                                 <div className="flex items-center gap-1.5">
-                                  <Bot className="h-3 w-3 text-[#3370FF]" />
-                                  <span className="text-xs font-medium text-[#3370FF]">{suggestion.pm}</span>
+                                  <Bot className="h-3 w-3 text-brand" />
+                                  <span className="text-xs font-medium text-brand">{suggestion.pm}</span>
                                 </div>
-                                <div className="text-[10px] text-slate-400 mt-0.5 max-w-[180px] truncate">{suggestion.reason}</div>
+                                <div className="text-tag text-text-muted mt-0.5 max-w-[180px] truncate">{suggestion.reason}</div>
                               </div>
-                            ) : <span className="text-xs text-slate-400">—</span>}
+                            ) : <span className="text-xs text-text-muted">—</span>}
                           </td>
-                          <td className="text-slate-600">{a.assigned_to ?? <span className="text-slate-300">未分配</span>}</td>
+                          <td className="text-text-secondary">{a.assigned_to ?? <span className="text-slate-300">未分配</span>}</td>
                           <td className="text-right">
                             {!a.assigned_to && suggestion && (
                               <button className="btn btn-default btn-sm" onClick={() => toast.success(`已分配给 ${suggestion.pm}`)}>
@@ -468,7 +454,7 @@ export default function DashboardPage() {
                   </tbody>
                 </table>
               </div>
-            </div>
+            </Card>
           </>
         )}
 
@@ -477,8 +463,8 @@ export default function DashboardPage() {
           <>
             <div className="bg-gradient-to-r from-blue-50 to-white border border-blue-100 rounded-lg p-4">
               <div className="flex items-start gap-3">
-                <Sparkles className="h-4 w-4 text-[#3370FF] shrink-0 mt-0.5" />
-                <div className="text-xs text-slate-600 leading-relaxed">
+                <Sparkles className="h-4 w-4 text-brand shrink-0 mt-0.5" />
+                <div className="text-xs text-text-secondary leading-relaxed">
                   <strong>AI 周评估：</strong>团队走访完成率 78%，政策转化率 22.3%（行业均值 15%），
                   {pmAnalysis.filter(p => p.quality === 'excellent').length} 人优秀，
                   {pmAnalysis.filter(p => p.quality === 'needs_attention').length} 人需关注。
@@ -486,15 +472,14 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-[10px]"
-              style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
+            <Card className="p-0">
               <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4 text-slate-400" />
-                  <h2 className="text-sm font-bold text-slate-900">团队成员效能</h2>
-                  <span className="text-[10px] text-[#3370FF] bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100">✦ AI 评估</span>
+                  <Users className="h-4 w-4 text-text-muted" />
+                  <h2 className="text-sm font-bold text-text-primary">团队成员效能</h2>
+                  <Tag variant="primary">✦ AI 评估</Tag>
                 </div>
-                <button className="text-xs text-[#3370FF] hover:underline flex items-center gap-1"
+                <button className="text-xs text-brand hover:underline flex items-center gap-1"
                   onClick={() => sendChat('请对团队每位成员做深度效能分析，从走访质量、转化效率、任务完成度评估。')}>
                   AI 深度分析 <ArrowRight className="h-3 w-3" />
                 </button>
@@ -508,19 +493,17 @@ export default function DashboardPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-2">
-                          <span className="text-sm font-bold text-slate-900">{pm.name}</span>
-                          <span className={cn("text-[10px] px-1.5 py-0.5 rounded border font-medium",
-                            pm.quality === 'excellent' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
-                            pm.quality === 'good' ? 'bg-blue-50 text-blue-600 border-blue-100' :
-                            'bg-amber-50 text-amber-600 border-amber-100'
-                          )}>{pm.qualityLabel}</span>
-                          {pm.overdue > 3 && <span className="text-[10px] px-1.5 py-0.5 bg-red-50 text-red-600 rounded border border-red-100">{pm.overdue} 项逾期</span>}
+                          <span className="text-sm font-bold text-text-primary">{pm.name}</span>
+                          <Tag variant={pm.quality === 'excellent' ? 'success' : pm.quality === 'good' ? 'primary' : 'warning'}>
+                            {pm.qualityLabel}
+                          </Tag>
+                          {pm.overdue > 3 && <Tag variant="danger">{pm.overdue} 项逾期</Tag>}
                         </div>
                         <div className="grid grid-cols-4 gap-4 mb-2">
-                          <div><div className="text-[10px] text-slate-400">分配/完成</div><div className="text-sm font-bold font-mono">{pm.visited}/{pm.assigned}</div></div>
-                          <div><div className="text-[10px] text-slate-400">转化率</div><div className={cn("text-sm font-bold font-mono", pm.qualityColor)}>{(pm.conversion_rate * 100).toFixed(0)}%</div></div>
-                          <div><div className="text-[10px] text-slate-400">有意愿</div><div className="text-sm font-bold font-mono text-emerald-600">{pm.willing}</div></div>
-                          <div><div className="text-[10px] text-slate-400">待处理</div><div className={cn("text-sm font-bold font-mono", pm.overdue > 3 ? 'text-red-600' : 'text-slate-500')}>{pm.overdue}</div></div>
+                          <div><div className="text-tag text-text-muted">分配/完成</div><div className="text-sm font-bold font-mono">{pm.visited}/{pm.assigned}</div></div>
+                          <div><div className="text-tag text-text-muted">转化率</div><div className={cn("text-sm font-bold font-mono", pm.qualityColor)}>{(pm.conversion_rate * 100).toFixed(0)}%</div></div>
+                          <div><div className="text-tag text-text-muted">有意愿</div><div className="text-sm font-bold font-mono text-emerald-600">{pm.willing}</div></div>
+                          <div><div className="text-tag text-text-muted">待处理</div><div className={cn("text-sm font-bold font-mono", pm.overdue > 3 ? 'text-red-600' : 'text-text-secondary')}>{pm.overdue}</div></div>
                         </div>
                         <div className="flex gap-1 h-1.5 rounded-full overflow-hidden bg-slate-100 mb-2">
                           <div className="bg-emerald-500 rounded-full" style={{ width: `${(pm.willing / pm.assigned) * 100}%` }} />
@@ -528,12 +511,12 @@ export default function DashboardPage() {
                         </div>
                         {pm.suggestion && (
                           <div className="flex items-start gap-2 p-2.5 bg-blue-50/60 border border-blue-100 rounded-lg">
-                            <Lightbulb className="h-3.5 w-3.5 text-[#3370FF] shrink-0 mt-0.5" />
-                            <span className="text-[11px] text-slate-600">{pm.suggestion}</span>
+                            <Lightbulb className="h-3.5 w-3.5 text-brand shrink-0 mt-0.5" />
+                            <span className="text-xs text-text-secondary">{pm.suggestion}</span>
                           </div>
                         )}
                       </div>
-                      <button className="text-[10px] text-[#3370FF] bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded border border-blue-100 shrink-0"
+                      <button className="text-tag text-brand bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded border border-blue-100 shrink-0"
                         onClick={() => sendChat(`分析 ${pm.name} 近期工作，转化率 ${(pm.conversion_rate * 100).toFixed(0)}%，给出改进建议。`)}>
                         <Bot className="h-3 w-3 inline" /> AI 分析
                       </button>
@@ -541,7 +524,7 @@ export default function DashboardPage() {
                   </div>
                 ))}
               </div>
-            </div>
+            </Card>
           </>
         )}
       </div>

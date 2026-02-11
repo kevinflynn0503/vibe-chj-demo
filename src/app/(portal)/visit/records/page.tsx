@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils';
 import { getVisitRecords } from '@/lib/mock-data';
 import { VISIT_TYPE_LABELS } from '@/lib/schema';
 import type { VisitType } from '@/lib/schema';
+import { Card, Tag, FilterSelect } from '@/components/ui';
 
 function VisitRecordsContent() {
   const router = useRouter();
@@ -43,33 +44,33 @@ function VisitRecordsContent() {
       {/* 头部 — 统一模板B */}
       <div className="detail-header">
         <div className="detail-header-inner">
-          <button onClick={() => router.back()} className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-[#3370FF] transition-colors mb-3">
+          <button onClick={() => router.back()} className="flex items-center gap-1.5 text-xs text-text-secondary hover:text-brand transition-colors mb-3">
             <ArrowLeft className="h-3.5 w-3.5" />
             返回走访工作台
           </button>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div>
-              <h1 className="text-lg font-bold text-slate-900">走访记录</h1>
-              <p className="text-xs text-slate-500 mt-0.5">共 {filtered.length} 条记录</p>
+              <h1 className="text-lg font-bold text-text-primary">走访记录</h1>
+              <p className="text-xs text-text-secondary mt-0.5">共 {filtered.length} 条记录</p>
             </div>
             <div className="flex items-center gap-2 w-full sm:w-auto">
-              <select
+              <FilterSelect
                 value={statusFilter}
-                onChange={e => setStatusFilter(e.target.value)}
-                className="flex-1 sm:flex-none sm:w-28 text-xs px-2.5 py-1.5 border border-slate-200 rounded bg-white focus:border-[#3370FF] focus:outline-none transition-colors"
-              >
-                <option value="">全部状态</option>
-                <option value="pending">待确认</option>
-                <option value="confirmed">已确认</option>
-              </select>
-              <select
+                onChange={setStatusFilter}
+                options={[
+                  { value: 'pending', label: '待确认' },
+                  { value: 'confirmed', label: '已确认' }
+                ]}
+                placeholder="全部状态"
+                className="flex-1 sm:flex-none sm:w-28"
+              />
+              <FilterSelect
                 value={deptFilter}
-                onChange={e => setDeptFilter(e.target.value)}
-                className="flex-1 sm:flex-none sm:w-28 text-xs px-2.5 py-1.5 border border-slate-200 rounded bg-white focus:border-[#3370FF] focus:outline-none transition-colors"
-              >
-                <option value="">全部部门</option>
-                {departments.map(d => <option key={d} value={d}>{d}</option>)}
-              </select>
+                onChange={setDeptFilter}
+                options={departments.map(d => ({ value: d, label: d }))}
+                placeholder="全部部门"
+                className="flex-1 sm:flex-none sm:w-28"
+              />
             </div>
           </div>
         </div>
@@ -77,11 +78,11 @@ function VisitRecordsContent() {
 
       {/* 内容 — 统一 max-w-[1200px] */}
       <div className="page-container space-y-4">
-        <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
+        <Card className="p-0 overflow-hidden">
           {filtered.length === 0 ? (
             <div className="py-16 text-center">
               <FileText className="h-12 w-12 text-slate-200 mx-auto mb-3" />
-              <p className="text-sm text-slate-500">没有匹配的走访记录</p>
+              <p className="text-sm text-text-secondary">没有匹配的走访记录</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -108,24 +109,24 @@ function VisitRecordsContent() {
                       )}
                       onClick={() => router.push(`/visit/confirm/${record.id}`)}
                     >
-                      <td className="font-mono text-slate-600 text-sm">{record.visit_date}</td>
-                      <td className="font-semibold text-slate-900">{record.enterprise_name}</td>
-                      <td className="text-slate-700">{record.visitor_name}</td>
-                      <td className="text-slate-600">{record.visitor_department ?? '-'}</td>
+                      <td className="font-mono text-text-secondary text-sm">{record.visit_date}</td>
+                      <td className="font-semibold text-text-primary">{record.enterprise_name}</td>
+                      <td className="text-text-primary">{record.visitor_name}</td>
+                      <td className="text-text-secondary">{record.visitor_department ?? '-'}</td>
                       <td>
                         {record.visit_type && (
-                          <span className="tag tag-blue">
+                          <Tag variant="primary">
                             {VISIT_TYPE_LABELS[record.visit_type as VisitType] ?? record.visit_type}
-                          </span>
+                          </Tag>
                         )}
                       </td>
                       <td>
                         {record.feishu_minute_id ? (
-                          <span className="flex items-center gap-1.5 text-sm text-slate-600">
+                          <span className="flex items-center gap-1.5 text-sm text-text-secondary">
                             <FileVideo className="h-4 w-4" /> 飞书妙记
                           </span>
                         ) : (
-                          <span className="flex items-center gap-1.5 text-sm text-slate-600">
+                          <span className="flex items-center gap-1.5 text-sm text-text-secondary">
                             <Clock className="h-4 w-4" /> 手动录入
                           </span>
                         )}
@@ -155,7 +156,7 @@ function VisitRecordsContent() {
               </table>
             </div>
           )}
-        </div>
+        </Card>
       </div>
     </div>
   );

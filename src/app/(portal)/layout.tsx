@@ -44,7 +44,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
   return (
     <div className="h-screen flex flex-col bg-white">
       {/* 浮动胶囊导航 — 固定高度，不参与滚动 */}
-      <div className="shrink-0 flex justify-center py-2 z-50 bg-white/85 backdrop-blur-lg border-b border-transparent">
+      <div className="shrink-0 flex justify-center py-2 z-50 bg-white/85 backdrop-blur-lg">
         <nav className="flex items-center gap-0.5 px-1.5 py-1 bg-white/85 backdrop-blur-lg border border-slate-200/60 rounded-full shadow-sm">
           {TABS.map(tab => {
             const isActive = activeTab === tab.id;

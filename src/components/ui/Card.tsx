@@ -5,6 +5,8 @@
  * - CardCompact: 看板小卡片 (p-3, 12px padding)
  * - CardStandard: 列表卡片 (p-4, 16px padding)
  * - CardAccent: 带强调色边条的卡片
+ * 
+ * 新增 noBorder 属性：移除边框，只保留阴影
  */
 
 import { cn } from '@/lib/utils';
@@ -15,12 +17,14 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
   hover?: boolean;  // 是否显示hover效果
   clickable?: boolean;  // 是否可点击
+  noBorder?: boolean;  // 是否移除边框（只保留阴影）
 }
 
 export function Card({ 
   children, 
   hover = false, 
-  clickable = false, 
+  clickable = false,
+  noBorder = false, 
   className, 
   ...props 
 }: CardProps) {
@@ -28,7 +32,8 @@ export function Card({
     <div
       className={cn(
         // 基础样式（统一！）
-        'bg-white border border-slate-200 rounded-lg shadow-card',
+        'bg-white rounded-lg shadow-card',
+        !noBorder && 'border border-slate-200',
         // 可选样式
         hover && 'hover:border-slate-300 hover:shadow-card-hover transition-all',
         clickable && 'cursor-pointer',

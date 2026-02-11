@@ -15,6 +15,7 @@ import {
 import { getActivityReports, getIncubatorEnterprises } from '@/lib/mock-data';
 import { sendChat } from '@/lib/host-api';
 import { cn } from '@/lib/utils';
+import { Card, CardStandard, Tag } from '@/components/ui';
 
 // AI 分析结果（mock）
 const aiAnalysisResults: Record<string, {
@@ -80,14 +81,14 @@ export default function AlertsPage() {
       {/* 头部 */}
       <div className="detail-header">
         <div className="detail-header-inner">
-          <button onClick={() => router.push('/incubator')} className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-[#3370FF] transition-colors mb-3">
+          <button onClick={() => router.push('/incubator')} className="flex items-center gap-1.5 text-xs text-text-secondary hover:text-brand transition-colors mb-3">
             <ArrowLeft className="h-3.5 w-3.5" />
             返回孵化管理
           </button>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div>
-              <h1 className="text-lg font-bold text-slate-900">异常预警</h1>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <h1 className="text-lg font-bold text-text-primary">异常预警</h1>
+              <p className="text-xs text-text-secondary mt-0.5">
                 AI 持续监测在孵企业活跃度 · {alerts.length} 个异常 · {warnings.length} 个需关注
               </p>
             </div>

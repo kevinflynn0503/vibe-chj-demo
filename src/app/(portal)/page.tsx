@@ -191,7 +191,7 @@ export default function HomePage() {
         {/* ═══ 统计卡片 — 彩色底色 ═══ */}
         <div className="grid grid-cols-4 gap-3">
           {statCards.map((s, i) => (
-            <div key={i} className={cn("rounded-lg p-3.5 flex items-center gap-3 border border-transparent", s.bg)}>
+            <div key={i} className={cn("rounded-lg p-3.5 flex items-center gap-3", s.bg)}>
               <div className={cn("p-2 rounded-lg shrink-0", s.iconBg)}>
                 <s.icon className={cn("h-4 w-4", s.color)} />
               </div>

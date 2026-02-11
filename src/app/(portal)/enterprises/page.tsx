@@ -19,6 +19,7 @@ import {
 import { cn } from '@/lib/utils';
 import { getEnterprises, getAssessments } from '@/lib/mock-data';
 import { sendChat } from '@/lib/host-api';
+import { Card, CardCompact, CardStandard, Tag, SearchBar, FilterSelect, SortButton } from '@/components/ui';
 
 type SortMode = 'default' | 'ai_recommend' | 'latest_visit' | 'risk';
 
@@ -71,8 +72,8 @@ export default function EnterprisesPage() {
         {/* ═══ 头部 ═══ */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-1">
           <div>
-            <h1 className="text-base font-bold text-slate-900">企业画像库</h1>
-            <p className="text-xs text-slate-400 mt-0.5">共 {totalEnterprises} 家园区企业</p>
+            <h1 className="text-lg font-bold text-text-primary">企业画像库</h1>
+            <p className="text-xs text-text-muted mt-0.5">共 {totalEnterprises} 家园区企业</p>
           </div>
           <div className="flex items-center gap-2">
             <button className="btn btn-default btn-sm"
@@ -89,64 +90,59 @@ export default function EnterprisesPage() {
         {/* AI 洞察概要 */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           {[
-            { icon: Building2, value: totalEnterprises, label: '园区企业', color: 'text-slate-700', iconColor: 'text-slate-400' },
-            { icon: Shield, value: withPolicy, label: '已AI筛选', color: 'text-[#3370FF]', iconColor: 'text-[#3370FF]' },
+            { icon: Building2, value: totalEnterprises, label: '园区企业', color: 'text-text-primary', iconColor: 'text-text-muted' },
+            { icon: Shield, value: withPolicy, label: '已AI筛选', color: 'text-brand', iconColor: 'text-brand' },
             { icon: CheckCircle2, value: gradeA, label: 'A级企业', color: 'text-emerald-600', iconColor: 'text-emerald-500' },
             { icon: Zap, value: incubated, label: '在孵企业', color: 'text-violet-600', iconColor: 'text-violet-500' },
             { icon: Briefcase, value: recentVisited, label: '已走访', color: 'text-amber-600', iconColor: 'text-amber-500' },
           ].map((item, i) => (
-            <div key={i} className="flex items-center gap-3 p-3 bg-white rounded-[10px] border border-slate-200"
-              style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
+            <CardCompact key={i} className="flex items-center gap-3">
               <item.icon className={cn("h-4 w-4 shrink-0", item.iconColor)} />
               <div>
                 <div className={cn("text-lg font-bold font-mono", item.color)}>{item.value}</div>
-                <div className="text-[10px] text-slate-500">{item.label}</div>
+                <div className="text-tag text-text-secondary">{item.label}</div>
               </div>
-            </div>
+            </CardCompact>
           ))}
         </div>
 
         {/* 搜索 + 筛选 */}
-        <div className="bg-white rounded-[10px] border border-slate-200 p-4"
-          style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-              <input type="text" placeholder="搜索企业名称、赛道..."
-                className="w-full pl-10 pr-4 py-2 text-sm border border-slate-200 rounded-md focus:outline-none focus:border-[#3370FF] transition-colors bg-slate-50"
-                value={search} onChange={e => setSearch(e.target.value)} />
-            </div>
-            <div className="relative w-full sm:w-40">
-              <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-              <select className="w-full pl-10 pr-8 py-2 text-sm border border-slate-200 rounded-md focus:outline-none focus:border-[#3370FF] appearance-none bg-slate-50"
-                value={industryFilter} onChange={e => setIndustryFilter(e.target.value)}>
-                <option value="">全部赛道</option>
-                {industries.map(i => <option key={i} value={i}>{i}</option>)}
-              </select>
-            </div>
-            <div className="flex items-center gap-1.5 text-xs">
-              {([
-                { key: 'default', label: '默认' },
-                { key: 'ai_recommend', label: '✦ AI 推荐' },
-                { key: 'latest_visit', label: '最近走访' },
-              ] as { key: SortMode; label: string }[]).map(s => (
-                <button key={s.key}
-                  className={cn("px-3 py-2 rounded-md border transition-colors",
-                    sortMode === s.key ? 'bg-[#3370FF] text-white border-[#3370FF]' : 'bg-white text-slate-600 border-slate-200 hover:border-[#3370FF]'
-                  )}
-                  onClick={() => setSortMode(s.key)}>
-                  {s.label}
-                </button>
-              ))}
-            </div>
+        <div className="flex flex-col sm:flex-row gap-3">
+          <SearchBar 
+            placeholder="搜索企业名称、赛道..."
+            value={search}
+            onChange={setSearch}
+          />
+          <FilterSelect
+            icon={Filter}
+            value={industryFilter}
+            onChange={setIndustryFilter}
+            options={industries.map(i => ({ value: i, label: i }))}
+            placeholder="全部赛道"
+            className="w-full sm:w-40"
+          />
+          <div className="flex items-center gap-1.5 text-xs">
+            {([
+              { key: 'default', label: '默认' },
+              { key: 'ai_recommend', label: '✦ AI 推荐' },
+              { key: 'latest_visit', label: '最近走访' },
+            ] as { key: SortMode; label: string }[]).map(s => (
+              <SortButton 
+                key={s.key}
+                active={sortMode === s.key}
+                onClick={() => setSortMode(s.key)}
+              >
+                {s.label}
+              </SortButton>
+            ))}
           </div>
         </div>
 
         {/* AI 推荐提示 */}
         {sortMode === 'ai_recommend' && (
           <div className="flex items-center gap-2 p-3 bg-gradient-to-r from-blue-50 to-white border border-blue-100 rounded-lg">
-            <Bot className="h-4 w-4 text-[#3370FF] shrink-0" />
-            <span className="text-xs text-slate-600">
+            <Bot className="h-4 w-4 text-brand shrink-0" />
+            <span className="text-xs text-text-secondary">
               AI 综合走访频率、政策匹配度、发展潜力推荐优先关注的企业。
             </span>
           </div>
@@ -164,9 +160,7 @@ export default function EnterprisesPage() {
             ) : '';
 
             return (
-              <div key={ent.id}
-                className="bg-white border border-slate-200 rounded-[10px] p-4 hover:border-slate-300 transition-all cursor-pointer group"
-                style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)' }}
+              <CardStandard key={ent.id} hover className="cursor-pointer group"
                 onClick={() => router.push(`/enterprises/${ent.id}`)}>
                 {/* 头部 */}
                 <div className="flex items-start gap-3 mb-3">
@@ -177,18 +171,16 @@ export default function EnterprisesPage() {
                     {(ent.short_name ?? ent.name).charAt(0)}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-bold text-slate-900 truncate group-hover:text-[#3370FF] transition-colors">
+                    <div className="text-sm font-bold text-text-primary truncate group-hover:text-brand transition-colors">
                       {ent.short_name ?? ent.name}
                     </div>
                     <div className="flex items-center gap-1.5 mt-1 flex-wrap">
-                      <span className={cn("text-[10px] px-1.5 py-0.5 rounded border",
-                        ent.is_incubated ? "bg-violet-50 text-violet-600 border-violet-100" : "bg-emerald-50 text-emerald-600 border-emerald-100"
-                      )}>
+                      <Tag variant={ent.is_incubated ? "purple" : "success"}>
                         {ent.is_incubated ? '在孵' : '存续'}
-                      </span>
-                      {ent.development_stage && <span className="text-[10px] px-1.5 py-0.5 bg-slate-50 text-slate-500 rounded border border-slate-100">{ent.development_stage}</span>}
+                      </Tag>
+                      {ent.development_stage && <Tag variant="default">{ent.development_stage}</Tag>}
                       {policy && (
-                        <span className={cn("text-[10px] px-1.5 py-0.5 rounded border", gradeColor)}>
+                        <span className={cn("text-tag px-1.5 py-0.5 rounded border", gradeColor)}>
                           政策 {policy.grade}级
                         </span>
                       )}
@@ -198,24 +190,24 @@ export default function EnterprisesPage() {
 
                 {/* 行业标签 */}
                 <div className="flex flex-wrap gap-1.5 mb-3">
-                  {ent.industry && <span className="text-[10px] px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded">{ent.industry}</span>}
-                  {ent.industry_sub && <span className="text-[10px] px-1.5 py-0.5 bg-slate-50 text-slate-500 rounded">{ent.industry_sub}</span>}
+                  {ent.industry && <Tag variant="primary">{ent.industry}</Tag>}
+                  {ent.industry_sub && <Tag variant="default">{ent.industry_sub}</Tag>}
                 </div>
 
                 {/* 关键信息 */}
-                <div className="space-y-1.5 text-xs text-slate-500 mb-3">
+                <div className="space-y-1.5 text-xs text-text-secondary mb-3">
                   <div className="flex items-center gap-1.5">
                     <Users className="h-3 w-3 shrink-0" />
-                    <span>法人: <span className="text-slate-700 font-medium">{ent.legal_person || '-'}</span></span>
+                    <span>法人: <span className="text-text-secondary font-medium">{ent.legal_person || '-'}</span></span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <Briefcase className="h-3 w-3 shrink-0" />
-                    <span>注册资本: <span className="text-slate-700">{ent.registered_capital || '-'}</span></span>
+                    <span>注册资本: <span className="text-text-secondary">{ent.registered_capital || '-'}</span></span>
                   </div>
                   {ent.employee_count && (
                     <div className="flex items-center gap-1.5">
                       <Calendar className="h-3 w-3 shrink-0" />
-                      <span>员工: <span className="text-slate-700">{ent.employee_count.toLocaleString()} 人</span></span>
+                      <span>员工: <span className="text-text-secondary">{ent.employee_count.toLocaleString()} 人</span></span>
                     </div>
                   )}
                 </div>
@@ -223,19 +215,19 @@ export default function EnterprisesPage() {
                 {/* 底部：AI 快捷操作 + 走访状态 */}
                 <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="text-[11px] text-slate-400">
+                    <div className="text-xs text-text-muted">
                       {ent.last_visited_at ? `走访 ${ent.last_visited_at}` : '未走访'}
                     </div>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <button className="text-[10px] text-[#3370FF] bg-blue-50 hover:bg-blue-100 px-1.5 py-0.5 rounded border border-blue-100 transition-colors flex items-center gap-0.5"
+                    <button className="btn-ai text-tag"
                       onClick={(e) => { e.stopPropagation(); sendChat(`请快速分析「${ent.short_name ?? ent.name}」的发展潜力和合作价值。`); }}>
                       <Bot className="h-2.5 w-2.5" /> AI
                     </button>
-                    <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-[#3370FF] transition-colors" />
+                    <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-brand transition-colors" />
                   </div>
                 </div>
-              </div>
+              </CardStandard>
             );
           })}
         </div>
@@ -244,7 +236,7 @@ export default function EnterprisesPage() {
         {filtered.length === 0 && (
           <div className="text-center py-16">
             <Building2 className="h-12 w-12 text-slate-200 mx-auto mb-3" />
-            <p className="text-sm text-slate-500">未找到匹配企业</p>
+            <p className="text-sm text-text-secondary">未找到匹配企业</p>
             <button className="btn btn-default btn-sm mt-3"
               onClick={() => sendChat(`帮我在园区企业中搜索关键词"${search}"相关的企业，从企业名称、业务描述、产品方向等多维度搜索。`)}>
               <Sparkles className="h-3.5 w-3.5" /> AI 智能搜索
