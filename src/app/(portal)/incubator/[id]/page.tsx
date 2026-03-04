@@ -12,14 +12,17 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { getIncubatorEnterprise, getActivityReports } from '@/lib/mock-data';
+import { useState, useEffect } from 'react';
+import { fetchIncubatorEnterprise, fetchActivityReports } from '@/services/incubator';
+import type { IncubatorEnterprise } from '@/lib/schema';
 import {
-  ArrowLeft, MapPin, Users, Briefcase, Building2, TrendingUp, TrendingDown, Minus,
+  ChevronLeft, MapPin, Users, Briefcase, Building2, TrendingUp, TrendingDown, Minus,
   Calendar, Cpu, Target, FileText, ChevronRight, Bot, Sparkles, DollarSign,
   UserCircle, Activity, Handshake, BarChart3
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { sendChat } from '@/lib/host-api';
+import { Button, DetailSkeleton } from '@/components/ui';
 
 // Mock 融资历史
 const mockFundingHistory = [
@@ -52,81 +55,97 @@ export default function IncubatorEnterprisePage() {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
-  const ent = getIncubatorEnterprise(id);
-  const activityReports = getActivityReports();
+  const [loading, setLoading] = useState(true);
+  const [ent, setEnt] = useState<IncubatorEnterprise | undefined>(undefined);
+  const [activityReports, setActivityReports] = useState<Awaited<ReturnType<typeof fetchActivityReports>>>([]);
+
+  useEffect(() => {
+    async function load() {
+      const [entData, reportsData] = await Promise.all([
+        fetchIncubatorEnterprise(id),
+        fetchActivityReports(),
+      ]);
+      setEnt(entData);
+      setActivityReports(reportsData);
+      setLoading(false);
+    }
+    load();
+  }, [id]);
+
   const activity = activityReports.find(r => r.enterprise_id === ent?.enterprise_id);
+
+  if (loading) return <DetailSkeleton />;
 
   if (!ent) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen bg-surface-card flex items-center justify-center">
         <div className="text-center">
-          <p className="text-slate-500 text-sm">未找到该在孵企业</p>
-          <button className="btn btn-primary btn-sm mt-4" onClick={() => router.push('/incubator')}>
+          <p className="text-text-muted text-sm">未找到该在孵企业</p>
+          <Button variant="primary" size="sm" className="mt-4" onClick={() => router.push('/incubator')}>
             返回孵化管理
-          </button>
+          </Button>
         </div>
       </div>
     );
   }
 
-  const trendIcon = activity?.trend === 'up' ? <TrendingUp className="h-3.5 w-3.5 text-emerald-500" />
-    : activity?.trend === 'down' ? <TrendingDown className="h-3.5 w-3.5 text-red-500" />
-    : <Minus className="h-3.5 w-3.5 text-slate-400" />;
+  const trendIcon = activity?.trend === 'up' ? <TrendingUp className="h-3.5 w-3.5 text-success" />
+    : activity?.trend === 'down' ? <TrendingDown className="h-3.5 w-3.5 text-error" />
+    : <Minus className="h-3.5 w-3.5 text-text-muted" />;
 
-  const scoreColor = ent.activity_score >= 80 ? 'text-emerald-600' : ent.activity_score >= 50 ? 'text-blue-600' : 'text-red-600';
-  const scoreBg = ent.activity_score >= 80 ? 'bg-emerald-500' : ent.activity_score >= 50 ? 'bg-blue-500' : 'bg-red-500';
+  const scoreColor = ent.activity_score >= 80 ? 'text-success' : ent.activity_score >= 50 ? 'text-brand' : 'text-error';
+  const scoreBg = ent.activity_score >= 80 ? 'bg-success' : ent.activity_score >= 50 ? 'bg-brand' : 'bg-error';
 
   return (
     <div className="min-h-full">
       {/* Header */}
       <div className="detail-header">
         <div className="detail-header-inner">
-          <button onClick={() => router.push('/incubator')} className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-[#3370FF] transition-colors mb-3">
-            <ArrowLeft className="h-3.5 w-3.5" />
-            返回孵化管理
-          </button>
+          <Button variant="ghost" size="sm" onClick={() => router.push('/incubator')} className="mb-3">
+            <ChevronLeft className="h-3.5 w-3.5" /> 返回孵化管理
+          </Button>
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-start gap-4">
-              <div className="w-14 h-14 bg-violet-50 text-violet-600 border border-violet-100 rounded-lg flex items-center justify-center text-xl font-bold shrink-0">
+              <div className="w-14 h-14 bg-[rgba(27,27,27,0.06)] text-brand border border-line-light rounded-lg flex items-center justify-center text-xl font-bold shrink-0">
                 {ent.name.charAt(0)}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-3 flex-wrap">
-                  <h1 className="text-lg font-bold text-slate-900">{ent.name}</h1>
+                  <h1 className="text-lg font-semibold text-text-primary">{ent.name}</h1>
                   {ent.funding_stage && (
-                    <span className="text-[10px] px-2 py-0.5 bg-amber-50 text-amber-700 rounded border border-amber-200">{ent.funding_stage}</span>
+                    <span className="text-tag px-2 py-0.5 bg-[rgba(27,27,27,0.06)] text-warning rounded border border-line-light">{ent.funding_stage}</span>
                   )}
-                  <span className="flex items-center gap-1 text-[10px] text-[#3370FF] bg-blue-50 px-1.5 py-0.5 rounded">
+                  <span className="flex items-center gap-1 text-tag text-brand bg-[rgba(27,27,27,0.06)] px-1.5 py-0.5 rounded">
                     <Bot className="h-3 w-3" /> BP 解析
                   </span>
                 </div>
-                <p className="text-xs text-slate-500 mt-1">{ent.bp_summary || '暂无简介'}</p>
+                <p className="text-xs text-text-muted mt-1">{ent.bp_summary || '暂无简介'}</p>
               </div>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              <button className="btn btn-default btn-sm" onClick={() => sendChat(`请全面分析「${ent.name}」的发展潜力、技术优势、融资状态和合作价值。`)}>
+              <Button variant="default" size="sm" onClick={() => sendChat(`请全面分析「${ent.name}」的发展潜力、技术优势、融资状态和合作价值。`)}>
                 <Sparkles className="h-3.5 w-3.5" /> AI 分析
-              </button>
-              <button className="btn btn-primary btn-sm" onClick={() => router.push('/incubator/match')}>
+              </Button>
+              <Button variant="primary" size="sm" onClick={() => router.push('/incubator/match')}>
                 <Handshake className="h-3.5 w-3.5" /> 发起匹配
-              </button>
+              </Button>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="page-container space-y-4">
+      <div className="page-container space-y-6">
 
         {/* AI 画像摘要 */}
-        <div className="bg-gradient-to-r from-blue-50 to-white border border-blue-100 rounded-lg p-4">
+        <div className="bg-surface-card border border-line-light rounded-lg p-4">
           <div className="flex items-start gap-3">
-            <Bot className="h-5 w-5 text-[#3370FF] shrink-0 mt-0.5" />
+            <Bot className="h-5 w-5 text-brand shrink-0 mt-0.5" />
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-sm font-bold text-slate-900">AI 画像摘要</span>
-                <span className="text-[10px] text-[#3370FF] bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100">✦ AI 生成</span>
+                <span className="text-sm font-semibold text-text-primary">AI 画像摘要</span>
+                <span className="text-tag text-brand bg-[rgba(27,27,27,0.06)] px-1.5 py-0.5 rounded border border-line-light">✦ AI 生成</span>
               </div>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <p className="text-xs text-text-secondary leading-relaxed">
                 {ent.name} 是一家专注于{ent.products.join('、')}的{ent.funding_stage || '初创'}企业，
                 团队规模 {ent.employee_count ?? '未知'} 人，技术栈涵盖 {ent.tech_stack.slice(0, 3).join('、')} 等。
                 {ent.target_market ? `目标市场为${ent.target_market}。` : ''}
@@ -139,43 +158,43 @@ export default function IncubatorEnterprisePage() {
 
         {/* ── 概览指标 ── */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-          <div className="bg-white border border-slate-200 rounded-lg p-4">
-            <div className="text-xs text-slate-500 mb-1">活跃度</div>
+          <div className="bg-surface-card border border-line rounded-lg p-4">
+            <div className="text-xs text-text-muted mb-1">活跃度</div>
             <div className="flex items-center gap-2">
               <span className={cn("text-2xl font-bold font-mono", scoreColor)}>{ent.activity_score}</span>
               {trendIcon}
             </div>
-            <div className="w-full h-1.5 bg-slate-100 rounded-full mt-2 overflow-hidden">
+            <div className="w-full h-1.5 bg-[rgba(27,27,27,0.06)] rounded-full mt-2 overflow-hidden">
               <div className={cn("h-full rounded-full", scoreBg)} style={{ width: `${ent.activity_score}%` }} />
             </div>
           </div>
-          <div className="bg-white border border-slate-200 rounded-lg p-4">
-            <div className="text-xs text-slate-500 mb-1">团队规模</div>
+          <div className="bg-surface-card border border-line rounded-lg p-4">
+            <div className="text-xs text-text-muted mb-1">团队规模</div>
             <div className="flex items-center gap-2">
-              <Users className="h-4 w-4 text-slate-400" />
-              <span className="text-2xl font-bold text-slate-900">{ent.employee_count ?? '-'}</span>
-              <span className="text-xs text-slate-400">人</span>
+              <Users className="h-4 w-4 text-text-muted" />
+              <span className="text-2xl font-semibold text-text-primary">{ent.employee_count ?? '-'}</span>
+              <span className="text-xs text-text-muted">人</span>
             </div>
           </div>
-          <div className="bg-white border border-slate-200 rounded-lg p-4">
-            <div className="text-xs text-slate-500 mb-1">融资阶段</div>
+          <div className="bg-surface-card border border-line rounded-lg p-4">
+            <div className="text-xs text-text-muted mb-1">融资阶段</div>
             <div className="flex items-center gap-2">
-              <DollarSign className="h-4 w-4 text-slate-400" />
-              <span className="text-lg font-bold text-slate-900">{ent.funding_stage ?? '-'}</span>
+              <DollarSign className="h-4 w-4 text-text-muted" />
+              <span className="text-lg font-semibold text-text-primary">{ent.funding_stage ?? '-'}</span>
             </div>
           </div>
-          <div className="bg-white border border-slate-200 rounded-lg p-4">
-            <div className="text-xs text-slate-500 mb-1">入孵时间</div>
+          <div className="bg-surface-card border border-line rounded-lg p-4">
+            <div className="text-xs text-text-muted mb-1">入孵时间</div>
             <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-slate-400" />
-              <span className="text-lg font-bold text-slate-900">{ent.entered_at ?? '-'}</span>
+              <Calendar className="h-4 w-4 text-text-muted" />
+              <span className="text-lg font-semibold text-text-primary">{ent.entered_at ?? '-'}</span>
             </div>
           </div>
-          <div className="bg-white border border-slate-200 rounded-lg p-4">
-            <div className="text-xs text-slate-500 mb-1">办公位置</div>
+          <div className="bg-surface-card border border-line rounded-lg p-4">
+            <div className="text-xs text-text-muted mb-1">办公位置</div>
             <div className="flex items-center gap-2">
-              <MapPin className="h-4 w-4 text-slate-400" />
-              <span className="text-lg font-bold text-slate-900">{ent.location ?? '-'}</span>
+              <MapPin className="h-4 w-4 text-text-muted" />
+              <span className="text-lg font-semibold text-text-primary">{ent.location ?? '-'}</span>
             </div>
           </div>
         </div>
@@ -187,24 +206,24 @@ export default function IncubatorEnterprisePage() {
           <div className="lg:col-span-3 space-y-4">
 
             {/* 产品与服务 */}
-            <div className="bg-white border border-slate-200 rounded-lg">
-              <div className="px-4 py-3 border-b border-slate-100 flex items-center gap-2">
-                <Briefcase className="h-4 w-4 text-slate-400" />
-                <h2 className="text-sm font-bold text-slate-900">产品与服务</h2>
-                <span className="flex items-center gap-0.5 text-[10px] text-[#3370FF] bg-blue-50 px-1.5 py-0.5 rounded"><Bot className="h-3 w-3" /> BP 解析</span>
+            <div className="bg-surface-card border border-line rounded-lg">
+              <div className="px-4 py-3 border-b border-line-light flex items-center gap-2">
+                <Briefcase className="h-4 w-4 text-text-muted" />
+                <h2 className="text-sm font-semibold text-text-primary">产品与服务</h2>
+                <span className="flex items-center gap-0.5 text-tag text-brand bg-[rgba(27,27,27,0.06)] px-1.5 py-0.5 rounded"><Bot className="h-3 w-3" /> BP 解析</span>
               </div>
               <div className="p-4">
                 <div className="flex flex-wrap gap-2">
                   {ent.products.map((p, i) => (
-                    <span key={i} className="text-xs px-2.5 py-1 bg-blue-50 text-blue-600 rounded border border-blue-100">{p}</span>
+                    <span key={i} className="text-xs px-2.5 py-1 bg-[rgba(27,27,27,0.06)] text-brand rounded border border-line-light">{p}</span>
                   ))}
                 </div>
                 {ent.target_market && (
-                  <div className="mt-3 pt-3 border-t border-slate-100">
+                  <div className="mt-3 pt-3 border-t border-line-light">
                     <div className="flex items-center gap-2 text-xs">
-                      <Target className="h-3.5 w-3.5 text-slate-400" />
-                      <span className="text-slate-500">目标市场：</span>
-                      <span className="text-slate-700">{ent.target_market}</span>
+                      <Target className="h-3.5 w-3.5 text-text-muted" />
+                      <span className="text-text-muted">目标市场：</span>
+                      <span className="text-text-secondary">{ent.target_market}</span>
                     </div>
                   </div>
                 )}
@@ -212,36 +231,36 @@ export default function IncubatorEnterprisePage() {
             </div>
 
             {/* 技术栈 */}
-            <div className="bg-white border border-slate-200 rounded-lg">
-              <div className="px-4 py-3 border-b border-slate-100 flex items-center gap-2">
-                <Cpu className="h-4 w-4 text-slate-400" />
-                <h2 className="text-sm font-bold text-slate-900">技术能力</h2>
+            <div className="bg-surface-card border border-line rounded-lg">
+              <div className="px-4 py-3 border-b border-line-light flex items-center gap-2">
+                <Cpu className="h-4 w-4 text-text-muted" />
+                <h2 className="text-sm font-semibold text-text-primary">技术能力</h2>
               </div>
               <div className="p-4">
                 <div className="flex flex-wrap gap-2">
                   {ent.tech_stack.map((t, i) => (
-                    <span key={i} className="text-xs px-2.5 py-1 bg-slate-50 text-slate-600 rounded border border-slate-200">{t}</span>
+                    <span key={i} className="text-xs px-2.5 py-1 bg-[rgba(27,27,27,0.06)] text-text-secondary rounded border border-line">{t}</span>
                   ))}
                 </div>
               </div>
             </div>
 
             {/* 核心团队 */}
-            <div className="bg-white border border-slate-200 rounded-lg">
-              <div className="px-4 py-3 border-b border-slate-100 flex items-center gap-2">
-                <UserCircle className="h-4 w-4 text-slate-400" />
-                <h2 className="text-sm font-bold text-slate-900">核心团队</h2>
-                <span className="flex items-center gap-0.5 text-[10px] text-[#3370FF] bg-blue-50 px-1.5 py-0.5 rounded"><Bot className="h-3 w-3" /> BP 解析</span>
+            <div className="bg-surface-card border border-line rounded-lg">
+              <div className="px-4 py-3 border-b border-line-light flex items-center gap-2">
+                <UserCircle className="h-4 w-4 text-text-muted" />
+                <h2 className="text-sm font-semibold text-text-primary">核心团队</h2>
+                <span className="flex items-center gap-0.5 text-tag text-brand bg-[rgba(27,27,27,0.06)] px-1.5 py-0.5 rounded"><Bot className="h-3 w-3" /> BP 解析</span>
               </div>
-              <div className="divide-y divide-slate-100">
+              <div className="divide-y divide-line-light">
                 {mockTeam.map((m, i) => (
                   <div key={i} className="px-4 py-3 flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-xs font-bold shrink-0">
+                    <div className="w-8 h-8 rounded-full bg-[rgba(27,27,27,0.06)] text-text-muted flex items-center justify-center text-xs font-bold shrink-0">
                       {m.name.charAt(0)}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="text-sm font-medium text-slate-900">{m.name} · <span className="text-slate-500 font-normal">{m.title}</span></div>
-                      <div className="text-xs text-slate-500 mt-0.5">{m.bg}</div>
+                      <div className="text-sm font-medium text-text-primary">{m.name} · <span className="text-text-muted font-normal">{m.title}</span></div>
+                      <div className="text-xs text-text-muted mt-0.5">{m.bg}</div>
                     </div>
                   </div>
                 ))}
@@ -249,27 +268,27 @@ export default function IncubatorEnterprisePage() {
             </div>
 
             {/* 融资历史 */}
-            <div className="bg-white border border-slate-200 rounded-lg">
-              <div className="px-4 py-3 border-b border-slate-100 flex items-center gap-2">
-                <DollarSign className="h-4 w-4 text-slate-400" />
-                <h2 className="text-sm font-bold text-slate-900">融资历史</h2>
+            <div className="bg-surface-card border border-line rounded-lg">
+              <div className="px-4 py-3 border-b border-line-light flex items-center gap-2">
+                <DollarSign className="h-4 w-4 text-text-muted" />
+                <h2 className="text-sm font-semibold text-text-primary">融资历史</h2>
               </div>
-              <div className="divide-y divide-slate-100">
+              <div className="divide-y divide-line-light">
                 {mockFundingHistory.map((f, i) => (
                   <div key={i} className="px-4 py-3 flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className={cn(
                         "w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold shrink-0",
-                        i === mockFundingHistory.length - 1 ? "bg-emerald-50 text-emerald-600 border border-emerald-100" : "bg-slate-50 text-slate-400 border border-slate-100"
+                        i === mockFundingHistory.length - 1 ? "bg-[rgba(27,27,27,0.06)] text-success border border-line-light" : "bg-[rgba(27,27,27,0.06)] text-text-muted border border-line-light"
                       )}>
                         {f.round.charAt(0)}
                       </div>
                       <div>
-                        <div className="text-sm font-medium text-slate-900">{f.round} · {f.amount}</div>
-                        <div className="text-xs text-slate-500">{f.investor}</div>
+                        <div className="text-sm font-medium text-text-primary">{f.round} · {f.amount}</div>
+                        <div className="text-xs text-text-muted">{f.investor}</div>
                       </div>
                     </div>
-                    <span className="text-xs text-slate-400 font-mono">{f.date}</span>
+                    <span className="text-xs text-text-muted font-mono">{f.date}</span>
                   </div>
                 ))}
               </div>
@@ -277,14 +296,14 @@ export default function IncubatorEnterprisePage() {
 
             {/* BP 简介 */}
             {ent.bp_summary && (
-              <div className="bg-white border border-slate-200 rounded-lg">
-                <div className="px-4 py-3 border-b border-slate-100 flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-slate-400" />
-                  <h2 className="text-sm font-bold text-slate-900">商业计划简介</h2>
-                  <span className="flex items-center gap-0.5 text-[10px] text-[#3370FF] bg-blue-50 px-1.5 py-0.5 rounded"><Bot className="h-3 w-3" /> BP 解析</span>
+              <div className="bg-surface-card border border-line rounded-lg">
+                <div className="px-4 py-3 border-b border-line-light flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-text-muted" />
+                  <h2 className="text-sm font-semibold text-text-primary">商业计划简介</h2>
+                  <span className="flex items-center gap-0.5 text-tag text-brand bg-[rgba(27,27,27,0.06)] px-1.5 py-0.5 rounded"><Bot className="h-3 w-3" /> BP 解析</span>
                 </div>
                 <div className="p-4">
-                  <p className="text-sm text-slate-700 leading-relaxed">{ent.bp_summary}</p>
+                  <p className="text-sm text-text-secondary leading-relaxed">{ent.bp_summary}</p>
                 </div>
               </div>
             )}
@@ -294,32 +313,32 @@ export default function IncubatorEnterprisePage() {
           <div className="lg:col-span-2 space-y-4">
 
             {/* 活跃度分解 */}
-            <div className="bg-white border border-slate-200 rounded-lg">
-              <div className="px-4 py-3 border-b border-slate-100 flex items-center gap-2">
-                <Activity className="h-4 w-4 text-[#3370FF]" />
-                <h2 className="text-sm font-bold text-slate-900">活跃度分解</h2>
-                <span className="flex items-center gap-0.5 text-[10px] text-[#3370FF] bg-blue-50 px-1.5 py-0.5 rounded"><Bot className="h-3 w-3" /> AI 监测</span>
+            <div className="bg-surface-card border border-line rounded-lg">
+              <div className="px-4 py-3 border-b border-line-light flex items-center gap-2">
+                <Activity className="h-4 w-4 text-brand" />
+                <h2 className="text-sm font-semibold text-text-primary">活跃度分解</h2>
+                <span className="flex items-center gap-0.5 text-tag text-brand bg-[rgba(27,27,27,0.06)] px-1.5 py-0.5 rounded"><Bot className="h-3 w-3" /> AI 监测</span>
               </div>
               <div className="p-4 space-y-3">
                 {mockActivityBreakdown.map((item, i) => (
                   <div key={i}>
                     <div className="flex items-center justify-between text-xs mb-1">
-                      <span className="text-slate-600">{item.label}</span>
+                      <span className="text-text-secondary">{item.label}</span>
                       <div className="flex items-center gap-1.5">
-                        <span className="font-mono font-bold text-slate-900">{item.score}</span>
-                        {item.trend === 'up' && <TrendingUp className="h-3 w-3 text-emerald-500" />}
-                        {item.trend === 'down' && <TrendingDown className="h-3 w-3 text-red-500" />}
-                        {item.trend === 'stable' && <Minus className="h-3 w-3 text-slate-400" />}
+                        <span className="font-mono font-semibold text-text-primary">{item.score}</span>
+                        {item.trend === 'up' && <TrendingUp className="h-3 w-3 text-success" />}
+                        {item.trend === 'down' && <TrendingDown className="h-3 w-3 text-error" />}
+                        {item.trend === 'stable' && <Minus className="h-3 w-3 text-text-muted" />}
                       </div>
                     </div>
-                    <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                    <div className="h-1.5 bg-[rgba(27,27,27,0.06)] rounded-full overflow-hidden">
                       <div className={cn("h-full rounded-full",
-                        item.score >= 70 ? 'bg-emerald-500' : item.score >= 50 ? 'bg-blue-500' : 'bg-amber-500'
+                        item.score >= 70 ? 'bg-success' : item.score >= 50 ? 'bg-brand' : 'bg-warning'
                       )} style={{ width: `${item.score}%` }} />
                     </div>
                   </div>
                 ))}
-                <p className="text-[10px] text-slate-400 pt-2 border-t border-slate-100">
+                <p className="text-tag text-text-muted pt-2 border-t border-line-light">
                   数据来源: 会议室预约系统 + 访客登记 · 每日更新
                 </p>
               </div>
@@ -327,15 +346,15 @@ export default function IncubatorEnterprisePage() {
 
             {/* 活跃信号 */}
             {activity && activity.signals.length > 0 && (
-              <div className="bg-white border border-slate-200 rounded-lg">
-                <div className="px-4 py-3 border-b border-slate-100">
-                  <h2 className="text-sm font-bold text-slate-900">近期活跃信号</h2>
+              <div className="bg-surface-card border border-line rounded-lg">
+                <div className="px-4 py-3 border-b border-line-light">
+                  <h2 className="text-sm font-semibold text-text-primary">近期活跃信号</h2>
                 </div>
                 <div className="p-4 space-y-2">
                   {activity.signals.map((signal, i) => (
                     <div key={i} className="flex items-start gap-2 text-xs">
                       <div className={cn("w-1.5 h-1.5 rounded-full mt-1.5 shrink-0", scoreBg)} />
-                      <span className="text-slate-700">{signal}</span>
+                      <span className="text-text-secondary">{signal}</span>
                     </div>
                   ))}
                 </div>
@@ -343,21 +362,21 @@ export default function IncubatorEnterprisePage() {
             )}
 
             {/* 匹配/合作历史 */}
-            <div className="bg-white border border-slate-200 rounded-lg">
-              <div className="px-4 py-3 border-b border-slate-100 flex items-center gap-2">
-                <Handshake className="h-4 w-4 text-slate-400" />
-                <h2 className="text-sm font-bold text-slate-900">匹配记录</h2>
+            <div className="bg-surface-card border border-line rounded-lg">
+              <div className="px-4 py-3 border-b border-line-light flex items-center gap-2">
+                <Handshake className="h-4 w-4 text-text-muted" />
+                <h2 className="text-sm font-semibold text-text-primary">匹配记录</h2>
               </div>
               {mockMatchHistory.length > 0 ? (
-                <div className="divide-y divide-slate-100">
+                <div className="divide-y divide-line-light">
                   {mockMatchHistory.map((m, i) => (
                     <div key={i} className="px-4 py-3 flex items-center justify-between">
                       <div>
-                        <div className="text-xs font-medium text-slate-900">{m.demand}</div>
-                        <div className="text-[10px] text-slate-500 mt-0.5">{m.date}</div>
+                        <div className="text-xs font-medium text-text-primary">{m.demand}</div>
+                        <div className="text-tag text-text-muted mt-0.5">{m.date}</div>
                       </div>
-                      <span className={cn("text-[10px] px-1.5 py-0.5 rounded border",
-                        m.status === 'matched' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-amber-50 text-amber-600 border-amber-100'
+                      <span className={cn("text-tag px-1.5 py-0.5 rounded border",
+                        m.status === 'matched' ? 'bg-[rgba(27,27,27,0.06)] text-success border-line-light' : 'bg-[rgba(27,27,27,0.06)] text-warning border-line-light'
                       )}>
                         {m.result}
                       </span>
@@ -365,38 +384,39 @@ export default function IncubatorEnterprisePage() {
                   ))}
                 </div>
               ) : (
-                <div className="px-4 py-6 text-center text-xs text-slate-400">暂无匹配记录</div>
+                <div className="px-4 py-6 text-center text-xs text-text-muted">暂无匹配记录</div>
               )}
             </div>
 
             {/* 快捷操作 */}
-            <div className="bg-white border border-slate-200 rounded-lg">
-              <div className="px-4 py-3 border-b border-slate-100">
-                <h2 className="text-sm font-bold text-slate-900">快捷操作</h2>
+            <div className="bg-surface-card border border-line rounded-lg">
+              <div className="px-4 py-3 border-b border-line-light">
+                <h2 className="text-sm font-semibold text-text-primary">快捷操作</h2>
               </div>
-              <div className="divide-y divide-slate-100">
-                <button onClick={() => router.push('/incubator/match')}
-                  className="w-full flex items-center justify-between px-4 py-3 text-xs text-slate-700 hover:bg-slate-50 transition-colors">
-                  <span>发起订单匹配</span>
-                  <ChevronRight className="h-3.5 w-3.5 text-slate-400" />
-                </button>
-                <button onClick={() => router.push('/visit/records')}
-                  className="w-full flex items-center justify-between px-4 py-3 text-xs text-slate-700 hover:bg-slate-50 transition-colors">
-                  <span>查看走访记录</span>
-                  <ChevronRight className="h-3.5 w-3.5 text-slate-400" />
-                </button>
+              <div className="divide-y divide-line-light">
+                <Button variant="link" size="sm" onClick={() => router.push('/incubator/match')}
+                  className="w-full flex items-center justify-between px-4 py-3 text-left">
+                  发起订单匹配
+                  <ChevronRight className="h-3.5 w-3.5 text-text-muted" />
+                </Button>
+                <Button variant="link" size="sm" onClick={() => router.push('/visit/records')}
+                  className="w-full flex items-center justify-between px-4 py-3 text-left">
+                  查看走访记录
+                  <ChevronRight className="h-3.5 w-3.5 text-text-muted" />
+                </Button>
                 {ent.enterprise_id && (
-                  <button onClick={() => router.push(`/enterprises/${ent.enterprise_id}`)}
-                    className="w-full flex items-center justify-between px-4 py-3 text-xs text-slate-700 hover:bg-slate-50 transition-colors">
-                    <span>在企业库中查看</span>
-                    <ChevronRight className="h-3.5 w-3.5 text-slate-400" />
-                  </button>
+                  <Button variant="link" size="sm" onClick={() => router.push(`/enterprises/${ent.enterprise_id}`)}
+                    className="w-full flex items-center justify-between px-4 py-3 text-left">
+                    在企业库中查看
+                    <ChevronRight className="h-3.5 w-3.5 text-text-muted" />
+                  </Button>
                 )}
-                <button onClick={() => sendChat(`请为「${ent.name}」生成一份详细的发展报告，涵盖技术优势、市场前景、融资建议和合作机会分析。`)}
-                  className="w-full flex items-center justify-between px-4 py-3 text-xs text-[#3370FF] font-medium hover:bg-slate-50 transition-colors">
-                  <span className="flex items-center gap-1"><Sparkles className="h-3 w-3" /> AI 生成发展报告</span>
+                <Button variant="text" size="sm" icon={<Sparkles className="h-3 w-3" />}
+                  onClick={() => sendChat(`请为「${ent.name}」生成一份详细的发展报告，涵盖技术优势、市场前景、融资建议和合作机会分析。`)}
+                  className="w-full flex items-center justify-between px-4 py-3 text-left">
+                  AI 生成发展报告
                   <ChevronRight className="h-3.5 w-3.5" />
-                </button>
+                </Button>
               </div>
             </div>
           </div>

@@ -1,16 +1,3 @@
-/**
- * Portal Layout — 适配嵌入小北 iframe
- * 
- * 导航方案：浮动胶囊 sticky 在内容区顶部
- * - 不是独立 header，是内容区的一部分
- * - sticky 吸顶，滚动时带 backdrop-blur
- * - 不占全宽，居中浮动，像内容内嵌的控件
- * 
- * 统一布局规范：
- * - 外层 h-screen + flex col，导航固定高度
- * - 内容区 flex-1 overflow-y-auto，每个 Tab 页自己滚动
- * - 所有页面共用同一套外壳，避免切换时跳动
- */
 'use client';
 
 import { usePathname, useRouter } from 'next/navigation';
@@ -43,32 +30,31 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
 
   return (
     <div className="h-screen flex flex-col bg-white">
-      {/* 浮动胶囊导航 — 固定高度，不参与滚动 */}
-      <div className="shrink-0 flex justify-center py-2 z-50 bg-white/85 backdrop-blur-lg">
-        <nav className="flex items-center gap-0.5 px-1.5 py-1 bg-white/85 backdrop-blur-lg border border-slate-200/60 rounded-full shadow-sm">
-          {TABS.map(tab => {
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => router.push(tab.href)}
-                className={cn(
-                  'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-150 cursor-pointer',
-                  isActive
-                    ? 'bg-[#3370FF] text-white shadow-sm'
-                    : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100/80'
-                )}
-              >
-                <tab.icon className={cn("h-3.5 w-3.5", isActive ? "text-white" : "text-slate-400")} />
-                <span>{tab.label}</span>
-              </button>
-            );
-          })}
-        </nav>
-      </div>
+      <nav className="shrink-0 z-50 flex items-center justify-center gap-1 px-4 h-11" style={{ background: 'rgba(51,112,255,0.04)' }}>
+        {TABS.map(tab => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => router.push(tab.href)}
+              className={cn(
+                'relative flex items-center gap-1.5 px-3 h-11 text-xs font-medium transition-colors duration-150 cursor-pointer',
+                isActive
+                  ? 'text-text-primary'
+                  : 'text-text-muted hover:text-text-primary'
+              )}
+            >
+              <tab.icon className={cn("h-3.5 w-3.5", isActive ? "text-brand" : "")} />
+              <span>{tab.label}</span>
+              {isActive && (
+                <span className="absolute bottom-0 left-3 right-3 h-[2px] bg-brand rounded-full" />
+              )}
+            </button>
+          );
+        })}
+      </nav>
 
-      {/* 内容区 — flex-1 占满剩余高度，自己滚动 */}
-      <main className="flex-1 overflow-y-auto overflow-x-hidden">
+      <main className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden portal-scroll">
         {children}
       </main>
     </div>

@@ -11,23 +11,53 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
-  Search, AlertCircle, FileText, CheckCircle2, Target, Clock,
+  AlertCircle, FileText, CheckCircle2, Target, Clock,
   ChevronRight, Building2, Calendar, User, Plus, MoreHorizontal,
   MapPin, Users, Phone, Sparkles, Bot, ArrowRight, Lightbulb
 } from 'lucide-react';
-import { getEnterprises, getVisitRecords, getDemands, getBackgroundReport } from '@/lib/mock-data';
+import { fetchVisitRecords, fetchDemands } from '@/services/visit';
+import { fetchEnterprises, fetchBackgroundReport } from '@/services/enterprise';
 import { generateReport } from '@/lib/host-api';
 import { cn } from '@/lib/utils';
-import { CardCompact, Tag } from '@/components/ui';
+import { CardCompact, Tag, Button, PageSkeleton, SearchBar } from '@/components/ui';
+import type { Enterprise, VisitRecord, VisitDemand, BackgroundReport } from '@/lib/schema';
 
 export default function VisitWorkbench() {
   const router = useRouter();
-  const enterprises = getEnterprises();
-  const records = getVisitRecords();
-  const demands = getDemands();
+  const [loading, setLoading] = useState(true);
+  const [enterprises, setEnterprises] = useState<Enterprise[]>([]);
+  const [records, setRecords] = useState<VisitRecord[]>([]);
+  const [demands, setDemands] = useState<VisitDemand[]>([]);
+  const [reportMap, setReportMap] = useState<Record<string, BackgroundReport | undefined>>({});
   const [search, setSearch] = useState('');
+
+  useEffect(() => {
+    async function load() {
+      const [e, r, d] = await Promise.all([
+        fetchEnterprises(),
+        fetchVisitRecords(),
+        fetchDemands(),
+      ]);
+      setEnterprises(e);
+      setRecords(r);
+      setDemands(d);
+
+      const visitedIds = new Set(r.map((x) => x.enterprise_id));
+      const prepareEnts = e.filter((x) => !visitedIds.has(x.id)).slice(0, 6);
+      const visitEnts = [e[0], e[1], e[2]].filter(Boolean);
+      const allEntIds = [...new Set([...prepareEnts.map((x) => x.id), ...visitEnts.map((x) => x.id)])];
+      const reportResults = await Promise.all(allEntIds.map((id) => fetchBackgroundReport(id)));
+      const map: Record<string, BackgroundReport | undefined> = {};
+      allEntIds.forEach((id, i) => {
+        map[id] = reportResults[i];
+      });
+      setReportMap(map);
+      setLoading(false);
+    }
+    load();
+  }, []);
 
   const prepareList = useMemo(() => {
     const visitedIds = new Set(records.map(r => r.enterprise_id));
@@ -59,45 +89,48 @@ export default function VisitWorkbench() {
 
   const total = prepareList.length + visitList.length + confirmList.length + followList.length;
 
+  if (loading) return <PageSkeleton />;
+
   return (
     <div className="min-h-full">
-      <div className="page-container space-y-4">
-
-        {/* ═══ 头部 — 与首页风格统一 ═══ */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-1">
-          <div>
-            <h1 className="text-lg font-bold text-text-primary">走访任务看板</h1>
-            <p className="text-xs text-text-muted mt-0.5">走访全流程：准备 → 走访 → 确认 → 跟进 · {total} 项任务</p>
-          </div>
-          <div className="flex items-center gap-2 w-full sm:w-auto">
-            <div className="relative flex-1 sm:w-56">
-              <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
-              <input type="text" placeholder="搜索..." value={search} onChange={e => setSearch(e.target.value)}
-                className="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg hover:border-slate-300 focus:border-[#3370FF] focus:outline-none focus:shadow-[0_0_0_3px_rgba(51,112,255,0.06)] transition-all" />
+      {/* ═══ 头部渐变区 ═══ */}
+      <div className="relative">
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(51,112,255,0.04) 0%, rgba(255,255,255,0) 100%)' }} />
+        <div className="relative page-container">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-5 pb-5">
+            <div>
+              <h1 className="text-lg font-semibold text-text-primary tracking-tight">走访任务看板</h1>
+              <p className="text-xs text-text-muted mt-1">走访全流程：准备 → 走访 → 确认 → 跟进 · {total} 项任务</p>
             </div>
-            <button className="btn btn-default btn-sm shrink-0" onClick={() => router.push('/visit/records')}>
-              <FileText className="h-3.5 w-3.5" /> 走访记录
-            </button>
-            <button className="btn btn-primary btn-sm shrink-0" onClick={() => router.push('/enterprises')}>
-              <Plus className="h-3.5 w-3.5" /> 新增走访
-            </button>
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <SearchBar placeholder="搜索..." value={search} onChange={setSearch} className="sm:w-56" />
+              <Button variant="default" size="sm" className="shrink-0" onClick={() => router.push('/visit/records')}>
+                <FileText className="h-3.5 w-3.5" /> 走访记录
+              </Button>
+              <Button variant="primary" size="sm" className="shrink-0" onClick={() => router.push('/enterprises')}>
+                <Plus className="h-3.5 w-3.5" /> 新增走访
+              </Button>
+            </div>
           </div>
         </div>
+      </div>
+
+      <div className="page-container space-y-6">
 
         {/* ═══ 看板 ═══ */}
         <div className="overflow-x-auto -mx-4 sm:-mx-6">
           <div className="flex gap-4 px-4 sm:px-6 pb-4" style={{ minWidth: '1100px' }}>
 
           {/* ─── 准备阶段 ─── */}
-          <Col title="准备阶段" count={prepareList.length} color="bg-blue-500">
+          <Col title="准备阶段" count={prepareList.length} color="bg-brand">
             {prepareList.map(ent => {
-              const hasReport = !!getBackgroundReport(ent.id);
+              const hasReport = !!reportMap[ent.id];
               return (
                 <CardCompact key={ent.id} onClick={() => router.push(`/visit/${ent.id}`)}>
                   <div className="flex items-start justify-between mb-2">
                     <div className="text-sm font-semibold text-text-primary leading-snug">{ent.short_name ?? ent.name}</div>
                     <div className={cn("w-8 h-8 rounded flex items-center justify-center text-xs font-bold shrink-0 ml-2",
-                      ent.is_incubated ? "bg-violet-50 text-violet-600" : "bg-blue-50 text-blue-600"
+                      ent.is_incubated ? "bg-[rgba(27,27,27,0.06)] text-brand" : "bg-[rgba(27,27,27,0.06)] text-brand"
                     )}>{(ent.short_name ?? ent.name).charAt(0)}</div>
                   </div>
                   <div className="flex flex-wrap gap-1 mb-2">
@@ -110,27 +143,30 @@ export default function VisitWorkbench() {
                   </div>
 
                   {/* AI 状态区域 */}
-                  <div className="mt-2.5 pt-2 border-t border-slate-100">
+                  <div className="mt-2.5 pt-2 border-t border-line-light">
                     {hasReport ? (
                       <div className="flex items-center justify-between">
-                        <span className="flex items-center gap-1 text-tag text-emerald-600">
+                        <span className="flex items-center gap-1 text-tag text-success">
                           <CheckCircle2 className="h-3 w-3" />
                           <Bot className="h-3 w-3" />
                           AI 已生成背调+清单
                         </span>
-                        <button
-                          className="btn-link"
+                        <Button
+                          variant="link"
+                          size="sm"
                           onClick={(e) => { e.stopPropagation(); router.push(`/visit/${ent.id}`); }}
-                        >查看准备 →</button>
+                        >查看准备 →</Button>
                       </div>
                     ) : (
-                      <button
-                        className="btn-ai w-full"
+                      <Button
+                        variant="ai"
+                        size="sm"
+                        className="w-full"
+                        icon={<Sparkles className="h-3 w-3" />}
                         onClick={(e) => { e.stopPropagation(); generateReport(ent.short_name ?? ent.name); }}
                       >
-                        <Sparkles className="h-3 w-3" />
                         一键 AI 生成走访准备
-                      </button>
+                      </Button>
                     )}
                   </div>
                 </CardCompact>
@@ -139,17 +175,17 @@ export default function VisitWorkbench() {
           </Col>
 
           {/* ─── 走访阶段 ─── */}
-          <Col title="走访阶段" count={visitList.length} color="bg-violet-500">
+          <Col title="走访阶段" count={visitList.length} color="bg-brand">
             {visitList.map((item, i) => {
-              const hasReport = !!getBackgroundReport(item.ent.id);
+              const hasReport = !!reportMap[item.ent.id];
               return (
                 <CardCompact key={i} onClick={() => router.push(`/visit/${item.ent.id}`)}>
                   <div className="text-sm font-semibold text-text-primary mb-2">{item.ent.short_name ?? item.ent.name}</div>
-                  <div className="flex items-center gap-2 mb-2 p-2 bg-violet-50 rounded border border-violet-100">
-                    <Calendar className="h-4 w-4 text-violet-500 shrink-0" />
+                  <div className="flex items-center gap-2 mb-2 p-2 bg-[rgba(27,27,27,0.06)] rounded border border-line-light">
+                    <Calendar className="h-4 w-4 text-brand shrink-0" />
                     <div>
-                      <div className="text-xs font-bold text-violet-700">{item.date} {item.time}</div>
-                      <div className="text-tag text-violet-500">{item.type}</div>
+                      <div className="text-xs font-bold text-text-secondary">{item.date} {item.time}</div>
+                      <div className="text-tag text-brand">{item.type}</div>
                     </div>
                   </div>
                   <div className="space-y-1 text-xs text-text-muted mb-2">
@@ -157,13 +193,13 @@ export default function VisitWorkbench() {
                     <div className="flex items-center gap-1"><User className="h-3 w-3" />负责人: {item.owner}</div>
                   </div>
                   {/* AI 就绪状态 */}
-                  <div className="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between text-tag">
+                  <div className="mt-2 pt-2 border-t border-line-light flex items-center justify-between text-tag">
                     {hasReport ? (
-                      <span className="flex items-center gap-1 text-emerald-600">
+                      <span className="flex items-center gap-1 text-success">
                         <Bot className="h-3 w-3" /><CheckCircle2 className="h-3 w-3" />背调+清单已就绪
                       </span>
                     ) : (
-                      <span className="flex items-center gap-1 text-amber-500">
+                      <span className="flex items-center gap-1 text-warning">
                         <Clock className="h-3 w-3" />背调待生成
                       </span>
                     )}
@@ -175,24 +211,24 @@ export default function VisitWorkbench() {
           </Col>
 
           {/* ─── 确认阶段 ─── */}
-          <Col title="确认阶段" count={confirmList.length} color="bg-amber-500">
+          <Col title="确认阶段" count={confirmList.length} color="bg-warning">
             {confirmList.map(item => (
               <CardCompact key={item.id} onClick={() => router.push(`/visit/confirm/${item.id}`)}>
                 <div className="text-sm font-semibold text-text-primary mb-2">{item.enterprise?.short_name ?? item.enterprise?.name}</div>
-                <div className="p-2 bg-amber-50 rounded border border-amber-100 mb-2">
-                  <div className="text-xs font-medium text-amber-700 mb-1">走访日期: {item.visit_date}</div>
+                <div className="p-2 bg-[rgba(27,27,27,0.06)] rounded border border-line-light mb-2">
+                  <div className="text-xs font-medium text-text-secondary mb-1">走访日期: {item.visit_date}</div>
                   {item.key_findings && item.key_findings.length > 0 && (
-                    <div className="text-xs text-amber-600 line-clamp-2">{item.key_findings[0]}</div>
+                    <div className="text-xs text-warning line-clamp-2">{item.key_findings[0]}</div>
                   )}
                 </div>
                 <div className="space-y-1 text-xs text-text-muted">
                   <div className="flex items-center gap-1"><User className="h-3 w-3" />访客: {item.visitor_name} · {item.visitor_department}</div>
                   {item.demands && item.demands.length > 0 && (
-                    <div className="flex items-center gap-1"><Target className="h-3 w-3 text-amber-500" />{item.demands.length} 条诉求待确认</div>
+                    <div className="flex items-center gap-1"><Target className="h-3 w-3 text-warning" />{item.demands.length} 条诉求待确认</div>
                   )}
                 </div>
                 {/* AI 提取标识 */}
-                <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between text-tag">
+                <div className="mt-2.5 pt-2 border-t border-line-light flex items-center justify-between text-tag">
                   <span className="flex items-center gap-1 text-brand">
                     <Bot className="h-3 w-3" />AI 已提取，待您确认
                   </span>
@@ -203,12 +239,12 @@ export default function VisitWorkbench() {
           </Col>
 
           {/* ─── 跟进阶段 ─── */}
-          <Col title="跟进阶段" count={followList.length} color="bg-emerald-500">
+          <Col title="跟进阶段" count={followList.length} color="bg-success">
             {followList.map((item, i) => (
               <CardCompact key={i} onClick={() => router.push(`/visit/${item.enterprise.id}/follow?demand=${item.demand.id}`)}>
                 <div className="text-sm font-semibold text-text-primary mb-2">{item.enterprise.short_name ?? item.enterprise.name}</div>
-                <div className="p-2 bg-slate-50 rounded border border-slate-100 mb-2">
-                  <div className="text-xs text-slate-700 leading-relaxed line-clamp-2">{item.demand.demand_content}</div>
+                <div className="p-2 bg-[rgba(27,27,27,0.06)] rounded border border-line-light mb-2">
+                  <div className="text-xs text-text-secondary leading-relaxed line-clamp-2">{item.demand.demand_content}</div>
                 </div>
                 <div className="flex flex-wrap gap-1 mb-2">
                   {item.demand.demand_type && <Tag variant="emerald" withBorder>{item.demand.demand_type}</Tag>}
@@ -218,15 +254,16 @@ export default function VisitWorkbench() {
                   <Building2 className="h-3 w-3" />分配: {item.demand.assigned_department || '待分配'}
                 </div>
                 {/* AI 跟进建议入口 */}
-                <div className="mt-2 pt-2 border-t border-slate-100">
-                  <button
-                    className="btn-ai w-full"
-                    style={{ color: '#059669', background: 'rgba(5, 150, 105, 0.06)', borderColor: 'rgba(5, 150, 105, 0.12)' }}
+                <div className="mt-2 pt-2 border-t border-line-light">
+                  <Button
+                    variant="ai"
+                    size="sm"
+                    className="w-full text-success bg-[rgba(27,27,27,0.06)] border-line-light hover:bg-surface-hover-row hover:border-line"
+                    icon={<Sparkles className="h-3 w-3" />}
                     onClick={(e) => { e.stopPropagation(); router.push(`/visit/${item.enterprise.id}/follow?demand=${item.demand.id}`); }}
                   >
-                    <Sparkles className="h-3 w-3" />
                     查看 AI 跟进建议
-                  </button>
+                  </Button>
                 </div>
               </CardCompact>
             ))}
@@ -246,8 +283,8 @@ function Col({ title, count, color, children }: { title: string; count: number; 
     <div className="flex-1 min-w-[260px] max-w-[320px] flex flex-col h-full">
       <div className="flex items-center gap-2 mb-3 px-1">
         <div className={cn("w-2 h-2 rounded-full", color)} />
-        <span className="text-sm font-semibold text-slate-700">{title}</span>
-        <span className="text-xs text-text-muted bg-slate-100 px-1.5 py-0.5 rounded">{count}</span>
+        <span className="text-sm font-semibold text-text-secondary">{title}</span>
+        <span className="text-xs text-text-muted bg-[rgba(27,27,27,0.06)] px-1.5 py-0.5 rounded">{count}</span>
       </div>
       <div className="flex-1 overflow-y-auto space-y-2 pr-1 pb-4">{children}</div>
     </div>

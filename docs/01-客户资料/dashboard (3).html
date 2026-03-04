@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>产业发展促进中心 · 部门工作大屏</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+:root{
+  --brand:#1A56A0;--accent:#0EA5E9;--gold:#F59E0B;--green:#10B981;
+  --purple:#8B5CF6;--red:#EF4444;--orange:#F97316;
+  --dark:#0F172A;--card:#1E293B;--border:#334155;
+  --text:#E2E8F0;--muted:#94A3B8;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--dark);color:var(--text);font-family:'Inter','PingFang SC','Microsoft YaHei',sans-serif;min-height:100vh;overflow-x:hidden;}
+
+/* ── Header ── */
+.header{display:flex;align-items:center;justify-content:space-between;padding:13px 28px;
+  background:linear-gradient(90deg,#0F172A 0%,#1a2744 50%,#0F172A 100%);
+  border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.header-left{display:flex;align-items:center;gap:14px;}
+.logo-badge{background:var(--brand);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:4px;letter-spacing:1px;}
+.header-title{font-size:16px;font-weight:600;color:#fff;}
+.header-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.live-badge{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--green);}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(1.3);}}
+
+/* ── Nav ── */
+.nav-tabs{display:flex;gap:4px;padding:9px 28px;background:var(--dark);border-bottom:1px solid var(--border);overflow-x:auto;}
+.nav-tab{padding:6px 15px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid transparent;transition:all .2s;white-space:nowrap;color:var(--muted);}
+.nav-tab:hover{color:var(--text);border-color:var(--border);}
+.nav-tab.active{background:var(--brand);color:#fff;border-color:var(--brand);}
+
+/* ── Layout ── */
+.main{padding:18px 28px;}
+.panel{display:none;}.panel.active{display:block;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px;}
+.grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-bottom:14px;}
+.grid-3-1{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px;}
+.grid-2-1{display:grid;grid-template-columns:3fr 2fr;gap:14px;margin-bottom:14px;}
+
+/* ── Card ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;}
+.card-title{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px;display:flex;align-items:center;gap:7px;}
+.card-title-dot{width:5px;height:5px;border-radius:50%;background:var(--accent);flex-shrink:0;}
+
+/* ── KPI cards ── */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
+.kpi-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;cursor:default;}
+.kpi-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.4);}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.kpi-card.blue::before{background:var(--brand);}
+.kpi-card.sky::before{background:var(--accent);}
+.kpi-card.gold::before{background:var(--gold);}
+.kpi-card.green::before{background:var(--green);}
+.kpi-card.purple::before{background:var(--purple);}
+.kpi-card.red::before{background:var(--red);}
+.kpi-label{font-size:10px;color:var(--muted);margin-bottom:5px;}
+.kpi-value{font-size:28px;font-weight:700;line-height:1;}
+.kpi-card.blue .kpi-value{color:var(--accent);}
+.kpi-card.sky .kpi-value{color:#7DD3FC;}
+.kpi-card.gold .kpi-value{color:var(--gold);}
+.kpi-card.green .kpi-value{color:var(--green);}
+.kpi-card.purple .kpi-value{color:var(--purple);}
+.kpi-card.red .kpi-value{color:var(--red);}
+.kpi-unit{font-size:12px;font-weight:400;color:var(--muted);margin-left:2px;}
+.kpi-trend{font-size:10px;margin-top:5px;color:var(--muted);}
+
+/* ── Bars ── */
+.bar-chart{display:flex;flex-direction:column;gap:9px;}
+.bar-info{display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px;}
+.bar-label{color:var(--text);}
+.bar-pct{color:var(--muted);}
+.bar-track{height:6px;background:#1e3248;border-radius:3px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:3px;transition:width 1.4s cubic-bezier(.4,0,.2,1);width:0;}
+
+/* ── KPI Metric rows (指标条) ── */
+.kpi-metric{background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;padding:11px 14px;margin-bottom:8px;transition:border-color .2s;}
+.kpi-metric:hover{border-color:rgba(14,165,233,.4);}
+.kpi-metric-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;}
+.kpi-metric-left{display:flex;align-items:center;gap:8px;}
+.kpi-num{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;}
+.kpi-metric-name{font-size:12px;font-weight:600;color:var(--text);}
+.kpi-metric-right{display:flex;align-items:center;gap:8px;}
+.weight-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;}
+.kpi-target{font-size:11px;color:var(--muted);}
+.kpi-metric-bar-track{height:5px;background:#1e3248;border-radius:3px;overflow:hidden;margin-bottom:5px;}
+.kpi-metric-bar-fill{height:100%;border-radius:3px;transition:width 1.4s cubic-bezier(.4,0,.2,1);width:0;}
+.kpi-metric-bottom{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);}
+.kpi-section-header{display:flex;align-items:center;gap:8px;padding:8px 0 10px;border-bottom:1px solid var(--border);margin-bottom:12px;}
+.kpi-section-title{font-size:12px;font-weight:700;}
+.kpi-section-weight{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600;}
+
+/* ── Timeline ── */
+.timeline{position:relative;padding-left:20px;}
+.timeline::before{content:'';position:absolute;left:5px;top:8px;bottom:8px;width:2px;background:linear-gradient(180deg,var(--accent),var(--purple));border-radius:2px;}
+.tl-item{position:relative;margin-bottom:15px;}
+.tl-dot{position:absolute;left:-16px;top:4px;width:9px;height:9px;border-radius:50%;border:2px solid var(--accent);background:var(--dark);}
+.tl-dot.done{background:var(--green);border-color:var(--green);}
+.tl-dot.active{background:var(--accent);border-color:var(--accent);animation:pulse 1.5s infinite;}
+.tl-quarter{font-size:10px;color:var(--accent);font-weight:600;margin-bottom:2px;}
+.tl-title{font-size:12px;font-weight:600;margin-bottom:2px;}
+.tl-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;}
+.tl-tag{font-size:9px;padding:2px 7px;border-radius:8px;background:rgba(14,165,233,.15);color:var(--accent);border:1px solid rgba(14,165,233,.3);}
+
+/* ── Table ── */
+.data-table{width:100%;border-collapse:collapse;font-size:11px;}
+.data-table th{background:rgba(26,86,160,.3);color:var(--accent);padding:8px 10px;text-align:left;font-weight:600;border-bottom:1px solid var(--border);}
+.data-table td{padding:8px 10px;border-bottom:1px solid rgba(51,65,85,.4);color:var(--text);line-height:1.5;}
+.data-table tr:hover td{background:rgba(255,255,255,.02);}
+.badge{display:inline-block;padding:2px 7px;border-radius:8px;font-size:10px;font-weight:600;}
+.badge-blue{background:rgba(14,165,233,.2);color:var(--accent);}
+.badge-gold{background:rgba(245,158,11,.2);color:var(--gold);}
+.badge-green{background:rgba(16,185,129,.2);color:var(--green);}
+.badge-purple{background:rgba(139,92,246,.2);color:var(--purple);}
+.badge-red{background:rgba(239,68,68,.2);color:var(--red);}
+.badge-orange{background:rgba(249,115,22,.2);color:var(--orange);}
+
+/* ── 总览 KPI 雷达 ── */
+.overview-kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;}
+.task-card{border-radius:10px;padding:14px;cursor:pointer;transition:all .2s;border:1px solid;}
+.task-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.4);}
+
+/* ── AI Chat ── */
+.ai-chat{display:flex;flex-direction:column;gap:9px;max-height:300px;overflow-y:auto;padding-right:4px;}
+.ai-msg{display:flex;gap:8px;align-items:flex-start;}
+.ai-msg.user{flex-direction:row-reverse;}
+.ai-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;background:var(--brand);}
+.ai-msg.user .ai-avatar{background:var(--accent);}
+.ai-bubble{background:rgba(30,41,59,.8);border:1px solid var(--border);border-radius:9px;padding:8px 11px;font-size:11px;line-height:1.6;max-width:82%;color:var(--text);}
+.ai-msg.user .ai-bubble{background:rgba(26,86,160,.3);border-color:rgba(26,86,160,.5);}
+.ai-input-row{display:flex;gap:7px;margin-top:9px;}
+.ai-input{flex:1;background:var(--dark);border:1px solid var(--border);border-radius:7px;padding:8px 11px;color:var(--text);font-size:11px;outline:none;font-family:inherit;}
+.ai-input:focus{border-color:var(--accent);}
+.ai-send{background:var(--brand);color:#fff;border:none;border-radius:7px;padding:8px 13px;cursor:pointer;font-size:11px;font-weight:600;transition:background .2s;}
+.ai-send:hover{background:var(--accent);}
+.ai-typing{display:flex;gap:4px;padding:7px 11px;}
+.ai-typing span{width:5px;height:5px;border-radius:50%;background:var(--muted);animation:bounce 1s infinite;}
+.ai-typing span:nth-child(2){animation-delay:.2s;}
+.ai-typing span:nth-child(3){animation-delay:.4s;}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
+.quick-btns{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px;}
+.quick-btn{background:rgba(14,165,233,.1);border:1px solid rgba(14,165,233,.3);color:var(--accent);border-radius:12px;padding:3px 9px;font-size:10px;cursor:pointer;transition:all .2s;font-family:inherit;}
+.quick-btn:hover{background:rgba(14,165,233,.2);}
+
+/* ── collab ── */
+.collab-card{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:10px;padding:13px;transition:all .2s;}
+.collab-card:hover{border-color:var(--accent);background:rgba(14,165,233,.04);}
+.collab-item{font-size:10px;color:var(--muted);line-height:1.75;display:flex;align-items:flex-start;gap:5px;margin-bottom:2px;}
+.collab-item::before{content:'✦';color:var(--gold);font-size:8px;flex-shrink:0;margin-top:3px;}
+
+@keyframes ring-pulse{0%{opacity:.8;}100%{opacity:0;transform:scale(2.5);}}
+.pulse-dot{animation:ring-pulse 2s ease-out infinite;}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--dark);}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="logo-badge">漕河泾</div>
+    <div>
+      <div class="header-title">产业发展促进中心 · 部门工作调研大屏</div>
+      <div class="header-sub">超级创业者社区 · 场景出海服务 · AI运营能力 · 重大产业招商 · 2025年度考核体系</div>
+    </div>
+  </div>
+  <div class="live-badge">
+    <div class="live-dot"></div>
+    <span id="clock"></span>
+  </div>
+</div>
+
+<div class="nav-tabs">
+  <div class="nav-tab active" onclick="switchPanel('overview',this)">📊 全局总览</div>
+  <div class="nav-tab" onclick="switchPanel('kpi_all',this)">🎯 年度考核指标</div>
+  <div class="nav-tab" onclick="switchPanel('recruit',this)">🏭 重大产业招商</div>
+  <div class="nav-tab" onclick="switchPanel('haichuan',this)">🌍 场景出海服务</div>
+  <div class="nav-tab" onclick="switchPanel('opc',this)">🏢 超级创业者社区</div>
+  <div class="nav-tab" onclick="switchPanel('ai',this)">🤖 AI运营能力</div>
+  <div class="nav-tab" onclick="switchPanel('collab',this)">🤝 部门协作价值</div>
+  <div class="nav-tab" onclick="switchPanel('demo',this)">✨ AI现场演示</div>
+</div>
+
+<div class="main">
+
+<!-- ════════════════════════════════════════
+     全局总览
+════════════════════════════════════════ -->
+<div class="panel active" id="panel-overview">
+
+  <!-- 四大战略任务入口 -->
+  <div class="overview-kpi-grid">
+    <div class="task-card" style="background:rgba(26,86,160,.15);border-color:rgba(26,86,160,.4);" onclick="switchPanelById('recruit')">
+      <div style="font-size:22px;margin-bottom:6px;">🏭</div>
+      <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:4px;">重大产业招商</div>
+      <div style="font-size:10px;color:var(--muted);line-height:1.7;">赛道图谱驱动 · 脱离中介模式<br>四大赛道 · 25%权重</div>
+      <div style="margin-top:8px;"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:3px;"><span>考核指标 4项</span><span>25%</span></div><div class="bar-track"><div class="bar-fill" data-width="25" style="background:var(--accent)"></div></div></div>
+      <div style="margin-top:6px;font-size:9px;color:rgba(14,165,233,.6);">点击查看详情 →</div>
+    </div>
+    <div class="task-card" style="background:rgba(14,165,233,.1);border-color:rgba(14,165,233,.35);" onclick="switchPanelById('haichuan')">
+      <div style="font-size:22px;margin-bottom:6px;">🌍</div>
+      <div style="font-size:13px;font-weight:700;color:#7DD3FC;margin-bottom:4px;">场景出海服务</div>
+      <div style="font-size:10px;color:var(--muted);line-height:1.7;">订单撮合 · 算力数据<br>四大洲网络 · 25%权重</div>
+      <div style="margin-top:8px;"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:3px;"><span>考核指标 3项</span><span>25%</span></div><div class="bar-track"><div class="bar-fill" data-width="25" style="background:#7DD3FC"></div></div></div>
+      <div style="margin-top:6px;font-size:9px;color:rgba(125,211,252,.6);">点击查看详情 →</div>
+    </div>
+    <div class="task-card" style="background:rgba(16,185,129,.1);border-color:rgba(16,185,129,.35);" onclick="switchPanelById('opc')">
+      <div style="font-size:22px;margin-bottom:6px;">🏢</div>
+      <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:4px;">超级创业者社区</div>
+      <div style="font-size:10px;color:var(--muted);line-height:1.7;">OPC · 50家AI原生企业<br>生态自生长 · 30%权重</div>
+      <div style="margin-top:8px;"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:3px;"><span>考核指标 3项</span><span>30%</span></div><div class="bar-track"><div class="bar-fill" data-width="30" style="background:var(--green)"></div></div></div>
+      <div style="margin-top:6px;font-size:9px;color:rgba(16,185,129,.6);">点击查看详情 →</div>
+    </div>
+    <div class="task-card" style="background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.35);" onclick="switchPanelById('ai')">
+      <div style="font-size:22px;margin-bottom:6px;">🤖</div>
+      <div style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:4px;">AI运营能力</div>
+      <div style="font-size:10px;color:var(--muted);line-height:1.7;">全司AI领头羊 · 工具链<br>知识沉淀 · 20%权重</div>
+      <div style="margin-top:8px;"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:3px;"><span>考核指标 3项</span><span>20%</span></div><div class="bar-track"><div class="bar-fill" data-width="20" style="background:var(--gold)"></div></div></div>
+      <div style="margin-top:6px;font-size:9px;color:rgba(245,158,11,.6);">点击查看详情 →</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <!-- 部门定位图 -->
+    <div class="card">
+      <div class="card-title"><div class="card-title-dot"></div>产业促进中心在公司架构中的定位</div>
+      <svg width="100%" height="210" viewBox="0 0 500 210">
+        <defs>
+          <linearGradient id="midGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#1A56A0;stop-opacity:.9"/>
+            <stop offset="100%" style="stop-color:#0EA5E9;stop-opacity:.9"/>
+          </linearGradient>
+        </defs>
+        <rect x="8" y="16" width="128" height="72" rx="8" fill="rgba(16,185,129,.1)" stroke="rgba(16,185,129,.4)" stroke-width="1.5"/>
+        <text x="72" y="40" text-anchor="middle" fill="#10B981" font-size="12" font-weight="700">前台事业部</text>
+        <text x="72" y="58" text-anchor="middle" fill="#94A3B8" font-size="10">属地招商·租赁</text>
+        <text x="72" y="74" text-anchor="middle" fill="#94A3B8" font-size="10">存量客户资源</text>
+        <rect x="8" y="108" width="128" height="72" rx="8" fill="rgba(139,92,246,.1)" stroke="rgba(139,92,246,.4)" stroke-width="1.5"/>
+        <text x="72" y="132" text-anchor="middle" fill="#8B5CF6" font-size="12" font-weight="700">后台职能部门</text>
+        <text x="72" y="150" text-anchor="middle" fill="#94A3B8" font-size="10">行政·人事·审计</text>
+        <text x="72" y="166" text-anchor="middle" fill="#94A3B8" font-size="10">传统国企管理</text>
+        <rect x="178" y="44" width="155" height="116" rx="12" fill="url(#midGrad)"/>
+        <text x="255" y="82" text-anchor="middle" fill="#fff" font-size="15" font-weight="700">产业发展</text>
+        <text x="255" y="102" text-anchor="middle" fill="#fff" font-size="15" font-weight="700">促进中心</text>
+        <text x="255" y="122" text-anchor="middle" fill="rgba(255,255,255,.85)" font-size="10">AI 大中台 · 横向赋能</text>
+        <text x="255" y="140" text-anchor="middle" fill="rgba(255,255,255,.65)" font-size="9">13项量化考核 · 全年可追踪</text>
+        <rect x="372" y="10" width="122" height="44" rx="7" fill="rgba(245,158,11,.12)" stroke="rgba(245,158,11,.4)" stroke-width="1.5"/>
+        <text x="433" y="30" text-anchor="middle" fill="#F59E0B" font-size="11" font-weight="600">OPC+出海生态</text>
+        <text x="433" y="46" text-anchor="middle" fill="#94A3B8" font-size="9">全球资源网络</text>
+        <rect x="372" y="68" width="122" height="44" rx="7" fill="rgba(239,68,68,.12)" stroke="rgba(239,68,68,.4)" stroke-width="1.5"/>
+        <text x="433" y="88" text-anchor="middle" fill="#EF4444" font-size="11" font-weight="600">重大产业招商</text>
+        <text x="433" y="104" text-anchor="middle" fill="#94A3B8" font-size="9">四大赛道图谱</text>
+        <rect x="372" y="126" width="122" height="44" rx="7" fill="rgba(16,185,129,.12)" stroke="rgba(16,185,129,.4)" stroke-width="1.5"/>
+        <text x="433" y="146" text-anchor="middle" fill="#10B981" font-size="11" font-weight="600">AI运营赋能</text>
+        <text x="433" y="162" text-anchor="middle" fill="#94A3B8" font-size="9">全司数字化转型</text>
+        <line x1="136" y1="54" x2="178" y2="78" stroke="rgba(16,185,129,.4)" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <line x1="136" y1="148" x2="178" y2="128" stroke="rgba(139,92,246,.4)" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <line x1="333" y1="82" x2="372" y2="32" stroke="rgba(245,158,11,.4)" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <line x1="333" y1="102" x2="372" y2="90" stroke="rgba(239,68,68,.4)" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <line x1="333" y1="124" x2="372" y2="148" stroke="rgba(16,185,129,.4)" stroke-width="1.5" stroke-dasharray="4,3"/>
+      </svg>
+    </div>
+
+    <!-- 13项指标全景快览 -->
+    <div class="card">
+      <div class="card-title"><div class="card-title-dot" style="background:var(--gold)"></div>13项年度考核指标全景 · <span style="color:var(--accent);cursor:pointer;text-transform:none;font-size:10px;" onclick="switchPanelById('kpi_all')">查看完整版 →</span></div>
+      <div style="display:flex;flex-direction:column;gap:5px;">
+        <!-- 招商4项 -->
+        <div style="font-size:10px;color:var(--accent);font-weight:700;margin:2px 0 4px;padding-left:2px;">🏭 重大产业招商（25%）</div>
+        <div class="bar-item" style="margin-bottom:2px;"><div class="bar-info" style="font-size:10px;"><span style="color:var(--text);">① 重大项目签约落地</span><span style="color:var(--accent);">10%</span></div><div class="bar-track"><div class="bar-fill" data-width="10" style="background:var(--accent);opacity:.8"></div></div></div>
+        <div class="bar-item" style="margin-bottom:2px;"><div class="bar-info" style="font-size:10px;"><span style="color:var(--text);">② 产业图谱建设</span><span style="color:var(--accent);">5%</span></div><div class="bar-track"><div class="bar-fill" data-width="5" style="background:var(--accent);opacity:.8"></div></div></div>
+        <div class="bar-item" style="margin-bottom:2px;"><div class="bar-info" style="font-size:10px;"><span style="color:var(--text);">③ 主动接触企业数</span><span style="color:var(--accent);">5%</span></div><div class="bar-track"><div class="bar-fill" data-width="5" style="background:var(--accent);opacity:.8"></div></div></div>
+        <div class="bar-item" style="margin-bottom:6px;"><div class="bar-info" style="font-size:10px;"><span style="color:var(--text);">④ 赛道研究报告</span><span style="color:var(--accent);">5%</span></div><div class="bar-track"><div class="bar-fill" data-width="5" style="background:var(--accent);opacity:.8"></div></div></div>
+        <!-- 出海3项 -->
+        <div style="font-size:10px;color:#7DD3FC;font-weight:700;margin:2px 0 4px;padding-left:2px;">🌍 场景出海服务（25%）</div>
+        <div class="bar-item" style="margin-bottom:2px;"><div class="bar-info" style="font-size:10px;"><span style="color:var(--text);">⑤ 场景订单撮合金额</span><span style="color:#7DD3FC;">10%</span></div><div class="bar-track"><div class="bar-fill" data-width="10" style="background:#7DD3FC;opacity:.8"></div></div></div>
+        <div class="bar-item" style="margin-bottom:2px;"><div class="bar-info" style="font-size:10px;"><span style="color:var(--text);">⑥ 出海服务企业覆盖</span><span style="color:#7DD3FC;">8%</span></div><div class="bar-track"><div class="bar-fill" data-width="8" style="background:#7DD3FC;opacity:.8"></div></div></div>
+        <div class="bar-item" style="margin-bottom:6px;"><div class="bar-info" style="font-size:10px;"><span style="color:var(--text);">⑦ 资源网络节点建设</span><span style="color:#7DD3FC;">7%</span></div><div class="bar-track"><div class="bar-fill" data-width="7" style="background:#7DD3FC;opacity:.8"></div></div></div>
+        <!-- OPC3项 -->
+        <div style="font-size:10px;color:var(--green);font-weight:700;margin:2px 0 4px;padding-left:2px;">🏢 超级创业者社区（30%）</div>
+        <div class="bar-item" style="margin-bottom:2px;"><div class="bar-info" style="font-size:10px;"><span style="color:var(--text);">⑧ OPC企业入驻数量质量</span><span style="color:var(--green);">12%</span></div><div class="bar-track"><div class="bar-fill" data-width="12" style="background:var(--green);opacity:.8"></div></div></div>
+        <div class="bar-item" style="margin-bottom:2px;"><div class="bar-info" style="font-size:10px;"><span style="color:var(--text);">⑨ 生态活动运营</span><span style="color:var(--green);">8%</span></div><div class="bar-track"><div class="bar-fill" data-width="8" style="background:var(--green);opacity:.8"></div></div></div>
+        <div class="bar-item" style="margin-bottom:6px;"><div class="bar-info" style="font-size:10px;"><span style="color:var(--text);">⑩ 企业间生态联动订单</span><span style="color:var(--green);">10%</span></div><div class="bar-track"><div class="bar-fill" data-width="10" style="background:var(--green);opacity:.8"></div></div></div>
+        <!-- AI3项 -->
+        <div style="font-size:10px;color:var(--gold);font-weight:700;margin:2px 0 4px;padding-left:2px;">🤖 AI运营能力（20%）</div>
+        <div class="bar-item" style="margin-bottom:2px;"><div class="bar-info" style="font-size:10px;"><span style="color:var(--text);">⑪ 全司AI工具覆盖率</span><span style="color:var(--gold);">8%</span></div><div class="bar-track"><div class="bar-fill" data-width="8" style="background:var(--gold);opacity:.8"></div></div></div>
+        <div class="bar-item" style="margin-bottom:2px;"><div class="bar-info" style="font-size:10px;"><span style="color:var(--text);">⑫ AI效率提升与知识沉淀</span><span style="color:var(--gold);">7%</span></div><div class="bar-track"><div class="bar-fill" data-width="7" style="background:var(--gold);opacity:.8"></div></div></div>
+        <div class="bar-item"><div class="bar-info" style="font-size:10px;"><span style="color:var(--text);">⑬ AI标杆示范影响力</span><span style="color:var(--gold);">5%</span></div><div class="bar-track"><div class="bar-fill" data-width="5" style="background:var(--gold);opacity:.8"></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 各部门协作亮点 -->
+  <div class="card">
+    <div class="card-title"><div class="card-title-dot" style="background:var(--green)"></div>我们能为各兄弟部门提供什么价值 · <span style="color:var(--accent);cursor:pointer;font-size:10px;text-transform:none;" onclick="switchPanelById('collab')">查看完整协作图谱 →</span></div>
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;">
+      <div style="text-align:center;padding:10px 6px;background:rgba(16,185,129,.07);border-radius:8px;border:1px solid rgba(16,185,129,.2);">
+        <div style="font-size:16px;margin-bottom:4px;">🏗️</div><div style="font-size:11px;font-weight:700;color:var(--green);">属地事业部</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:3px;line-height:1.6;">升级客户结构<br>OPC推荐通道</div>
+      </div>
+      <div style="text-align:center;padding:10px 6px;background:rgba(139,92,246,.07);border-radius:8px;border:1px solid rgba(139,92,246,.2);">
+        <div style="font-size:16px;margin-bottom:4px;">⚙️</div><div style="font-size:11px;font-weight:700;color:var(--purple);">行政/人事</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:3px;line-height:1.6;">AI降本增效<br>重复工作自动化</div>
+      </div>
+      <div style="text-align:center;padding:10px 6px;background:rgba(245,158,11,.07);border-radius:8px;border:1px solid rgba(245,158,11,.2);">
+        <div style="font-size:16px;margin-bottom:4px;">🔍</div><div style="font-size:11px;font-weight:700;color:var(--gold);">审计/法务</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:3px;line-height:1.6;">出海合规支持<br>政策解读赋能</div>
+      </div>
+      <div style="text-align:center;padding:10px 6px;background:rgba(14,165,233,.07);border-radius:8px;border:1px solid rgba(14,165,233,.2);">
+        <div style="font-size:16px;margin-bottom:4px;">🎯</div><div style="font-size:11px;font-weight:700;color:var(--accent);">招商部门</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:3px;line-height:1.6;">图谱共享<br>高质量线索</div>
+      </div>
+      <div style="text-align:center;padding:10px 6px;background:rgba(239,68,68,.07);border-radius:8px;border:1px solid rgba(239,68,68,.2);">
+        <div style="font-size:16px;margin-bottom:4px;">💰</div><div style="font-size:11px;font-weight:700;color:var(--red);">财务/资产</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:3px;line-height:1.6;">新收入来源<br>新KPI体系</div>
+      </div>
+      <div style="text-align:center;padding:10px 6px;background:rgba(249,115,22,.07);border-radius:8px;border:1px solid rgba(249,115,22,.2);">
+        <div style="font-size:16px;margin-bottom:4px;">📣</div><div style="font-size:11px;font-weight:700;color:var(--orange);">公关/品牌</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:3px;line-height:1.6;">成功案例内容<br>AI宣传工具</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     年度考核指标完整版
+════════════════════════════════════════ -->
+<div class="panel" id="panel-kpi_all">
+
+  <!-- 权重总览环形 + 说明 -->
+  <div class="grid-2" style="margin-bottom:14px;">
+    <div class="card">
+      <div class="card-title"><div class="card-title-dot"></div>2025年度考核权重分布</div>
+      <div style="display:flex;align-items:center;gap:24px;">
+        <svg width="160" height="160" viewBox="0 0 160 160" style="flex-shrink:0;">
+          <!-- OPC 30% -->
+          <circle cx="80" cy="80" r="62" fill="none" stroke="#10B981" stroke-width="20"
+            stroke-dasharray="116.6 272.3" stroke-dashoffset="0" stroke-linecap="butt"/>
+          <!-- 招商 25% -->
+          <circle cx="80" cy="80" r="62" fill="none" stroke="#0EA5E9" stroke-width="20"
+            stroke-dasharray="97.2 272.3" stroke-dashoffset="-116.6" stroke-linecap="butt"/>
+          <!-- 出海 25% -->
+          <circle cx="80" cy="80" r="62" fill="none" stroke="#7DD3FC" stroke-width="20"
+            stroke-dasharray="97.2 272.3" stroke-dashoffset="-213.8" stroke-linecap="butt"/>
+          <!-- AI 20% -->
+          <circle cx="80" cy="80" r="62" fill="none" stroke="#F59E0B" stroke-width="20"
+            stroke-dasharray="77.7 272.3" stroke-dashoffset="-311" stroke-linecap="butt"/>
+          <circle cx="80" cy="80" r="52" fill="var(--card)"/>
+          <text x="80" y="76" text-anchor="middle" fill="var(--text)" font-size="18" font-weight="700">13项</text>
+          <text x="80" y="92" text-anchor="middle" fill="var(--muted)" font-size="10">考核指标</text>
+        </svg>
+        <div style="flex:1;display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:12px;height:12px;border-radius:2px;background:var(--green);flex-shrink:0;"></div>
+            <div style="flex:1;font-size:12px;color:var(--text);">超级创业者社区</div>
+            <div style="font-size:13px;font-weight:700;color:var(--green);">30%</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:12px;height:12px;border-radius:2px;background:var(--accent);flex-shrink:0;"></div>
+            <div style="flex:1;font-size:12px;color:var(--text);">重大产业招商</div>
+            <div style="font-size:13px;font-weight:700;color:var(--accent);">25%</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:12px;height:12px;border-radius:2px;background:#7DD3FC;flex-shrink:0;"></div>
+            <div style="flex:1;font-size:12px;color:var(--text);">场景出海服务</div>
+            <div style="font-size:13px;font-weight:700;color:#7DD3FC;">25%</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:12px;height:12px;border-radius:2px;background:var(--gold);flex-shrink:0;"></div>
+            <div style="flex:1;font-size:12px;color:var(--text);">AI运营能力</div>
+            <div style="font-size:13px;font-weight:700;color:var(--gold);">20%</div>
+          </div>
+          <div style="margin-top:4px;padding:10px;background:rgba(26,86,160,.12);border-radius:8px;font-size:11px;color:var(--muted);line-height:1.7;">
+            💡 OPC权重最高（30%）体现公司对社区建设的战略优先级；招商与出海并重（各25%）体现双引擎驱动；AI运营（20%）体现方法论输出能力。
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="card-title-dot" style="background:var(--gold)"></div>指标设计三大原则</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="background:rgba(14,165,233,.08);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:11px 13px;">
+          <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:4px;">① 可量化 · 有硬数据支撑</div>
+          <div style="font-size:11px;color:var(--muted);line-height:1.7;">每项指标均有明确数字目标，以合同金额、飞书后台数据、签到人次等第三方可核查数据为准，杜绝主观评定。</div>
+        </div>
+        <div style="background:rgba(16,185,129,.08);border-left:3px solid var(--green);border-radius:0 8px 8px 0;padding:11px 13px;">
+          <div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:4px;">② 有挑战 · 非随手可得</div>
+          <div style="font-size:11px;color:var(--muted);line-height:1.7;">指标设计充分体现产业促进中心工作的复杂度——500万撮合金额、50家OPC入驻、80%企业AI原生性等，均需要持续6-12个月的系统性工作才能达成。</div>
+        </div>
+        <div style="background:rgba(245,158,11,.08);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:11px 13px;">
+          <div style="font-size:12px;font-weight:700;color:var(--gold);margin-bottom:4px;">③ 过程+结果 · 双重考核</div>
+          <div style="font-size:11px;color:var(--muted);line-height:1.7;">每项任务均设置过程指标（如接触80家企业）和结果指标（如签约3家），漏斗型管理确保执行有抓手、结果有保障。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 13项指标详细展开 -->
+  <!-- 重大招商 -->
+  <div class="card" style="margin-bottom:14px;">
+    <div class="kpi-section-header">
+      <div style="width:28px;height:28px;background:rgba(14,165,233,.2);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;">🏭</div>
+      <div class="kpi-section-title" style="color:var(--accent);">重大产业招商</div>
+      <div class="kpi-section-weight" style="background:rgba(14,165,233,.15);color:var(--accent);">权重 25%</div>
+      <div style="flex:1;"></div>
+      <div style="font-size:11px;color:var(--muted);">4项指标 · 四大赛道：未来产业 / 智能终端 / 汽车 / 宠物</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div class="kpi-metric">
+        <div class="kpi-metric-top">
+          <div class="kpi-metric-left">
+            <div class="kpi-num" style="background:rgba(14,165,233,.2);color:var(--accent);">1</div>
+            <div class="kpi-metric-name">重大产业项目签约落地数量</div>
+          </div>
+          <div class="kpi-metric-right">
+            <div class="weight-badge" style="background:rgba(14,165,233,.15);color:var(--accent);">10%</div>
+            <div class="kpi-target">目标：≥ 3个项目</div>
+          </div>
+        </div>
+        <div class="kpi-metric-bar-track"><div class="kpi-metric-bar-fill" data-width="0" style="background:var(--accent);"></div></div>
+        <div class="kpi-metric-bottom"><span>核验方式：签约合同 + 工商注册记录</span><span style="color:var(--accent);">单项注册资金/投资额 ≥ 1000万元</span></div>
+      </div>
+      <div class="kpi-metric">
+        <div class="kpi-metric-top">
+          <div class="kpi-metric-left">
+            <div class="kpi-num" style="background:rgba(14,165,233,.2);color:var(--accent);">2</div>
+            <div class="kpi-metric-name">产业图谱建设覆盖赛道数</div>
+          </div>
+          <div class="kpi-metric-right">
+            <div class="weight-badge" style="background:rgba(14,165,233,.15);color:var(--accent);">5%</div>
+            <div class="kpi-target">目标：4条赛道 · 每条≥50家节点企业</div>
+          </div>
+        </div>
+        <div class="kpi-metric-bar-track"><div class="kpi-metric-bar-fill" data-width="0" style="background:var(--accent);"></div></div>
+        <div class="kpi-metric-bottom"><span>核验方式：图谱文档 + 企业数据库记录</span><span style="color:var(--accent);">可动态更新的数字化图谱</span></div>
+      </div>
+      <div class="kpi-metric">
+        <div class="kpi-metric-top">
+          <div class="kpi-metric-left">
+            <div class="kpi-num" style="background:rgba(14,165,233,.2);color:var(--accent);">3</div>
+            <div class="kpi-metric-name">重大产业项目主动接触企业数</div>
+          </div>
+          <div class="kpi-metric-right">
+            <div class="weight-badge" style="background:rgba(14,165,233,.15);color:var(--accent);">5%</div>
+            <div class="kpi-target">目标：接触≥80家 · 深度谈判≥20家</div>
+          </div>
+        </div>
+        <div class="kpi-metric-bar-track"><div class="kpi-metric-bar-fill" data-width="0" style="background:var(--accent);"></div></div>
+        <div class="kpi-metric-bottom"><span>核验方式：拜访记录 + 会议纪要存档</span><span style="color:var(--accent);">漏斗：80→20→3 过程+结果双考核</span></div>
+      </div>
+      <div class="kpi-metric">
+        <div class="kpi-metric-top">
+          <div class="kpi-metric-left">
+            <div class="kpi-num" style="background:rgba(14,165,233,.2);color:var(--accent);">4</div>
+            <div class="kpi-metric-name">赛道研究报告产出</div>
+          </div>
+          <div class="kpi-metric-right">
+            <div class="weight-badge" style="background:rgba(14,165,233,.15);color:var(--accent);">5%</div>
+            <div class="kpi-target">目标：≥ 4份（每季度一份）</div>
+          </div>
+        </div>
+        <div class="kpi-metric-bar-track"><div class="kpi-metric-bar-fill" data-width="0" style="background:var(--accent);"></div></div>
+        <div class="kpi-metric-bottom"><span>核验方式：报告文档 + 公司内部正式发布记录</span><span style="color:var(--accent);">含市场规模·代表企业·招商机会点三模块</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 出海服务 -->
+  <div class="card" style="margin-bottom:14px;">
+    <div class="kpi-section-header">
+      <div style="width:28px;height:28px;background:rgba(125,211,252,.15);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;">🌍</div>
+      <div class="kpi-section-title" style="color:#7DD3FC;">场景出海服务</div>
+      <div class="kpi-section-weight" style="background:rgba(125,211,252,.12);color:#7DD3FC;">权重 25%</div>
+      <div style="flex:1;"></div>
+      <div style="font-size:11px;color:var(--muted);">3项指标 · 场景订单撮合 + 算力数据服务 + 全球资源网络</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div class="kpi-metric">
+        <div class="kpi-metric-top">
+          <div class="kpi-metric-left">
+            <div class="kpi-num" style="background:rgba(125,211,252,.15);color:#7DD3FC;">5</div>
+            <div class="kpi-metric-name">场景订单撮合成交金额</div>
+          </div>
+          <div class="kpi-metric-right">
+            <div class="weight-badge" style="background:rgba(125,211,252,.12);color:#7DD3FC;">10%</div>
+            <div class="kpi-target">目标：累计 ≥ 500万元 · 成功案例≥5个</div>
+          </div>
+        </div>
+        <div class="kpi-metric-bar-track"><div class="kpi-metric-bar-fill" data-width="0" style="background:#7DD3FC;"></div></div>
+        <div class="kpi-metric-bottom"><span>核验方式：已签合同或框架协议中的约定金额</span><span style="color:#7DD3FC;">排除口头承诺，仅计入有合同记录的金额</span></div>
+      </div>
+      <div class="kpi-metric">
+        <div class="kpi-metric-top">
+          <div class="kpi-metric-left">
+            <div class="kpi-num" style="background:rgba(125,211,252,.15);color:#7DD3FC;">6</div>
+            <div class="kpi-metric-name">出海服务企业覆盖数量</div>
+          </div>
+          <div class="kpi-metric-right">
+            <div class="weight-badge" style="background:rgba(125,211,252,.12);color:#7DD3FC;">8%</div>
+            <div class="kpi-target">目标：摸底≥50家 · 签约≥10家 · 成功案例≥1个</div>
+          </div>
+        </div>
+        <div class="kpi-metric-bar-track"><div class="kpi-metric-bar-fill" data-width="0" style="background:#7DD3FC;"></div></div>
+        <div class="kpi-metric-bottom"><span>核验方式：需求摸底报告 + 服务协议 + 对外可传播案例</span><span style="color:#7DD3FC;">三层递进：摸底→签约→案例缺一不可</span></div>
+      </div>
+      <div class="kpi-metric">
+        <div class="kpi-metric-top">
+          <div class="kpi-metric-left">
+            <div class="kpi-num" style="background:rgba(125,211,252,.15);color:#7DD3FC;">7</div>
+            <div class="kpi-metric-name">资源网络节点建设</div>
+          </div>
+          <div class="kpi-metric-right">
+            <div class="weight-badge" style="background:rgba(125,211,252,.12);color:#7DD3FC;">7%</div>
+            <div class="kpi-target">目标：新增≥20个节点 · 海外节点≥5个</div>
+          </div>
+        </div>
+        <div class="kpi-metric-bar-track"><div class="kpi-metric-bar-fill" data-width="0" style="background:#7DD3FC;"></div></div>
+        <div class="kpi-metric-bottom"><span>核验方式：合作备忘录 / 实质合作记录（每节点≥1次）</span><span style="color:#7DD3FC;">含海外机构·行业协会·投资机构·产业园区</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPC社区 -->
+  <div class="card" style="margin-bottom:14px;">
+    <div class="kpi-section-header">
+      <div style="width:28px;height:28px;background:rgba(16,185,129,.15);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;">🏢</div>
+      <div class="kpi-section-title" style="color:var(--green);">超级创业者社区（OPC）</div>
+      <div class="kpi-section-weight" style="background:rgba(16,185,129,.15);color:var(--green);">权重 30%</div>
+      <div style="flex:1;"></div>
+      <div style="font-size:11px;color:var(--muted);">3项指标 · 孵化50家AI原生企业 · 1/3营收破百万</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div class="kpi-metric">
+        <div class="kpi-metric-top">
+          <div class="kpi-metric-left">
+            <div class="kpi-num" style="background:rgba(16,185,129,.15);color:var(--green);">8</div>
+            <div class="kpi-metric-name">OPC社区企业入驻数量与质量</div>
+          </div>
+          <div class="kpi-metric-right">
+            <div class="weight-badge" style="background:rgba(16,185,129,.15);color:var(--green);">12%</div>
+            <div class="kpi-target">目标：≥50家 · AI原生比例≥80% · 营收百万+占≥1/3</div>
+          </div>
+        </div>
+        <div class="kpi-metric-bar-track"><div class="kpi-metric-bar-fill" data-width="0" style="background:var(--green);"></div></div>
+        <div class="kpi-metric-bottom"><span>核验方式：入驻协议 + 企业AI原生认定评分表 + 营收证明</span><span style="color:var(--green);">数量×质量双重标准，防止凑数</span></div>
+      </div>
+      <div class="kpi-metric">
+        <div class="kpi-metric-top">
+          <div class="kpi-metric-left">
+            <div class="kpi-num" style="background:rgba(16,185,129,.15);color:var(--green);">9</div>
+            <div class="kpi-metric-name">OPC社区生态活动运营</div>
+          </div>
+          <div class="kpi-metric-right">
+            <div class="weight-badge" style="background:rgba(16,185,129,.15);color:var(--green);">8%</div>
+            <div class="kpi-target">目标：活动≥12次 · 对外峰会≥4次 · 触达≥500人次</div>
+          </div>
+        </div>
+        <div class="kpi-metric-bar-track"><div class="kpi-metric-bar-fill" data-width="0" style="background:var(--green);"></div></div>
+        <div class="kpi-metric-bottom"><span>核验方式：活动签到记录 + 照片存档 + 宣传发布记录</span><span style="color:var(--green);">每次活动平均参与企业数≥15家</span></div>
+      </div>
+      <div class="kpi-metric">
+        <div class="kpi-metric-top">
+          <div class="kpi-metric-left">
+            <div class="kpi-num" style="background:rgba(16,185,129,.15);color:var(--green);">10</div>
+            <div class="kpi-metric-name">OPC企业间生态联动订单</div>
+          </div>
+          <div class="kpi-metric-right">
+            <div class="weight-badge" style="background:rgba(16,185,129,.15);color:var(--green);">10%</div>
+            <div class="kpi-target">目标：联动合作≥8笔 · 有合同记录≥3笔 · 累计≥200万元</div>
+          </div>
+        </div>
+        <div class="kpi-metric-bar-track"><div class="kpi-metric-bar-fill" data-width="0" style="background:var(--green);"></div></div>
+        <div class="kpi-metric-bottom"><span>核验方式：企业间合同/协议 + 双方确认记录</span><span style="color:var(--green);">检验社区是否真正形成"自生长生态"的核心指标</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI运营 -->
+  <div class="card">
+    <div class="kpi-section-header">
+      <div style="width:28px;height:28px;background:rgba(245,158,11,.15);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;">🤖</div>
+      <div class="kpi-section-title" style="color:var(--gold);">AI运营能力</div>
+      <div class="kpi-section-weight" style="background:rgba(245,158,11,.15);color:var(--gold);">权重 20%</div>
+      <div style="flex:1;"></div>
+      <div style="font-size:11px;color:var(--muted);">3项指标 · 飞书工具链 + 大模型 + Seedance + Gem智能体</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div class="kpi-metric">
+        <div class="kpi-metric-top">
+          <div class="kpi-metric-left">
+            <div class="kpi-num" style="background:rgba(245,158,11,.15);color:var(--gold);">11</div>
+            <div class="kpi-metric-name">公司AI工具覆盖率与使用活跃度</div>
+          </div>
+          <div class="kpi-metric-right">
+            <div class="weight-badge" style="background:rgba(245,158,11,.15);color:var(--gold);">8%</div>
+            <div class="kpi-target">目标：覆盖≥20部门 · 月活跃率≥70% · 分享会≥10次</div>
+          </div>
+        </div>
+        <div class="kpi-metric-bar-track"><div class="kpi-metric-bar-fill" data-width="0" style="background:var(--gold);"></div></div>
+        <div class="kpi-metric-bottom"><span>核验方式：飞书后台使用数据（第三方数据，客观可查）</span><span style="color:var(--gold);">月活跃 = 当月有实质使用记录的部门数/总部门数</span></div>
+      </div>
+      <div class="kpi-metric">
+        <div class="kpi-metric-top">
+          <div class="kpi-metric-left">
+            <div class="kpi-num" style="background:rgba(245,158,11,.15);color:var(--gold);">12</div>
+            <div class="kpi-metric-name">AI工作效率提升与知识沉淀</div>
+          </div>
+          <div class="kpi-metric-right">
+            <div class="weight-badge" style="background:rgba(245,158,11,.15);color:var(--gold);">7%</div>
+            <div class="kpi-target">目标：AI产出成果≥30件 · 知识库入库≥50条 · 节省工时≥200小时</div>
+          </div>
+        </div>
+        <div class="kpi-metric-bar-track"><div class="kpi-metric-bar-fill" data-width="0" style="background:var(--gold);"></div></div>
+        <div class="kpi-metric-bottom"><span>核验方式：成果文档/视频存档 + 知识库记录 + 工时自评+主管认定</span><span style="color:var(--gold);">含：报告·物料·分析·视频（Seedance）·智能体</span></div>
+      </div>
+      <div class="kpi-metric">
+        <div class="kpi-metric-top">
+          <div class="kpi-metric-left">
+            <div class="kpi-num" style="background:rgba(245,158,11,.15);color:var(--gold);">13</div>
+            <div class="kpi-metric-name">AI标杆示范与全司影响力</div>
+          </div>
+          <div class="kpi-metric-right">
+            <div class="weight-badge" style="background:rgba(245,158,11,.15);color:var(--gold);">5%</div>
+            <div class="kpi-target">目标：规范文件≥2份 · 演示≥3次 · 带动改进案例≥2个</div>
+          </div>
+        </div>
+        <div class="kpi-metric-bar-track"><div class="kpi-metric-bar-fill" data-width="0" style="background:var(--gold);"></div></div>
+        <div class="kpi-metric-bottom"><span>核验方式：文件发布记录 + 受益部门书面确认</span><span style="color:var(--gold);">不只是自己用得好，要真正带动其他部门改进</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     重大产业招商（含考核指标）
+════════════════════════════════════════ -->
+<div class="panel" id="panel-recruit">
+  <div class="kpi-row">
+    <div class="kpi-card purple"><div class="kpi-label">重点产业赛道</div><div class="kpi-value">4<span class="kpi-unit">条</span></div><div class="kpi-trend">未来产业·智能终端·汽车·宠物</div></div>
+    <div class="kpi-card blue"><div class="kpi-label">招商新范式</div><div class="kpi-value" style="font-size:17px;margin-top:5px;">图谱驱动</div><div class="kpi-trend">脱离传统房地产中介模式</div></div>
+    <div class="kpi-card gold"><div class="kpi-label">项目漏斗</div><div class="kpi-value" style="font-size:17px;margin-top:5px;">80→20→3</div><div class="kpi-trend">接触→深谈→签约</div></div>
+    <div class="kpi-card sky"><div class="kpi-label">模块考核权重</div><div class="kpi-value">25<span class="kpi-unit">%</span></div><div class="kpi-trend">4项量化指标</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><div class="card-title-dot"></div>四大产业赛道布局</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.4);border-radius:9px;padding:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <span style="font-size:12px;font-weight:700;color:var(--purple);">🔬 未来产业</span>
+            <div style="display:flex;gap:5px;"><span class="badge badge-purple">未来材料</span><span class="badge badge-purple">未来能源</span></div>
+          </div>
+          <div style="font-size:10px;color:var(--muted);line-height:1.8;">基于产业图谱识别前沿技术企业，超前布局漕河泾下一个10年产业结构。对接院所资源、基金生态、产业链集群。</div>
+        </div>
+        <div style="background:rgba(14,165,233,.1);border:1px solid rgba(14,165,233,.3);border-radius:9px;padding:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <span style="font-size:12px;font-weight:700;color:var(--accent);">📱 智能终端</span>
+            <span class="badge badge-blue">AI硬件 · 消费电子</span>
+          </div>
+          <div style="font-size:10px;color:var(--muted);line-height:1.8;">聚焦AI原生硬件产品公司，与OPC社区深度联动，吸引具有全球化销售能力的智能终端企业设立研发或总部。</div>
+        </div>
+        <div style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:9px;padding:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <span style="font-size:12px;font-weight:700;color:var(--green);">🚗 汽车赛道</span>
+            <div style="display:flex;gap:5px;"><span class="badge badge-green">传统汽车</span><span class="badge badge-green">新能源汽车</span></div>
+          </div>
+          <div style="font-size:10px;color:var(--muted);line-height:1.8;">深耕汽车产业链，从整车厂到Tier1/Tier2供应商，利用产业关系网络精准对接有落地需求的汽车科技企业。</div>
+        </div>
+        <div style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:9px;padding:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <span style="font-size:12px;font-weight:700;color:var(--gold);">🐾 宠物赛道</span>
+            <span class="badge badge-gold">消费升级新赛道</span>
+          </div>
+          <div style="font-size:10px;color:var(--muted);line-height:1.8;">中国宠物经济万亿级增量市场，围绕宠物科技、宠物食品、宠物医疗引入具有创新能力的成长型企业。</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:13px;">
+      <div class="card">
+        <div class="card-title"><div class="card-title-dot" style="background:var(--purple)"></div>新范式 vs 传统招商</div>
+        <table class="data-table">
+          <thead><tr><th>维度</th><th>传统</th><th>产业促进中心</th></tr></thead>
+          <tbody>
+            <tr><td>核心逻辑</td><td style="color:var(--muted)">面积·价格</td><td style="color:var(--green)">图谱·生态价值</td></tr>
+            <tr><td>触达方式</td><td style="color:var(--muted)">中介·广告</td><td style="color:var(--green)">资源网络·圈层</td></tr>
+            <tr><td>目标客户</td><td style="color:var(--muted)">有需求即可</td><td style="color:var(--green)">战略赛道头部</td></tr>
+            <tr><td>成果质量</td><td style="color:var(--muted)">填充式·被动</td><td style="color:var(--green)">战略性·引领性</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- 招商模块考核指标 -->
+      <div class="card" style="border-color:rgba(14,165,233,.3);">
+        <div class="card-title"><div class="card-title-dot" style="background:var(--accent)"></div>本模块考核指标（权重25%）</div>
+        <div style="display:flex;flex-direction:column;gap:7px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:rgba(14,165,233,.07);border-radius:6px;">
+            <div style="display:flex;align-items:center;gap:7px;">
+              <span style="width:18px;height:18px;background:rgba(14,165,233,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--accent);">1</span>
+              <span style="font-size:11px;">项目签约落地</span>
+            </div>
+            <span style="font-size:11px;color:var(--accent);font-weight:600;">≥3个 · 10%</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:rgba(14,165,233,.07);border-radius:6px;">
+            <div style="display:flex;align-items:center;gap:7px;">
+              <span style="width:18px;height:18px;background:rgba(14,165,233,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--accent);">2</span>
+              <span style="font-size:11px;">产业图谱建设</span>
+            </div>
+            <span style="font-size:11px;color:var(--accent);font-weight:600;">4赛道图谱 · 5%</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:rgba(14,165,233,.07);border-radius:6px;">
+            <div style="display:flex;align-items:center;gap:7px;">
+              <span style="width:18px;height:18px;background:rgba(14,165,233,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--accent);">3</span>
+              <span style="font-size:11px;">主动接触企业</span>
+            </div>
+            <span style="font-size:11px;color:var(--accent);font-weight:600;">≥80家 · 5%</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:rgba(14,165,233,.07);border-radius:6px;">
+            <div style="display:flex;align-items:center;gap:7px;">
+              <span style="width:18px;height:18px;background:rgba(14,165,233,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--accent);">4</span>
+              <span style="font-size:11px;">赛道研究报告</span>
+            </div>
+            <span style="font-size:11px;color:var(--accent);font-weight:600;">≥4份 · 5%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     场景出海服务（含考核指标）
+════════════════════════════════════════ -->
+<div class="panel" id="panel-haichuan">
+  <div class="kpi-row">
+    <div class="kpi-card blue"><div class="kpi-label">全球资源网络</div><div class="kpi-value">4<span class="kpi-unit">大洲</span></div><div class="kpi-trend">亚洲·欧洲·北美·中东</div></div>
+    <div class="kpi-card sky"><div class="kpi-label">订单撮合目标</div><div class="kpi-value">500<span class="kpi-unit">万+</span></div><div class="kpi-trend">全年合同金额</div></div>
+    <div class="kpi-card gold"><div class="kpi-label">出海服务企业</div><div class="kpi-value">10<span class="kpi-unit">家+</span></div><div class="kpi-trend">签约服务企业</div></div>
+    <div class="kpi-card green"><div class="kpi-label">模块考核权重</div><div class="kpi-value">25<span class="kpi-unit">%</span></div><div class="kpi-trend">3项量化指标</div></div>
+  </div>
+  <div class="grid-2-1">
+    <div class="card">
+      <div class="card-title"><div class="card-title-dot"></div>产业促进中心全球资源网络 · 四大洲覆盖</div>
+      <svg width="100%" height="270" viewBox="0 0 620 270">
+        <defs>
+          <radialGradient id="seaGrad2" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" style="stop-color:#162236"/>
+            <stop offset="100%" style="stop-color:#080f1c"/>
+          </radialGradient>
+          <filter id="glow3"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <rect width="620" height="270" fill="url(#seaGrad2)" rx="10"/>
+        <line x1="0" y1="135" x2="620" y2="135" stroke="rgba(255,255,255,.03)" stroke-width="1"/>
+        <line x1="310" y1="0" x2="310" y2="270" stroke="rgba(255,255,255,.03)" stroke-width="1"/>
+        <path d="M238,52 L258,44 L278,50 L292,42 L302,52 L297,66 L283,76 L272,85 L258,80 L242,76 L232,66 Z" fill="rgba(14,165,233,.22)" stroke="rgba(14,165,233,.45)" stroke-width="1.2"/>
+        <path d="M250,92 L282,86 L297,96 L302,125 L292,154 L277,173 L263,168 L248,150 L244,121 L246,96 Z" fill="rgba(14,165,233,.18)" stroke="rgba(14,165,233,.38)" stroke-width="1.2"/>
+        <path d="M308,38 L382,28 L442,33 L462,52 L452,76 L422,87 L393,97 L363,92 L338,78 L315,67 L303,52 Z" fill="rgba(14,165,233,.22)" stroke="rgba(14,165,233,.45)" stroke-width="1.2"/>
+        <path d="M390,102 L420,97 L440,112 L430,130 L412,136 L396,128 Z" fill="rgba(14,165,233,.18)" stroke="rgba(14,165,233,.38)" stroke-width="1.2"/>
+        <path d="M304,82 L332,77 L342,96 L328,112 L308,109 L298,95 Z" fill="rgba(14,165,233,.18)" stroke="rgba(14,165,233,.38)" stroke-width="1.2"/>
+        <path d="M58,38 L140,28 L164,43 L158,77 L138,97 L108,102 L78,87 L52,67 Z" fill="rgba(14,165,233,.22)" stroke="rgba(14,165,233,.45)" stroke-width="1.2"/>
+        <path d="M98,118 L132,112 L148,136 L143,174 L128,205 L108,210 L88,190 L82,156 L87,126 Z" fill="rgba(14,165,233,.18)" stroke="rgba(14,165,233,.38)" stroke-width="1.2"/>
+        <path d="M440,165 L490,155 L510,175 L505,205 L480,215 L455,210 L440,190 Z" fill="rgba(14,165,233,.18)" stroke="rgba(14,165,233,.38)" stroke-width="1.2"/>
+        <circle cx="416" cy="79" r="3" fill="#F59E0B" filter="url(#glow3)"/>
+        <circle cx="416" cy="79" r="8" fill="none" stroke="#F59E0B" stroke-width="1.5" opacity=".7"/>
+        <circle cx="416" cy="79" r="14" fill="none" stroke="#F59E0B" stroke-width="1" opacity=".3" class="pulse-dot"/>
+        <text x="416" y="66" text-anchor="middle" fill="#F59E0B" font-size="9.5" font-weight="700" filter="url(#glow3)">上海漕河泾</text>
+        <path d="M416,79 Q422,115 412,126" stroke="#10B981" stroke-width="1.8" fill="none" stroke-dasharray="5,3" opacity=".85"/>
+        <circle cx="412" cy="126" r="4.5" fill="#10B981" filter="url(#glow3)"/>
+        <text x="434" y="130" fill="#10B981" font-size="9" font-weight="600">东南亚</text>
+        <path d="M416,79 Q370,88 320,96" stroke="#0EA5E9" stroke-width="1.8" fill="none" stroke-dasharray="5,3" opacity=".85"/>
+        <circle cx="320" cy="96" r="4.5" fill="#0EA5E9" filter="url(#glow3)"/>
+        <text x="292" y="91" fill="#0EA5E9" font-size="9" font-weight="600">中东</text>
+        <path d="M416,79 Q338,48 270,62" stroke="#8B5CF6" stroke-width="1.8" fill="none" stroke-dasharray="5,3" opacity=".85"/>
+        <circle cx="270" cy="62" r="4.5" fill="#8B5CF6" filter="url(#glow3)"/>
+        <text x="248" y="56" fill="#8B5CF6" font-size="9" font-weight="600">欧洲</text>
+        <path d="M416,79 Q295,18 148,56" stroke="#EC4899" stroke-width="1.8" fill="none" stroke-dasharray="5,3" opacity=".85"/>
+        <circle cx="148" cy="56" r="4.5" fill="#EC4899" filter="url(#glow3)"/>
+        <text x="108" y="51" fill="#EC4899" font-size="9" font-weight="600">北美</text>
+        <rect x="8" y="234" width="604" height="28" rx="6" fill="rgba(30,41,59,.85)" stroke="rgba(51,65,85,.5)" stroke-width="1"/>
+        <circle cx="36" cy="248" r="4" fill="#10B981"/><text x="46" y="252" fill="#94A3B8" font-size="9">东南亚（越南·印尼·泰国）</text>
+        <circle cx="188" cy="248" r="4" fill="#0EA5E9"/><text x="198" y="252" fill="#94A3B8" font-size="9">中东（UAE·沙特）</text>
+        <circle cx="316" cy="248" r="4" fill="#8B5CF6"/><text x="326" y="252" fill="#94A3B8" font-size="9">欧洲（德·英·法）</text>
+        <circle cx="442" cy="248" r="4" fill="#EC4899"/><text x="452" y="252" fill="#94A3B8" font-size="9">北美（美·加）</text>
+      </svg>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="card">
+        <div class="card-title"><div class="card-title-dot" style="background:var(--gold)"></div>场景服务两大类型</div>
+        <div style="display:flex;flex-direction:column;gap:9px;">
+          <div style="background:linear-gradient(135deg,rgba(14,165,233,.12),rgba(26,86,160,.08));border:1px solid rgba(14,165,233,.35);border-radius:8px;padding:11px;">
+            <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:5px;">🤝 场景订单撮合</div>
+            <div style="font-size:10px;color:var(--muted);line-height:1.8;">· 企业间B2B场景精准对接<br>· 园区17000家企业需求挖掘<br>· OPC企业产品落地引入<br>· 跨境商业合作撮合</div>
+          </div>
+          <div style="background:linear-gradient(135deg,rgba(139,92,246,.12),rgba(14,165,233,.08));border:1px solid rgba(139,92,246,.35);border-radius:8px;padding:11px;">
+            <div style="font-size:12px;font-weight:700;color:var(--purple);margin-bottom:5px;">⚡ 算力数据服务</div>
+            <div style="font-size:10px;color:var(--muted);line-height:1.8;">· 国内外算力资源对接<br>· AI训练数据采购撮合<br>· 数据合规跨境支持<br>· 算力优惠政策申请协助</div>
+          </div>
+        </div>
+      </div>
+      <!-- 出海模块考核指标 -->
+      <div class="card" style="border-color:rgba(125,211,252,.3);">
+        <div class="card-title"><div class="card-title-dot" style="background:#7DD3FC"></div>本模块考核指标（权重25%）</div>
+        <div style="display:flex;flex-direction:column;gap:7px;">
+          <div style="padding:9px 10px;background:rgba(125,211,252,.06);border-radius:6px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+              <span style="font-size:11px;font-weight:600;color:#7DD3FC;">⑤ 场景订单撮合金额</span>
+              <span style="font-size:11px;font-weight:700;color:#7DD3FC;">10%</span>
+            </div>
+            <div style="font-size:10px;color:var(--muted);">目标：≥500万元 · 成功案例≥5个</div>
+            <div style="font-size:10px;color:var(--muted);">核验：已签合同/框架协议约定金额</div>
+          </div>
+          <div style="padding:9px 10px;background:rgba(125,211,252,.06);border-radius:6px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+              <span style="font-size:11px;font-weight:600;color:#7DD3FC;">⑥ 出海服务企业覆盖</span>
+              <span style="font-size:11px;font-weight:700;color:#7DD3FC;">8%</span>
+            </div>
+            <div style="font-size:10px;color:var(--muted);">目标：摸底≥50家 · 签约≥10家 · 案例≥1个</div>
+            <div style="font-size:10px;color:var(--muted);">核验：三层递进，缺一不可</div>
+          </div>
+          <div style="padding:9px 10px;background:rgba(125,211,252,.06);border-radius:6px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+              <span style="font-size:11px;font-weight:600;color:#7DD3FC;">⑦ 资源网络节点建设</span>
+              <span style="font-size:11px;font-weight:700;color:#7DD3FC;">7%</span>
+            </div>
+            <div style="font-size:10px;color:var(--muted);">目标：新增≥20个节点 · 海外≥5个</div>
+            <div style="font-size:10px;color:var(--muted);">核验：合作备忘录 + 实质合作记录</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     OPC超级创业者社区（含考核指标）
+════════════════════════════════════════ -->
+<div class="panel" id="panel-opc">
+  <div class="kpi-row">
+    <div class="kpi-card green"><div class="kpi-label">OPC入驻目标</div><div class="kpi-value">50<span class="kpi-unit">家</span></div><div class="kpi-trend">全年累计AI原生企业</div></div>
+    <div class="kpi-card blue"><div class="kpi-label">营收达标企业</div><div class="kpi-value">1/3<span class="kpi-unit">以上</span></div><div class="kpi-trend">营收过百万/千万</div></div>
+    <div class="kpi-card gold"><div class="kpi-label">生态联动订单</div><div class="kpi-value">200<span class="kpi-unit">万+</span></div><div class="kpi-trend">企业间合作金额</div></div>
+    <div class="kpi-card purple"><div class="kpi-label">模块考核权重</div><div class="kpi-value">30<span class="kpi-unit">%</span></div><div class="kpi-trend">3项量化指标 · 最高权重</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><div class="card-title-dot"></div>OPC战略定位 · 掐尖评估五维体系</div>
+      <div style="background:linear-gradient(135deg,rgba(26,86,160,.2),rgba(14,165,233,.1));border:1px solid rgba(14,165,233,.3);border-radius:9px;padding:13px;margin-bottom:12px;">
+        <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:6px;">🏆 全球化AI企业的筛选器 + 生态容器</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.7;">50家AI原生企业聚集一栋楼，互为客户、互为伙伴，形成<strong style="color:var(--accent)">自生长的产业生态</strong>。其中1/3营收破百万，是OPC不是活动群而是真实商业生态的核心证明。</div>
+      </div>
+      <div class="bar-chart">
+        <div class="bar-item"><div class="bar-info"><span class="bar-label">★★★★★ AI原生性（最核心）</span><span class="bar-pct">100%</span></div><div class="bar-track"><div class="bar-fill" data-width="100" style="background:linear-gradient(90deg,#1A56A0,#0EA5E9)"></div></div></div>
+        <div class="bar-item"><div class="bar-info"><span class="bar-label">★★★★☆ 全球化基因</span><span class="bar-pct">80%</span></div><div class="bar-track"><div class="bar-fill" data-width="80" style="background:linear-gradient(90deg,#F59E0B,#D97706)"></div></div></div>
+        <div class="bar-item"><div class="bar-info"><span class="bar-label">★★★★☆ 产业影响力</span><span class="bar-pct">80%</span></div><div class="bar-track"><div class="bar-fill" data-width="80" style="background:linear-gradient(90deg,#10B981,#059669)"></div></div></div>
+        <div class="bar-item"><div class="bar-info"><span class="bar-label">★★★☆☆ 生态协同意愿</span><span class="bar-pct">60%</span></div><div class="bar-track"><div class="bar-fill" data-width="60" style="background:linear-gradient(90deg,#8B5CF6,#7C3AED)"></div></div></div>
+        <div class="bar-item"><div class="bar-info"><span class="bar-label">★★★☆☆ 成长潜力（营收达标）</span><span class="bar-pct">60%</span></div><div class="bar-track"><div class="bar-fill" data-width="60" style="background:linear-gradient(90deg,#EC4899,#DB2777)"></div></div></div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="card">
+        <div class="card-title"><div class="card-title-dot" style="background:var(--green)"></div>社区四大运营机制</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="background:rgba(16,185,129,.08);border-radius:7px;padding:10px;display:flex;gap:9px;align-items:center;">
+            <span style="font-size:18px;">🎯</span><div><div style="font-size:11px;font-weight:600;color:var(--green);">生态活动</div><div style="font-size:10px;color:var(--muted);">月度社区交流+季度峰会，全年≥12次</div></div>
+          </div>
+          <div style="background:rgba(14,165,233,.08);border-radius:7px;padding:10px;display:flex;gap:9px;align-items:center;">
+            <span style="font-size:18px;">🔗</span><div><div style="font-size:11px;font-weight:600;color:var(--accent);">场景服务</div><div style="font-size:10px;color:var(--muted);">将17000家企业需求转化为OPC企业订单</div></div>
+          </div>
+          <div style="background:rgba(139,92,246,.08);border-radius:7px;padding:10px;display:flex;gap:9px;align-items:center;">
+            <span style="font-size:18px;">🌏</span><div><div style="font-size:11px;font-weight:600;color:var(--purple);">出海联动</div><div style="font-size:10px;color:var(--muted);">OPC企业优先享受出海深度层服务</div></div>
+          </div>
+          <div style="background:rgba(245,158,11,.08);border-radius:7px;padding:10px;display:flex;gap:9px;align-items:center;">
+            <span style="font-size:18px;">📊</span><div><div style="font-size:11px;font-weight:600;color:var(--gold);">内容输出</div><div style="font-size:10px;color:var(--muted);">季度产业洞察报告，全年≥4份</div></div>
+          </div>
+        </div>
+      </div>
+      <!-- OPC模块考核指标 -->
+      <div class="card" style="border-color:rgba(16,185,129,.3);">
+        <div class="card-title"><div class="card-title-dot" style="background:var(--green)"></div>本模块考核指标（权重30%）</div>
+        <div style="display:flex;flex-direction:column;gap:7px;">
+          <div style="padding:9px 10px;background:rgba(16,185,129,.06);border-radius:6px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+              <span style="font-size:11px;font-weight:600;color:var(--green);">⑧ OPC入驻数量与质量</span>
+              <span style="font-size:11px;font-weight:700;color:var(--green);">12%</span>
+            </div>
+            <div style="font-size:10px;color:var(--muted);">≥50家 · AI原生≥80% · 营收百万占≥1/3</div>
+            <div style="font-size:10px;color:var(--muted);">核验：入驻协议 + AI原生评分 + 营收证明</div>
+          </div>
+          <div style="padding:9px 10px;background:rgba(16,185,129,.06);border-radius:6px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+              <span style="font-size:11px;font-weight:600;color:var(--green);">⑨ 生态活动运营</span>
+              <span style="font-size:11px;font-weight:700;color:var(--green);">8%</span>
+            </div>
+            <div style="font-size:10px;color:var(--muted);">≥12次活动 · 对外峰会≥4次 · 触达≥500人次</div>
+            <div style="font-size:10px;color:var(--muted);">核验：活动签到 + 照片 + 宣传记录</div>
+          </div>
+          <div style="padding:9px 10px;background:rgba(16,185,129,.06);border-radius:6px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+              <span style="font-size:11px;font-weight:600;color:var(--green);">⑩ 企业间生态联动订单</span>
+              <span style="font-size:11px;font-weight:700;color:var(--green);">10%</span>
+            </div>
+            <div style="font-size:10px;color:var(--muted);">联动≥8笔 · 有合同≥3笔 · 累计≥200万元</div>
+            <div style="font-size:10px;color:var(--muted);">核验：企业间合同/协议 + 双方确认</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     AI运营能力（含考核指标）
+════════════════════════════════════════ -->
+<div class="panel" id="panel-ai">
+  <div class="kpi-row">
+    <div class="kpi-card green"><div class="kpi-label">全司AI覆盖目标</div><div class="kpi-value">70<span class="kpi-unit">%+</span></div><div class="kpi-trend">月活跃部门比例</div></div>
+    <div class="kpi-card blue"><div class="kpi-label">AI产出成果</div><div class="kpi-value">30<span class="kpi-unit">件+</span></div><div class="kpi-trend">报告·视频·分析·物料</div></div>
+    <div class="kpi-card gold"><div class="kpi-label">节省工时</div><div class="kpi-value">200<span class="kpi-unit">小时+</span></div><div class="kpi-trend">全年折算</div></div>
+    <div class="kpi-card purple"><div class="kpi-label">模块考核权重</div><div class="kpi-value">20<span class="kpi-unit">%</span></div><div class="kpi-trend">3项量化指标</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><div class="card-title-dot"></div>AI工具矩阵 · 六大类实战应用</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div style="background:rgba(14,165,233,.07);border:1px solid rgba(14,165,233,.2);border-radius:7px;padding:10px;">
+          <div style="font-size:10px;font-weight:700;color:var(--accent);margin-bottom:5px;">📱 飞书工具链</div>
+          <div style="font-size:9.5px;color:var(--muted);line-height:1.8;">妙记·AI日历·AI周报<br>会议纪要 30min→5min</div>
+        </div>
+        <div style="background:rgba(16,185,129,.07);border:1px solid rgba(16,185,129,.2);border-radius:7px;padding:10px;">
+          <div style="font-size:10px;font-weight:700;color:var(--green);margin-bottom:5px;">🧠 大语言模型</div>
+          <div style="font-size:9.5px;color:var(--muted);line-height:1.8;">Claude·GPT·Gemini<br>DeepSeek·报告·翻译</div>
+        </div>
+        <div style="background:rgba(249,115,22,.07);border:1px solid rgba(249,115,22,.2);border-radius:7px;padding:10px;">
+          <div style="font-size:10px;font-weight:700;color:var(--orange);margin-bottom:5px;">🎬 Seedance 2.0</div>
+          <div style="font-size:9.5px;color:var(--muted);line-height:1.8;">AI视频生成<br>制作周期↓90%</div>
+        </div>
+        <div style="background:rgba(139,92,246,.07);border:1px solid rgba(139,92,246,.2);border-radius:7px;padding:10px;">
+          <div style="font-size:10px;font-weight:700;color:var(--purple);margin-bottom:5px;">🤖 Gem智能体</div>
+          <div style="font-size:9.5px;color:var(--muted);line-height:1.8;">企业尽调·政策追踪<br>定制工作流自动化</div>
+        </div>
+        <div style="background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.2);border-radius:7px;padding:10px;">
+          <div style="font-size:10px;font-weight:700;color:var(--gold);margin-bottom:5px;">🎨 AI图文创作</div>
+          <div style="font-size:9.5px;color:var(--muted);line-height:1.8;">Midjourney·DALL-E<br>物料·封面·可视化</div>
+        </div>
+        <div style="background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);border-radius:7px;padding:10px;">
+          <div style="font-size:10px;font-weight:700;color:var(--red);margin-bottom:5px;">📊 AI数据分析</div>
+          <div style="font-size:9.5px;color:var(--muted);line-height:1.8;">企业画像·图谱<br>招商线索智能筛选</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="card">
+        <div class="card-title"><div class="card-title-dot" style="background:var(--gold)"></div>核心效率提升对比</div>
+        <div class="bar-chart">
+          <div class="bar-item"><div class="bar-info"><span class="bar-label">会议纪要（飞书妙记）</span><span class="bar-pct" style="color:var(--green)">↑6倍速</span></div><div class="bar-track"><div class="bar-fill" data-width="92" style="background:var(--green)"></div></div></div>
+          <div class="bar-item"><div class="bar-info"><span class="bar-label">宣传视频（Seedance 2.0）</span><span class="bar-pct" style="color:var(--orange)">↓90%成本</span></div><div class="bar-track"><div class="bar-fill" data-width="86" style="background:var(--orange)"></div></div></div>
+          <div class="bar-item"><div class="bar-info"><span class="bar-label">调研报告（大模型）</span><span class="bar-pct" style="color:var(--accent)">7天→2天</span></div><div class="bar-track"><div class="bar-fill" data-width="76" style="background:var(--accent)"></div></div></div>
+          <div class="bar-item"><div class="bar-info"><span class="bar-label">企业尽调（Gem智能体）</span><span class="bar-pct" style="color:var(--purple)">↑3倍速</span></div><div class="bar-track"><div class="bar-fill" data-width="68" style="background:var(--purple)"></div></div></div>
+        </div>
+      </div>
+      <!-- AI模块考核指标 -->
+      <div class="card" style="border-color:rgba(245,158,11,.3);">
+        <div class="card-title"><div class="card-title-dot" style="background:var(--gold)"></div>本模块考核指标（权重20%）</div>
+        <div style="display:flex;flex-direction:column;gap:7px;">
+          <div style="padding:9px 10px;background:rgba(245,158,11,.06);border-radius:6px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+              <span style="font-size:11px;font-weight:600;color:var(--gold);">⑪ 全司AI工具覆盖率</span>
+              <span style="font-size:11px;font-weight:700;color:var(--gold);">8%</span>
+            </div>
+            <div style="font-size:10px;color:var(--muted);">≥20部门部署 · 月活跃率≥70% · 分享会≥10次</div>
+            <div style="font-size:10px;color:var(--muted);">核验：飞书后台数据（客观第三方可查）</div>
+          </div>
+          <div style="padding:9px 10px;background:rgba(245,158,11,.06);border-radius:6px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+              <span style="font-size:11px;font-weight:600;color:var(--gold);">⑫ AI效率提升与知识沉淀</span>
+              <span style="font-size:11px;font-weight:700;color:var(--gold);">7%</span>
+            </div>
+            <div style="font-size:10px;color:var(--muted);">AI产出≥30件 · 知识库≥50条 · 节省≥200小时</div>
+            <div style="font-size:10px;color:var(--muted);">核验：成果文档存档 + 工时自评+主管认定</div>
+          </div>
+          <div style="padding:9px 10px;background:rgba(245,158,11,.06);border-radius:6px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+              <span style="font-size:11px;font-weight:600;color:var(--gold);">⑬ AI标杆示范影响力</span>
+              <span style="font-size:11px;font-weight:700;color:var(--gold);">5%</span>
+            </div>
+            <div style="font-size:10px;color:var(--muted);">规范文件≥2份 · 示范演示≥3次 · 带动改进≥2部门</div>
+            <div style="font-size:10px;color:var(--muted);">核验：文件记录 + 受益部门书面确认</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     部门协作价值
+════════════════════════════════════════ -->
+<div class="panel" id="panel-collab">
+  <div style="margin-bottom:14px;padding:13px 16px;background:linear-gradient(90deg,rgba(26,86,160,.2),rgba(14,165,233,.1));border:1px solid rgba(14,165,233,.3);border-radius:10px;">
+    <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:3px;">产业发展促进中心能为各部门提供什么？</div>
+    <div style="font-size:11px;color:var(--muted);">没有前台的存量客户，没有后台的行政权力——但有连接资源、输出方法论、引领AI运营的独特能力，为每个兄弟部门创造真实价值。</div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+    <div class="collab-card" style="border-color:rgba(16,185,129,.3);">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;">
+        <div style="width:30px;height:30px;background:rgba(16,185,129,.15);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;">🏗️</div>
+        <div style="font-size:12px;font-weight:700;color:var(--green);">各属地事业部（前台）</div>
+      </div>
+      <div class="collab-item">按OPC掐尖标准推荐存量客户进入社区，帮客户"升格"为高价值企业</div>
+      <div class="collab-item">出海服务为客户创造新增值点，增强续租意愿和口碑</div>
+      <div class="collab-item">场景订单撮合帮客户找到新业务机会，粘性更强</div>
+      <div class="collab-item">产业图谱提供精准招商线索，协同引入战略项目</div>
+      <div style="margin-top:7px;padding:5px 9px;background:rgba(16,185,129,.1);border-radius:5px;font-size:10px;color:var(--green);">结果：你们的客户更好，业绩更强 💪</div>
+    </div>
+    <div class="collab-card" style="border-color:rgba(139,92,246,.3);">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;">
+        <div style="width:30px;height:30px;background:rgba(139,92,246,.15);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;">⚙️</div>
+        <div style="font-size:12px;font-weight:700;color:var(--purple);">行政 / 人事部</div>
+      </div>
+      <div class="collab-item">AI工具优先培训赋能，识别可自动化的重复性工作</div>
+      <div class="collab-item">飞书妙记：会议纪要自动生成，节省大量时间</div>
+      <div class="collab-item">AI辅助公文起草：通知、报告、总结效率倍增</div>
+      <div class="collab-item">Gem智能体辅助人才筛选、档案管理流程优化</div>
+      <div style="margin-top:7px;padding:5px 9px;background:rgba(139,92,246,.1);border-radius:5px;font-size:10px;color:var(--purple);">结果：重复工作少了，效能高了 ⚡</div>
+    </div>
+    <div class="collab-card" style="border-color:rgba(245,158,11,.3);">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;">
+        <div style="width:30px;height:30px;background:rgba(245,158,11,.15);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;">🔍</div>
+        <div style="font-size:12px;font-weight:700;color:var(--gold);">审计 / 法务部</div>
+      </div>
+      <div class="collab-item">出海引入跨境合规需求，为法务创造专业输出场景</div>
+      <div class="collab-item">AI辅助合同审核和政策解读，提升效率</div>
+      <div class="collab-item">产业项目引进前期合规风险评估协作</div>
+      <div class="collab-item">OPC境外企业需要本地法律支持</div>
+      <div style="margin-top:7px;padding:5px 9px;background:rgba(245,158,11,.1);border-radius:5px;font-size:10px;color:var(--gold);">结果：专业能力有了更多发挥场景 ⚖️</div>
+    </div>
+    <div class="collab-card" style="border-color:rgba(14,165,233,.3);">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;">
+        <div style="width:30px;height:30px;background:rgba(14,165,233,.15);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;">🎯</div>
+        <div style="font-size:12px;font-weight:700;color:var(--accent);">招商部门</div>
+      </div>
+      <div class="collab-item">产业图谱共享，提供精准目标企业名单和触达路径</div>
+      <div class="collab-item">资源网络对接，产业圈层关系引荐高质量项目</div>
+      <div class="collab-item">OPC标杆案例是最有说服力的招商名片</div>
+      <div class="collab-item">赛道新范式探索，共同提升招商质量和档次</div>
+      <div style="margin-top:7px;padding:5px 9px;background:rgba(14,165,233,.1);border-radius:5px;font-size:10px;color:var(--accent);">结果：引进的项目更有战略价值 🏆</div>
+    </div>
+    <div class="collab-card" style="border-color:rgba(239,68,68,.3);">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;">
+        <div style="width:30px;height:30px;background:rgba(239,68,68,.15);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;">💰</div>
+        <div style="font-size:12px;font-weight:700;color:var(--red);">财务 / 资产管理部</div>
+      </div>
+      <div class="collab-item">AI辅助财务数据分析和报表生成，减少人工</div>
+      <div class="collab-item">场景订单撮合为公司创造新收入来源</div>
+      <div class="collab-item">出海服务收费体系，需财务支持合规设计</div>
+      <div class="collab-item">OPC效益可量化，协助建立新KPI评估体系</div>
+      <div style="margin-top:7px;padding:5px 9px;background:rgba(239,68,68,.1);border-radius:5px;font-size:10px;color:var(--red);">结果：新业务收入有数据支撑 📊</div>
+    </div>
+    <div class="collab-card" style="border-color:rgba(249,115,22,.3);">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;">
+        <div style="width:30px;height:30px;background:rgba(249,115,22,.15);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;">📣</div>
+        <div style="font-size:12px;font-weight:700;color:var(--orange);">公关 / 品牌部门</div>
+      </div>
+      <div class="collab-item">OPC和出海成功案例，是公司对外传播的最强素材</div>
+      <div class="collab-item">Seedance等AI工具大幅降低宣传内容制作成本</div>
+      <div class="collab-item">季度产业洞察报告是高质量品牌内容持续输出</div>
+      <div class="collab-item">全球化产业生态提升漕河泾国际化形象</div>
+      <div style="margin-top:7px;padding:5px 9px;background:rgba(249,115,22,.1);border-radius:5px;font-size:10px;color:var(--orange);">结果：园区品牌有了新故事可讲 ✨</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     AI现场演示
+════════════════════════════════════════ -->
+<div class="panel" id="panel-demo">
+  <div class="grid-3-1">
+    <div class="card">
+      <div class="card-title"><div class="card-title-dot" style="background:var(--green)"></div>🤖 AI数据助手 · 现场问答演示</div>
+      <div class="ai-chat" id="chat-container">
+        <div class="ai-msg">
+          <div class="ai-avatar">🤖</div>
+          <div class="ai-bubble">你好！我是产业发展促进中心的AI数据助手。可以问我四大战略任务、13项考核指标、或各部门协作价值等问题。</div>
+        </div>
+      </div>
+      <div class="quick-btns">
+        <button class="quick-btn" onclick="sendQuick(this)">13项考核指标是什么？</button>
+        <button class="quick-btn" onclick="sendQuick(this)">OPC社区怎么考核？</button>
+        <button class="quick-btn" onclick="sendQuick(this)">出海服务的目标金额？</button>
+        <button class="quick-btn" onclick="sendQuick(this)">AI运营能力如何衡量？</button>
+        <button class="quick-btn" onclick="sendQuick(this)">重大招商的量化目标？</button>
+        <button class="quick-btn" onclick="sendQuick(this)">能为我们部门做什么？</button>
+      </div>
+      <div class="ai-input-row">
+        <input class="ai-input" id="ai-input" placeholder="直接输入问题..." onkeydown="if(event.key==='Enter')sendMsg()"/>
+        <button class="ai-send" onclick="sendMsg()">发送</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="card-title-dot" style="background:var(--gold)"></div>这个大屏本身就是AI产出</div>
+      <div style="display:flex;flex-direction:column;gap:7px;font-size:11px;">
+        <div style="padding:8px;background:rgba(245,158,11,.1);border-radius:6px;"><div style="font-weight:600;color:var(--gold);margin-bottom:2px;">📊 交互大屏</div><div style="color:var(--muted);font-size:10px;">AI生成代码，传统外包2-3周 → 数小时</div></div>
+        <div style="padding:8px;background:rgba(16,185,129,.1);border-radius:6px;"><div style="font-weight:600;color:var(--green);margin-bottom:2px;">📝 调研报告</div><div style="color:var(--muted);font-size:10px;">AI辅助框架+内容，1周 → 1天</div></div>
+        <div style="padding:8px;background:rgba(249,115,22,.1);border-radius:6px;"><div style="font-weight:600;color:var(--orange);margin-bottom:2px;">🎬 Seedance 2.0</div><div style="color:var(--muted);font-size:10px;">宣传视频AI生成，专业制作费省90%</div></div>
+        <div style="padding:8px;background:rgba(139,92,246,.1);border-radius:6px;"><div style="font-weight:600;color:var(--purple);margin-bottom:2px;">🤖 Gem智能体</div><div style="color:var(--muted);font-size:10px;">定制工作流，企业尽调·信息聚合</div></div>
+        <div style="padding:8px;background:rgba(14,165,233,.1);border-radius:6px;"><div style="font-weight:600;color:var(--accent);margin-bottom:2px;">🎯 13项指标</div><div style="color:var(--muted);font-size:10px;">每个战略任务都有可追踪的量化目标</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+// Clock
+function updateClock(){document.getElementById('clock').textContent=new Date().toLocaleString('zh-CN');}
+updateClock();setInterval(updateClock,1000);
+
+// Panel switch
+function switchPanel(id,el){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  if(el)el.classList.add('active');
+  setTimeout(animateBars,100);animateCounters();
+}
+function switchPanelById(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>{
+    t.classList.remove('active');
+    const oc=t.getAttribute('onclick')||'';
+    if(oc.includes("'"+id+"'"))t.classList.add('active');
+  });
+  const p=document.getElementById('panel-'+id);
+  if(p){p.classList.add('active');setTimeout(animateBars,100);animateCounters();}
+}
+
+// Bars
+function animateBars(){
+  document.querySelectorAll('.bar-fill,.kpi-metric-bar-fill').forEach(el=>{
+    el.style.width=(el.dataset.width||0)+'%';
+  });
+}
+
+// Counters
+function animateCounters(){
+  document.querySelectorAll('.count-up').forEach(el=>{
+    const t=parseInt(el.dataset.target);let c=0;const s=t/40;
+    const ti=setInterval(()=>{c=Math.min(c+s,t);el.textContent=Math.floor(c).toLocaleString();if(c>=t)clearInterval(ti);},30);
+  });
+}
+window.addEventListener('load',()=>{setTimeout(animateBars,200);animateCounters();});
+
+// AI Chat
+const KB={
+  "13项指标":"产业发展促进中心2025年度13项量化考核指标：\n\n🏭 重大产业招商（25%）\n① 项目签约落地 ≥3个（10%）\n② 产业图谱建设 4赛道（5%）\n③ 主动接触企业 ≥80家（5%）\n④ 赛道研究报告 ≥4份（5%）\n\n🌍 场景出海服务（25%）\n⑤ 订单撮合金额 ≥500万（10%）\n⑥ 出海服务覆盖 摸底50/签约10（8%）\n⑦ 资源网络节点 ≥20个（7%）\n\n🏢 超级创业者社区（30%）\n⑧ OPC入驻 ≥50家·1/3营收百万（12%）\n⑨ 生态活动 ≥12次·触达500人次（8%）\n⑩ 生态联动订单 ≥200万（10%）\n\n🤖 AI运营能力（20%）\n⑪ 全司覆盖率 ≥70%月活（8%）\n⑫ AI产出成果 ≥30件·知识库50条（7%）\n⑬ 示范影响力 带动≥2部门改进（5%）",
+  "OPC考核":"OPC超级创业者社区考核指标（权重30%，最高权重）：\n\n⑧ 入驻数量与质量（12%）\n· 全年累计入驻 ≥50家企业\n· AI原生企业占比 ≥80%\n· 营收过百万/千万占比 ≥1/3（约17家）\n· 核验：入驻协议 + AI原生评分表 + 营收证明\n\n⑨ 生态活动运营（8%）\n· 活动总次数 ≥12次\n· 对外开放峰会 ≥4次（每季度一次）\n· 全年触达受众 ≥500人次\n· 每次活动参与企业均值 ≥15家\n\n⑩ 企业间生态联动订单（10%）\n· OPC企业互为客户合作 ≥8笔\n· 有合同记录的合作 ≥3笔\n· 累计合同金额 ≥200万元\n· 这是检验社区是否真正「自生长」的核心指标",
+  "出海金额":"场景出海服务考核指标（权重25%）：\n\n⑤ 场景订单撮合金额（10%）\n· 全年累计撮合金额 ≥500万元\n· 成功案例 ≥5个\n· 口径：已签合同/框架协议约定金额\n· 注意：排除口头承诺，仅计入有书面记录的金额\n\n⑥ 出海服务企业覆盖（8%）\n· 需求摸底 ≥50家企业\n· 正式签约服务 ≥10家企业\n· 可对外传播成功案例 ≥1个\n· 三层递进缺一不可\n\n⑦ 资源网络节点（7%）\n· 新增高质量资源节点 ≥20个\n· 其中海外节点 ≥5个\n· 每个节点须有至少一次实质合作记录",
+  "AI指标":"AI运营能力考核指标（权重20%）：\n\n⑪ 全司AI工具覆盖率（8%）\n· 完成部署和培训的部门 ≥20个\n· 月活跃使用部门比例 ≥70%\n· 全司AI工具分享会 ≥10次\n· 核验：飞书后台数据（客观第三方可查）\n\n⑫ AI效率提升与知识沉淀（7%）\n· AI工具产出成果 ≥30件（报告/视频/分析）\n· 知识库入库条目 ≥50条\n· 折算节省工时 ≥200小时\n\n⑬ AI标杆示范影响力（5%）\n· 发布AI方法论/规范文件 ≥2份\n· 全司AI示范演示 ≥3次\n· 因产业促进中心指导而产生改进的部门 ≥2个",
+  "重大招商":"重大产业招商考核指标（权重25%）：\n\n① 项目签约落地（10%）\n· 全年签约落地重大项目 ≥3个\n· 单项注册资金/投资额 ≥1000万元\n· 核验：签约合同 + 工商注册记录\n\n② 产业图谱建设（5%）\n· 完成四大赛道图谱（未来产业/智能终端/汽车/宠物）\n· 每条赛道覆盖节点企业 ≥50家\n· 可动态更新的数字化图谱文档\n\n③ 主动接触企业（5%）\n· 全年主动接触目标企业 ≥80家\n· 进入深度谈判阶段 ≥20家\n· 漏斗：80→20→3，过程+结果双考核\n\n④ 赛道研究报告（5%）\n· 每季度一份 · 全年 ≥4份\n· 含市场规模·代表企业·招商机会点三模块",
+  "部门价值":"产业发展促进中心能为各部门提供：\n\n🏗️ 属地事业部：升级存量客户结构，OPC+出海让客户更有粘性\n⚙️ 行政/人事：AI工具降本增效，飞书妙记等自动化重复工作\n🔍 审计/法务：跨境合规场景，专业能力有了新的输出机会\n🎯 招商部门：产业图谱+资源网络，共引高质量战略项目\n💰 财务/资产：场景订单创造新收入，帮建立新KPI评估体系\n📣 公关/品牌：OPC成功案例+AI宣传工具，园区有新故事可讲"
+};
+function findAnswer(q){
+  const map={"13项":"13项指标","考核指标":"13项指标","全部指标":"13项指标","opc考核":"OPC考核","社区考核":"OPC考核","社区指标":"OPC考核","入驻":"OPC考核","500万":"出海金额","出海指标":"出海金额","出海考核":"出海金额","撮合":"出海金额","ai考核":"AI指标","ai指标":"AI指标","ai运营考核":"AI指标","覆盖率":"AI指标","招商指标":"重大招商","招商考核":"重大招商","签约":"重大招商","图谱":"重大招商","部门":"部门价值","为我":"部门价值","价值":"部门价值","协作":"部门价值"};
+  const lower=q.toLowerCase();
+  for(const[kw,key] of Object.entries(map)){if(lower.includes(kw))return KB[key];}
+  return "感谢提问！建议点击上方快捷问题了解核心内容，或切换到「年度考核指标」页面查看完整13项指标体系。";
+}
+function appendMsg(role,text){
+  const c=document.getElementById('chat-container');
+  const d=document.createElement('div');d.className='ai-msg'+(role==='user'?' user':'');
+  d.innerHTML=`<div class="ai-avatar">${role==='user'?'👤':'🤖'}</div><div class="ai-bubble" style="white-space:pre-line">${text}</div>`;
+  c.appendChild(d);c.scrollTop=c.scrollHeight;
+}
+function showTyping(){
+  const c=document.getElementById('chat-container');
+  const d=document.createElement('div');d.className='ai-msg';d.id='typing-indicator';
+  d.innerHTML='<div class="ai-avatar">🤖</div><div class="ai-bubble"><div class="ai-typing"><span></span><span></span><span></span></div></div>';
+  c.appendChild(d);c.scrollTop=c.scrollHeight;
+}
+function hideTyping(){const el=document.getElementById('typing-indicator');if(el)el.remove();}
+function sendMsg(){
+  const input=document.getElementById('ai-input');const q=input.value.trim();if(!q)return;
+  input.value='';appendMsg('user',q);showTyping();
+  setTimeout(()=>{hideTyping();appendMsg('ai',findAnswer(q));},600+Math.random()*400);
+}
+function sendQuick(btn){
+  const q=btn.textContent;appendMsg('user',q);showTyping();
+  setTimeout(()=>{hideTyping();appendMsg('ai',findAnswer(q));},600+Math.random()*400);
+}
+</script>
+</body>
+</html>

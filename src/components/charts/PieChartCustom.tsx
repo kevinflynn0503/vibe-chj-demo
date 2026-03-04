@@ -29,7 +29,7 @@ export function PieChartCustom({ data, height = 300 }: PieChartCustomProps) {
           labelLine={false}
           label={({ name, value, percent }) => `${name}: ${value} (${((percent || 0) * 100).toFixed(1)}%)`}
           outerRadius={80}
-          fill="#8884d8"
+          fill="var(--color-data-blue)"
           dataKey="value"
         >
           {data.map((entry, index) => (
@@ -42,10 +42,10 @@ export function PieChartCustom({ data, height = 300 }: PieChartCustomProps) {
               const data = payload[0].payload;
               const percent = ((data.value / total) * 100).toFixed(1);
               return (
-                <div className="bg-white px-4 py-3 rounded-lg shadow-lg border border-slate-200">
-                  <div className="font-semibold text-slate-900 mb-1">{data.name}</div>
-                  <div className="text-sm text-slate-600">数量: {data.value.toLocaleString()}</div>
-                  <div className="text-sm text-slate-600">占比: {percent}%</div>
+                <div className="bg-surface-card px-4 py-3 rounded-lg shadow-lg border border-line">
+                  <div className="font-semibold text-text-primary mb-1">{data.name}</div>
+                  <div className="text-sm text-text-secondary">数量: {data.value.toLocaleString()}</div>
+                  <div className="text-sm text-text-secondary">占比: {percent}%</div>
                 </div>
               );
             }

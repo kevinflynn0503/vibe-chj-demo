@@ -9,11 +9,11 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import {
-  ArrowLeft, Zap, Building2, ChevronRight, TrendingUp,
+  ChevronLeft, Zap, Building2, ChevronRight, TrendingUp,
   Sparkles, ExternalLink, Users, Target, Bot, CheckCircle2, XCircle
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { getIncubatorEnterprises, getEnterprises } from '@/lib/mock-data';
+import { Button } from '@/components/ui';
 import { sendChat } from '@/lib/host-api';
 
 // 模拟反向推荐数据
@@ -72,10 +72,10 @@ const mockRecommendations: RecommendItem[] = [
 ];
 
 const signalTypeConfig: Record<string, { label: string; cls: string; icon: React.ComponentType<{ className?: string }> }> = {
-  product: { label: '新产品', cls: 'bg-blue-50 text-blue-600 border-blue-100', icon: Sparkles },
-  funding: { label: '融资', cls: 'bg-emerald-50 text-emerald-600 border-emerald-100', icon: TrendingUp },
-  tech: { label: '技术突破', cls: 'bg-violet-50 text-violet-600 border-violet-100', icon: Zap },
-  expansion: { label: '扩张', cls: 'bg-amber-50 text-amber-600 border-amber-100', icon: Target },
+  product: { label: '新产品', cls: 'bg-[rgba(27,27,27,0.06)] text-brand border-line-light', icon: Sparkles },
+  funding: { label: '融资', cls: 'bg-[rgba(27,27,27,0.06)] text-success border-line-light', icon: TrendingUp },
+  tech: { label: '技术突破', cls: 'bg-[rgba(27,27,27,0.06)] text-brand border-line-light', icon: Zap },
+  expansion: { label: '扩张', cls: 'bg-[rgba(27,27,27,0.06)] text-warning border-line-light', icon: Target },
 };
 
 export default function RecommendPage() {
@@ -98,41 +98,40 @@ export default function RecommendPage() {
       {/* 头部 */}
       <div className="detail-header">
         <div className="detail-header-inner">
-          <button onClick={() => router.push('/incubator')} className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-[#3370FF] transition-colors mb-3">
-            <ArrowLeft className="h-3.5 w-3.5" />
-            返回孵化管理
-          </button>
+          <Button variant="ghost" size="sm" onClick={() => router.push('/incubator')} className="mb-3">
+            <ChevronLeft className="h-3.5 w-3.5" /> 返回孵化管理
+          </Button>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-lg font-bold text-slate-900">反向推荐</h1>
-                <span className="flex items-center gap-1 text-[10px] text-[#3370FF] bg-blue-50 px-1.5 py-0.5 rounded">
+                <h1 className="text-lg font-semibold text-text-primary">反向推荐</h1>
+                <span className="flex items-center gap-1 text-tag text-brand bg-[rgba(27,27,27,0.06)] px-1.5 py-0.5 rounded">
                   <Bot className="h-3 w-3" /> AI 自动监测
                 </span>
               </div>
-              <p className="text-xs text-slate-500 mt-0.5">AI 持续监测在孵企业变化 → 自动推荐园区合作伙伴 · {mockRecommendations.length} 条信号 · {totalRecommendations} 条推荐</p>
+              <p className="text-xs text-text-muted mt-0.5">AI 持续监测在孵企业变化 → 自动推荐园区合作伙伴 · {mockRecommendations.length} 条信号 · {totalRecommendations} 条推荐</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="page-container space-y-4">
+      <div className="page-container space-y-6">
 
         {/* 概览 */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-          <div className="bg-white border border-slate-200 rounded-lg p-4 text-center">
-            <div className="text-2xl font-bold text-slate-900 font-mono">{mockRecommendations.length}</div>
-            <div className="text-xs text-slate-500 mt-0.5">变化信号</div>
+          <div className="bg-surface-card border border-line rounded-lg p-4 text-center">
+            <div className="text-2xl font-semibold text-text-primary font-mono">{mockRecommendations.length}</div>
+            <div className="text-xs text-text-muted mt-0.5">变化信号</div>
           </div>
-          <div className="bg-white border border-slate-200 rounded-lg p-4 text-center">
-            <div className="text-2xl font-bold text-[#3370FF] font-mono">{totalRecommendations}</div>
-            <div className="text-xs text-slate-500 mt-0.5">推荐对接</div>
+          <div className="bg-surface-card border border-line rounded-lg p-4 text-center">
+            <div className="text-2xl font-bold text-brand font-mono">{totalRecommendations}</div>
+            <div className="text-xs text-text-muted mt-0.5">推荐对接</div>
           </div>
-          <div className="bg-white border border-slate-200 rounded-lg p-4 text-center">
-            <div className="text-2xl font-bold text-emerald-600 font-mono">
+          <div className="bg-surface-card border border-line rounded-lg p-4 text-center">
+            <div className="text-2xl font-bold text-success font-mono">
               {new Set(mockRecommendations.map(r => r.incubatorEnterprise)).size}
             </div>
-            <div className="text-xs text-slate-500 mt-0.5">涉及企业</div>
+            <div className="text-xs text-text-muted mt-0.5">涉及企业</div>
           </div>
         </div>
 
@@ -142,22 +141,22 @@ export default function RecommendPage() {
             const signalConfig = signalTypeConfig[rec.signalType];
             const SignalIcon = signalConfig.icon;
             return (
-              <div key={rec.id} className="bg-white border border-slate-200 rounded-lg">
+              <div key={rec.id} className="bg-surface-card border border-line rounded-lg">
                 {/* 信号头部 */}
-                <div className="px-4 py-3 border-b border-slate-100">
+                <div className="px-4 py-3 border-b border-line-light">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className={cn("text-[10px] px-1.5 py-0.5 rounded border flex items-center gap-1", signalConfig.cls)}>
+                    <span className={cn("text-tag px-1.5 py-0.5 rounded border flex items-center gap-1", signalConfig.cls)}>
                       <SignalIcon className="h-3 w-3" />
                       {signalConfig.label}
                     </span>
-                    <span className="text-sm font-bold text-slate-900">{rec.incubatorEnterprise}</span>
-                    <span className="text-xs text-slate-400 font-mono">{rec.signalTime}</span>
+                    <span className="text-sm font-semibold text-text-primary">{rec.incubatorEnterprise}</span>
+                    <span className="text-xs text-text-muted font-mono">{rec.signalTime}</span>
                   </div>
-                  <p className="text-xs text-slate-600 mt-1.5">{rec.signal}</p>
+                  <p className="text-xs text-text-secondary mt-1.5">{rec.signal}</p>
                 </div>
 
                 {/* 推荐伙伴 */}
-                <div className="divide-y divide-slate-100">
+                <div className="divide-y divide-line-light">
                   {rec.recommendations.map((r, i) => {
                     const key = `${rec.id}-${r.enterpriseId}`;
                     const isAccepted = acceptedKeys.has(key);
@@ -165,61 +164,57 @@ export default function RecommendPage() {
 
                     return (
                       <div key={i} className={cn("px-4 py-3 transition-colors", isIgnored && "opacity-50")}>
-                        <div className="flex items-center justify-between hover:bg-slate-50/50 -mx-1 px-1 rounded cursor-pointer"
+                        <div className="flex items-center justify-between hover:bg-surface-hover-row -mx-1 px-1 rounded cursor-pointer"
                           onClick={() => router.push(`/enterprises/${r.enterpriseId}`)}>
                           <div className="flex items-center gap-3 flex-1 min-w-0">
-                            <div className="w-8 h-8 bg-blue-50 text-blue-600 border border-blue-100 rounded-lg flex items-center justify-center text-xs font-bold shrink-0">
+                            <div className="w-8 h-8 bg-[rgba(27,27,27,0.06)] text-brand border border-line-light rounded-lg flex items-center justify-center text-xs font-bold shrink-0">
                               {r.enterpriseName.charAt(0)}
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2">
-                                <span className="text-sm font-medium text-slate-900">{r.enterpriseName}</span>
-                                {isAccepted && <span className="text-[10px] px-1.5 py-0.5 bg-emerald-100 text-emerald-600 rounded flex items-center gap-0.5"><CheckCircle2 className="h-3 w-3" />已采纳</span>}
+                                <span className="text-sm font-medium text-text-primary">{r.enterpriseName}</span>
+                                {isAccepted && <span className="text-tag px-1.5 py-0.5 bg-[rgba(27,27,27,0.06)] text-success rounded flex items-center gap-0.5"><CheckCircle2 className="h-3 w-3" />已采纳</span>}
                               </div>
-                              <div className="text-xs text-slate-500 mt-0.5 truncate">{r.reason}</div>
+                              <div className="text-xs text-text-muted mt-0.5 truncate">{r.reason}</div>
                             </div>
                           </div>
                           <div className="flex items-center gap-3 shrink-0 ml-4">
                             <div className="text-right">
                               <div className={cn("text-sm font-bold font-mono",
-                                r.matchScore >= 90 ? 'text-emerald-600' :
-                                r.matchScore >= 70 ? 'text-blue-600' : 'text-amber-600'
+                                r.matchScore >= 90 ? 'text-success' :
+                                r.matchScore >= 70 ? 'text-brand' : 'text-warning'
                               )}>
                                 {r.matchScore}%
                               </div>
-                              <div className="text-[10px] text-slate-400">匹配度</div>
+                              <div className="text-tag text-text-muted">匹配度</div>
                             </div>
                           </div>
                         </div>
                         {/* 操作栏 */}
-                        <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100 pl-11">
-                          <button
-                            className="flex items-center gap-1 text-[10px] font-medium text-[#3370FF] hover:underline"
+                        <div className="flex items-center justify-between mt-2 pt-2 border-t border-line-light pl-11">
+                          <Button
+                            variant="text"
+                            size="sm"
+                            icon={<Sparkles className="h-3 w-3" />}
                             onClick={() => sendChat(`请深度分析「${rec.incubatorEnterprise}」与「${r.enterpriseName}」的合作可行性，评估技术互补度、合作模式和风险。`)}
                           >
-                            <Sparkles className="h-3 w-3" /> AI 分析合作可行性
-                          </button>
+                            AI 分析合作可行性
+                          </Button>
                           <div className="flex items-center gap-2">
                             {!isAccepted && !isIgnored && (
                               <>
-                                <button
-                                  className="flex items-center gap-1 text-[10px] font-medium text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-2 py-1 rounded border border-emerald-200 transition-colors"
-                                  onClick={() => handleAccept(key)}
-                                >
+                                <Button variant="ghost" size="sm" onClick={() => handleAccept(key)}>
                                   <CheckCircle2 className="h-3 w-3" /> 发起对接
-                                </button>
-                                <button
-                                  className="flex items-center gap-1 text-[10px] text-slate-400 hover:text-slate-600 px-1.5 py-1"
-                                  onClick={() => handleIgnore(key)}
-                                >
+                                </Button>
+                                <Button variant="ghost" size="sm" onClick={() => handleIgnore(key)}>
                                   <XCircle className="h-3 w-3" /> 暂不
-                                </button>
+                                </Button>
                               </>
                             )}
                             {isIgnored && (
-                              <button className="text-[10px] text-slate-400 hover:text-[#3370FF]" onClick={() => { setIgnoredKeys(prev => { const n = new Set(prev); n.delete(key); return n; }); }}>
+                              <Button variant="link" size="sm" onClick={() => { setIgnoredKeys(prev => { const n = new Set(prev); n.delete(key); return n; }); }}>
                                 撤销
-                              </button>
+                              </Button>
                             )}
                           </div>
                         </div>

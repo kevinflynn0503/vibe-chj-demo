@@ -22,16 +22,16 @@ interface TagProps {
 }
 
 const variantStyles: Record<TagVariant, string> = {
-  blue: 'bg-blue-50 text-blue-600 border-blue-100',
-  green: 'bg-green-50 text-green-600 border-green-100',
-  emerald: 'bg-emerald-50 text-emerald-600 border-emerald-100',
-  orange: 'bg-orange-50 text-orange-600 border-orange-100',
-  amber: 'bg-amber-50 text-amber-600 border-amber-100',
-  red: 'bg-red-50 text-red-600 border-red-100',
-  purple: 'bg-purple-50 text-purple-600 border-purple-100',
-  violet: 'bg-violet-50 text-violet-600 border-violet-100',
-  gray: 'bg-slate-50 text-slate-600 border-slate-200',
-  slate: 'bg-slate-50 text-slate-600 border-slate-200',
+  blue: 'bg-info-light text-info border-transparent',
+  green: 'bg-success-light text-success border-transparent',
+  emerald: 'bg-success-light text-success border-transparent',
+  orange: 'bg-warning-light text-[#B45309] border-transparent',
+  amber: 'bg-warning-light text-[#B45309] border-transparent',
+  red: 'bg-error-light text-error border-transparent',
+  purple: 'bg-info-light text-info border-transparent',
+  violet: 'bg-info-light text-info border-transparent',
+  gray: 'bg-[rgba(27,27,27,0.06)] text-text-secondary border-transparent',
+  slate: 'bg-[rgba(27,27,27,0.06)] text-text-secondary border-transparent',
 };
 
 export function Tag({ 

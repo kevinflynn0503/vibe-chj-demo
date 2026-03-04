@@ -17,8 +17,7 @@ export function Skeleton({ className }: SkeletonProps) {
 /** 卡片骨架 */
 export function SkeletonCard({ className }: SkeletonProps) {
   return (
-    <div className={cn('bg-white border border-slate-200 rounded-[10px] p-4 space-y-3', className)}
-      style={{ boxShadow: 'var(--card-shadow)' }}>
+    <div className={cn('bg-surface-card border border-line rounded-lg p-4 space-y-3 shadow-card', className)}>
       <Skeleton className="h-4 w-2/3" />
       <Skeleton className="h-3 w-1/2" />
       <div className="flex gap-2">
@@ -48,7 +47,7 @@ export function PageSkeleton() {
       {/* 统计卡片 */}
       <div className="grid grid-cols-4 gap-3">
         {[1, 2, 3, 4].map(i => (
-          <div key={i} className="bg-white border border-slate-100 rounded-[10px] p-4 space-y-2">
+          <div key={i} className="bg-surface-card border border-line rounded-lg p-4 space-y-2">
             <Skeleton className="h-3 w-16" />
             <Skeleton className="h-6 w-12" />
           </div>

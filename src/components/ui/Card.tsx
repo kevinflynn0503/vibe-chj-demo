@@ -31,11 +31,9 @@ export function Card({
   return (
     <div
       className={cn(
-        // 基础样式（统一！）
-        'bg-white rounded-lg shadow-card',
-        !noBorder && 'border border-slate-200',
-        // 可选样式
-        hover && 'hover:border-slate-300 hover:shadow-card-hover transition-all',
+        'bg-surface-card rounded-lg',
+        !noBorder && 'border border-line',
+        hover && 'hover:bg-surface-hover-card transition-colors duration-150',
         clickable && 'cursor-pointer',
         className
       )}
@@ -71,7 +69,7 @@ interface CardAccentProps extends CardProps {
 
 export function CardAccent({ 
   children, 
-  accentColor = '#3370FF', 
+  accentColor = 'var(--color-brand)', 
   className, 
   ...props 
 }: CardAccentProps) {

@@ -10,6 +10,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import {
   Rocket, TrendingDown, TrendingUp, Zap, Building2, Activity,
   ChevronRight, ArrowRight, MapPin, AlertTriangle, Sparkles, Bot,
@@ -17,14 +18,35 @@ import {
 } from 'lucide-react';
 import { sendChat } from '@/lib/host-api';
 import { cn } from '@/lib/utils';
-import { getIncubatorStats, getIncubatorEnterprises, getActivityReports } from '@/lib/mock-data';
-import { Card, CardCompact, CardStandard, Tag } from '@/components/ui';
+import { fetchIncubatorStats, fetchIncubatorEnterprises, fetchActivityReports } from '@/services/incubator';
+import type { IncubatorEnterprise } from '@/lib/schema';
+import { Card, CardCompact, CardStandard, Tag, Button, PageSkeleton } from '@/components/ui';
 
 export default function IncubatorPage() {
   const router = useRouter();
-  const stats = getIncubatorStats();
-  const enterprises = getIncubatorEnterprises();
-  const activityReports = getActivityReports();
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState<Awaited<ReturnType<typeof fetchIncubatorStats>> | null>(null);
+  const [enterprises, setEnterprises] = useState<IncubatorEnterprise[]>([]);
+  const [activityReports, setActivityReports] = useState<Awaited<ReturnType<typeof fetchActivityReports>>>([]);
+
+  useEffect(() => {
+    async function load() {
+      const [statsData, enterprisesData, reportsData] = await Promise.all([
+        fetchIncubatorStats(),
+        fetchIncubatorEnterprises(),
+        fetchActivityReports(),
+      ]);
+      setStats(statsData);
+      setEnterprises(enterprisesData);
+      setActivityReports(reportsData);
+      setLoading(false);
+    }
+    load();
+  }, []);
+
+  if (loading) return <PageSkeleton />;
+
+  const statsResolved = stats!;
 
   const alerts = activityReports.filter(r => r.trend === 'down');
   const topActive = activityReports.filter(r => r.trend === 'up').slice(0, 3);
@@ -32,56 +54,68 @@ export default function IncubatorPage() {
 
   return (
     <div className="min-h-full">
-      <div className="page-container space-y-4">
-        {/* ═══ 头部 ═══ */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-1">
-          <div>
-            <h1 className="text-lg font-bold text-text-primary">孵化器运营</h1>
-            <p className="text-xs text-text-muted mt-0.5">A6 奇岱松校友中心 · {stats.total_enterprises} 家在孵</p>
+      {/* ═══ 头部渐变区 ═══ */}
+      <div className="relative">
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(51,112,255,0.04) 0%, rgba(255,255,255,0) 100%)' }} />
+        <div className="relative page-container">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-5 pb-5">
+            <div>
+              <h1 className="text-lg font-semibold text-text-primary tracking-tight">孵化器运营</h1>
+              <p className="text-xs text-text-muted mt-1">A6 奇岱松校友中心 · {statsResolved.total_enterprises} 家在孵</p>
+            </div>
+            <Button variant="primary" size="sm" onClick={() => router.push('/incubator/match')}>
+              <Sparkles className="h-3.5 w-3.5" /> AI 订单匹配
+            </Button>
           </div>
-          <button className="btn btn-primary btn-sm" onClick={() => router.push('/incubator/match')}>
-            <Sparkles className="h-3.5 w-3.5" /> AI 订单匹配
-          </button>
         </div>
+      </div>
 
-        {/* ═══ 运营指标 + AI 状态 ═══ */}
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <BarChart3 className="h-4 w-4 text-brand" />
-              <h2 className="text-xs font-bold text-text-secondary uppercase tracking-wider">运营概览</h2>
-              <Tag variant="primary" className="flex items-center gap-1">
-                <Bot className="h-3 w-3" /> AI 持续监测中
-              </Tag>
+      <div className="page-container space-y-6">
+
+        {/* ═══ 运营指标 ═══ */}
+        <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
+          <CardCompact>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs text-text-muted">在孵企业</span>
+              <Building2 className="h-3.5 w-3.5 text-text-muted" />
             </div>
-            <span className="text-tag text-text-muted">更新于 10 分钟前</span>
-          </div>
-          <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
-            <div className="text-center p-3 bg-slate-50 rounded-lg">
-              <div className="text-lg font-bold font-mono text-text-primary">{stats.total_enterprises}</div>
-              <div className="text-tag text-text-secondary">在孵企业</div>
+            <div className="text-2xl font-semibold font-mono text-text-primary">{statsResolved.total_enterprises}</div>
+          </CardCompact>
+          <CardCompact>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs text-text-muted">高活跃</span>
+              <TrendingUp className="h-3.5 w-3.5 text-text-muted" />
             </div>
-            <div className="text-center p-3 bg-emerald-50 rounded-lg">
-              <div className="text-lg font-bold font-mono text-emerald-600">{topActive.length}</div>
-              <div className="text-tag text-text-secondary">高活跃</div>
+            <div className="text-2xl font-semibold font-mono text-success">{topActive.length}</div>
+          </CardCompact>
+          <CardCompact>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs text-text-muted">异常预警</span>
+              <AlertTriangle className="h-3.5 w-3.5 text-text-muted" />
             </div>
-            <div className="text-center p-3 bg-red-50 rounded-lg">
-              <div className="text-lg font-bold font-mono text-red-600">{alerts.length}</div>
-              <div className="text-tag text-text-secondary">异常预警</div>
+            <div className="text-2xl font-semibold font-mono text-error">{alerts.length}</div>
+          </CardCompact>
+          <CardCompact>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs text-text-muted">本周会议</span>
+              <Clock className="h-3.5 w-3.5 text-text-muted" />
             </div>
-            <div className="text-center p-3 bg-blue-50 rounded-lg">
-              <div className="text-lg font-bold font-mono text-blue-600">156</div>
-              <div className="text-tag text-text-secondary">本周会议</div>
+            <div className="text-2xl font-semibold font-mono text-text-primary">156</div>
+          </CardCompact>
+          <CardCompact>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs text-text-muted">本周访客</span>
+              <Activity className="h-3.5 w-3.5 text-text-muted" />
             </div>
-            <div className="text-center p-3 bg-violet-50 rounded-lg">
-              <div className="text-lg font-bold font-mono text-violet-600">89</div>
-              <div className="text-tag text-text-secondary">本周访客</div>
+            <div className="text-2xl font-semibold font-mono text-text-primary">89</div>
+          </CardCompact>
+          <CardCompact>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs text-text-muted">工位使用率</span>
+              <MapPin className="h-3.5 w-3.5 text-text-muted" />
             </div>
-            <div className="text-center p-3 bg-amber-50 rounded-lg">
-              <div className="text-lg font-bold font-mono text-amber-600">92%</div>
-              <div className="text-tag text-text-secondary">工位使用率</div>
-            </div>
-          </div>
+            <div className="text-2xl font-semibold font-mono text-text-primary">92%</div>
+          </CardCompact>
         </div>
 
         {/* ═══ 三大场景入口 ═══ */}
@@ -89,25 +123,25 @@ export default function IncubatorPage() {
           {/* 异常预警 */}
           <CardStandard hover className="p-0 overflow-hidden cursor-pointer group"
             onClick={() => router.push('/incubator/alerts')}>
-            <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+            <div className="px-4 py-3 border-b border-line-light flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4 text-red-500" />
-                <h2 className="text-sm font-bold text-text-primary">异常预警</h2>
-                {alerts.length > 0 && <Tag variant="danger" className="rounded-full">{alerts.length}</Tag>}
+                <AlertTriangle className="h-4 w-4 text-text-muted" />
+                <h2 className="text-sm font-semibold text-text-primary">异常预警</h2>
+                {alerts.length > 0 && <Tag variant="red" className="rounded-full">{alerts.length}</Tag>}
               </div>
-              <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-red-500" />
+              <ChevronRight className="h-4 w-4 text-text-muted group-hover:text-error" />
             </div>
             <div className="p-4 space-y-2">
               {alerts.length > 0 ? alerts.slice(0, 2).map(r => (
                 <div key={r.enterprise_id} className="flex items-center gap-2 text-xs">
-                  <TrendingDown className="h-3 w-3 text-red-500 shrink-0" />
+                  <TrendingDown className="h-3 w-3 text-error shrink-0" />
                   <span className="text-text-primary truncate">{r.name}</span>
-                  <span className="text-red-500 shrink-0">活跃度 {r.activity_score}</span>
+                  <span className="text-error shrink-0">活跃度 {r.activity_score}</span>
                 </div>
               )) : <p className="text-xs text-text-muted">暂无异常</p>}
               {alerts.length > 2 && <p className="text-tag text-text-muted">+{alerts.length - 2} 更多...</p>}
             </div>
-            <div className="px-4 py-2.5 bg-red-50/50 border-t border-red-100 flex items-center gap-1.5 text-tag text-red-600">
+            <div className="px-4 py-2.5 bg-[rgba(27,27,27,0.06)] border-t border-line-light flex items-center gap-1.5 text-tag text-error">
               <Bot className="h-3 w-3" /> AI 持续监测活跃度，自动检测异常
             </div>
           </CardStandard>
@@ -115,21 +149,21 @@ export default function IncubatorPage() {
           {/* 订单匹配 */}
           <CardStandard hover className="p-0 overflow-hidden cursor-pointer group"
             onClick={() => router.push('/incubator/match')}>
-            <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+            <div className="px-4 py-3 border-b border-line-light flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Rocket className="h-4 w-4 text-brand" />
-                <h2 className="text-sm font-bold text-text-primary">AI 订单匹配</h2>
+                <Rocket className="h-4 w-4 text-text-muted" />
+                <h2 className="text-sm font-semibold text-text-primary">AI 订单匹配</h2>
               </div>
-              <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-brand" />
+              <ChevronRight className="h-4 w-4 text-text-muted group-hover:text-brand" />
             </div>
             <div className="p-4">
               <p className="text-xs text-text-secondary mb-3">输入大企业需求 → AI 拆解子任务 → 匹配孵化企业能力</p>
               <div className="flex items-center gap-3 text-xs">
-                <span className="text-brand font-medium">待处理 {stats.pending_orders} 个</span>
-                <span className="text-text-muted">本月匹配 {stats.total_orders} 次</span>
+                <span className="text-brand font-medium">待处理 {statsResolved.pending_orders} 个</span>
+                <span className="text-text-muted">本月匹配 {statsResolved.total_orders} 次</span>
               </div>
             </div>
-            <div className="px-4 py-2.5 bg-blue-50/50 border-t border-blue-100 flex items-center gap-1.5 text-tag text-brand">
+            <div className="px-4 py-2.5 bg-[rgba(27,27,27,0.06)] border-t border-line-light flex items-center gap-1.5 text-tag text-brand">
               <Sparkles className="h-3 w-3" /> AI 自动拆解需求 + 语义匹配企业能力
             </div>
           </CardStandard>
@@ -137,21 +171,21 @@ export default function IncubatorPage() {
           {/* 反向推荐 */}
           <CardStandard hover className="p-0 overflow-hidden cursor-pointer group"
             onClick={() => router.push('/incubator/recommend')}>
-            <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+            <div className="px-4 py-3 border-b border-line-light flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Zap className="h-4 w-4 text-emerald-500" />
-                <h2 className="text-sm font-bold text-text-primary">AI 反向推荐</h2>
+                <Zap className="h-4 w-4 text-text-muted" />
+                <h2 className="text-sm font-semibold text-text-primary">AI 反向推荐</h2>
               </div>
-              <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-emerald-500" />
+              <ChevronRight className="h-4 w-4 text-text-muted group-hover:text-success" />
             </div>
             <div className="p-4">
               <p className="text-xs text-text-secondary mb-3">在孵企业有变化 → AI 自动推荐可对接的园区合作伙伴</p>
               <div className="flex items-center gap-3 text-xs">
-                <span className="text-emerald-600 font-medium">3 条新推荐待审</span>
+                <span className="text-success font-medium">3 条新推荐待审</span>
                 <span className="text-text-muted">本月推荐 8 条</span>
               </div>
             </div>
-            <div className="px-4 py-2.5 bg-emerald-50/50 border-t border-emerald-100 flex items-center gap-1.5 text-tag text-emerald-600">
+            <div className="px-4 py-2.5 bg-[rgba(27,27,27,0.06)] border-t border-line-light flex items-center gap-1.5 text-tag text-success">
               <Bot className="h-3 w-3" /> AI 监测变化信号（融资/新产品/团队扩张）
             </div>
           </CardStandard>
@@ -161,29 +195,30 @@ export default function IncubatorPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* 高活跃企业 */}
           <Card className="p-0">
-            <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+            <div className="px-4 py-3 border-b border-line-light flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Activity className="h-4 w-4 text-emerald-500" />
-                <h2 className="text-sm font-bold text-text-primary">高活跃企业</h2>
-                <Tag variant="success" className="flex items-center gap-0.5"><Bot className="h-3 w-3" /> AI 识别</Tag>
+                <Activity className="h-4 w-4 text-text-muted" />
+                <h2 className="text-sm font-semibold text-text-primary">高活跃企业</h2>
+                <Tag variant="emerald" className="flex items-center gap-0.5"><Bot className="h-3 w-3" /> AI 识别</Tag>
               </div>
             </div>
-            <div className="divide-y divide-slate-100">
+            <div className="divide-y divide-line-light">
               {topActive.map(r => (
-                <div key={r.enterprise_id} className="px-4 py-3 flex items-center justify-between hover:bg-slate-50 transition-colors cursor-pointer"
+                <div key={r.enterprise_id} className="px-4 py-3 flex items-center justify-between hover:bg-surface-hover-row transition-colors cursor-pointer"
                   onClick={() => { const incId = entIdToIncId[r.enterprise_id]; if (incId) router.push(`/incubator/${incId}`); }}>
                   <div>
                     <div className="text-sm font-medium text-text-primary">{r.name}</div>
-                    <div className="text-xs text-emerald-600 mt-0.5">
+                    <div className="text-xs text-success mt-0.5">
                       活跃度 {r.activity_score} · {r.signals?.[0] || '会议频次上升'}
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <button className="text-tag text-brand bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded border border-blue-100"
+                    <Button variant="text" size="sm"
+                      icon={<Sparkles className="h-3 w-3" />}
                       onClick={(e) => { e.stopPropagation(); sendChat(`「${r.name}」活跃度上升，请分析原因并推荐可对接的合作机会。`); }}>
-                      <Sparkles className="h-3 w-3 inline" /> AI 分析
-                    </button>
-                    <ChevronRight className="h-4 w-4 text-slate-300" />
+                      AI 分析
+                    </Button>
+                    <ChevronRight className="h-4 w-4 text-text-muted" />
                   </div>
                 </div>
               ))}
@@ -193,19 +228,19 @@ export default function IncubatorPage() {
 
           {/* 最近动态 */}
           <Card className="p-0">
-            <div className="px-4 py-3 border-b border-slate-100 flex items-center gap-2">
+            <div className="px-4 py-3 border-b border-line-light flex items-center gap-2">
               <Clock className="h-4 w-4 text-text-muted" />
-              <h2 className="text-sm font-bold text-text-primary">最近动态</h2>
+              <h2 className="text-sm font-semibold text-text-primary">最近动态</h2>
             </div>
-            <div className="divide-y divide-slate-100">
+            <div className="divide-y divide-line-light">
               {[
-                { icon: Sparkles, text: 'AI 完成「仪电-自动洗车」需求匹配，推荐 3 家', time: '10分钟前', cls: 'bg-blue-50 text-[#3370FF]' },
-                { icon: AlertTriangle, text: '芯视科技活跃度下降至 35，触发预警', time: '2小时前', cls: 'bg-red-50 text-red-500' },
-                { icon: Zap, text: 'AI 检测到微纳智造完成 Pre-A 融资，推荐合作方', time: '昨天', cls: 'bg-emerald-50 text-emerald-600' },
-                { icon: Handshake, text: '你采纳了「传感器供应商」匹配方案', time: '昨天', cls: 'bg-violet-50 text-violet-600' },
-                { icon: CheckCircle2, text: '清洁智造走访完成，AI 已提取走访记录', time: '2天前', cls: 'bg-emerald-50 text-emerald-600' },
+                { icon: Sparkles, text: 'AI 完成「仪电-自动洗车」需求匹配，推荐 3 家', time: '10分钟前', cls: 'bg-[rgba(27,27,27,0.06)] text-brand' },
+                { icon: AlertTriangle, text: '芯视科技活跃度下降至 35，触发预警', time: '2小时前', cls: 'bg-[rgba(27,27,27,0.06)] text-error' },
+                { icon: Zap, text: 'AI 检测到微纳智造完成 Pre-A 融资，推荐合作方', time: '昨天', cls: 'bg-[rgba(27,27,27,0.06)] text-success' },
+                { icon: Handshake, text: '你采纳了「传感器供应商」匹配方案', time: '昨天', cls: 'bg-[rgba(27,27,27,0.06)] text-brand' },
+                { icon: CheckCircle2, text: '清洁智造走访完成，AI 已提取走访记录', time: '2天前', cls: 'bg-[rgba(27,27,27,0.06)] text-success' },
               ].map((item, i) => (
-                <div key={i} className="px-4 py-3 flex items-center gap-3 hover:bg-slate-50 transition-colors">
+                <div key={i} className="px-4 py-3 flex items-center gap-3 hover:bg-surface-hover-row transition-colors">
                   <div className={cn("p-1.5 rounded-full shrink-0", item.cls)}>
                     <item.icon className="h-3.5 w-3.5" />
                   </div>
@@ -222,7 +257,7 @@ export default function IncubatorPage() {
         {/* ═══ 在孵企业名录 ═══ */}
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-bold text-text-primary">在孵企业名录</h2>
+            <h2 className="text-sm font-semibold text-text-primary">在孵企业名录</h2>
             <span className="text-xs text-text-secondary">{enterprises.length} 家</span>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -231,29 +266,29 @@ export default function IncubatorPage() {
                 className="cursor-pointer group"
                 onClick={() => router.push(`/incubator/${ent.id}`)}>
                 <div className="flex items-start gap-3 mb-2">
-                  <div className="w-9 h-9 bg-violet-50 text-violet-600 border border-violet-100 rounded-lg flex items-center justify-center text-sm font-bold shrink-0">
+                  <div className="w-9 h-9 bg-[rgba(27,27,27,0.06)] text-brand border border-line-light rounded-lg flex items-center justify-center text-sm font-bold shrink-0">
                     {ent.name.charAt(0)}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-semibold text-text-primary truncate group-hover:text-brand transition-colors">{ent.name}</div>
                     <div className="flex items-center gap-2 mt-0.5">
-                      {ent.funding_stage && <Tag variant="warning">{ent.funding_stage}</Tag>}
+                      {ent.funding_stage && <Tag variant="orange">{ent.funding_stage}</Tag>}
                       <span className="text-tag text-text-muted">{ent.employee_count ? `${ent.employee_count}人` : ''}</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-1.5 shrink-0">
-                    <div className="w-10 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                      <div className={cn("h-full rounded-full", ent.activity_score >= 80 ? "bg-emerald-500" : ent.activity_score >= 50 ? "bg-blue-500" : "bg-red-500")}
+                    <div className="w-10 h-1.5 bg-[rgba(27,27,27,0.06)] rounded-full overflow-hidden">
+                      <div className={cn("h-full rounded-full", ent.activity_score >= 80 ? "bg-success" : ent.activity_score >= 50 ? "bg-brand" : "bg-error")}
                         style={{ width: `${ent.activity_score}%` }} />
                     </div>
-                    <span className={cn("text-[10px] font-mono font-bold", ent.activity_score >= 80 ? "text-emerald-600" : ent.activity_score >= 50 ? "text-blue-600" : "text-red-600")}>
+                    <span className={cn("text-tag font-mono font-bold", ent.activity_score >= 80 ? "text-success" : ent.activity_score >= 50 ? "text-brand" : "text-error")}>
                       {ent.activity_score}
                     </span>
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-1">
                   {ent.products.slice(0, 3).map((p, i) => (
-                    <Tag key={i} variant="primary">{p}</Tag>
+                    <Tag key={i} variant="blue">{p}</Tag>
                   ))}
                 </div>
               </CardStandard>

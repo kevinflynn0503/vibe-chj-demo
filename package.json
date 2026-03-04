@@ -4,14 +4,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev --turbo --port 3333",
+    "dev": "next dev --turbo --port 3001",
     "build": "next build",
     "start": "next start"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "framer-motion": "^11.15.0",
     "lucide-react": "^0.563.0",
     "next": "^14.2.0",
     "react": "^18.2.0",
@@ -21,7 +20,6 @@
     "remark-gfm": "^4.0.1",
     "sonner": "^2.0.3",
     "tailwind-merge": "^3.4.0",
-    "tailwindcss-animate": "^1.0.7",
     "zod": "^3.23.0",
     "zustand": "^5.0.0"
   },

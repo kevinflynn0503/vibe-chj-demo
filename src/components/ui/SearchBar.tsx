@@ -33,7 +33,7 @@ export function SearchBar({
       <input 
         type="text" 
         placeholder={placeholder}
-        className="w-full pl-10 pr-4 py-2 text-sm border border-slate-200 rounded-md focus:outline-none focus:border-brand transition-colors bg-slate-50"
+        className="w-full pl-10 pr-4 py-2 text-sm border border-line rounded-md focus:outline-none focus:border-brand transition-colors bg-surface-card"
         value={value} 
         onChange={e => onChange(e.target.value)} 
       />
@@ -66,7 +66,7 @@ export function FilterSelect({
       {Icon && <Icon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-muted" />}
       <select 
         className={cn(
-          "w-full pr-8 py-2 text-sm border border-slate-200 rounded-md focus:outline-none focus:border-brand appearance-none bg-slate-50",
+          "w-full pr-8 py-2 text-sm border border-line rounded-md focus:outline-none focus:border-brand appearance-none bg-surface-card",
           Icon && "pl-10"
         )}
         value={value} 
@@ -96,8 +96,8 @@ export function SortButton({ active, onClick, children }: SortButtonProps) {
       className={cn(
         "px-3 py-2 text-xs rounded-md border transition-colors",
         active 
-          ? 'bg-brand text-white border-brand' 
-          : 'bg-white text-text-secondary border-slate-200 hover:border-brand'
+          ? 'bg-[rgba(27,27,27,0.06)] text-text-primary border-text-primary' 
+          : 'bg-surface-card text-text-secondary border-line hover:border-line-hover'
       )}
       onClick={onClick}
     >

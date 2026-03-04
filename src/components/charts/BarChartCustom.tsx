@@ -17,14 +17,14 @@ interface BarChartCustomProps {
   color?: string;
 }
 
-export function BarChartCustom({ data, height = 300, color = '#3B82F6' }: BarChartCustomProps) {
+export function BarChartCustom({ data, height = 300, color = 'var(--color-data-blue)' }: BarChartCustomProps) {
   return (
     <ResponsiveContainer width="100%" height={height}>
       <BarChart
         data={data}
         margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
       >
-        <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--color-neutral-200)" />
         <XAxis dataKey="name" />
         <YAxis />
         <Tooltip
@@ -32,9 +32,9 @@ export function BarChartCustom({ data, height = 300, color = '#3B82F6' }: BarCha
             if (active && payload && payload.length) {
               const data = payload[0].payload;
               return (
-                <div className="bg-white px-4 py-3 rounded-lg shadow-lg border border-slate-200">
-                  <div className="font-semibold text-slate-900 mb-1">{data.name}</div>
-                  <div className="text-sm text-slate-600">数量: {data.value.toLocaleString()}</div>
+                <div className="bg-surface-card px-4 py-3 rounded-lg shadow-lg border border-line">
+                  <div className="font-semibold text-text-primary mb-1">{data.name}</div>
+                  <div className="text-sm text-text-secondary">数量: {data.value.toLocaleString()}</div>
                 </div>
               );
             }
