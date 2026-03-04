@@ -49,19 +49,16 @@ export default function PolicyPage() {
 
   return (
     <div className="min-h-full">
-      {/* ═══ 头部渐变区 ═══ */}
-      <div className="relative">
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(51,112,255,0.04) 0%, rgba(255,255,255,0) 100%)' }} />
-        <div className="relative page-container">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-5 pb-5">
-            <div>
-              <h1 className="text-lg font-semibold text-text-primary tracking-tight">政策服务</h1>
-              <p className="text-xs text-text-muted mt-1">高新技术企业认定 · 我的工作台 · {myTasks.length} 家企业</p>
-            </div>
-            <Button variant="primary" size="sm" onClick={() => startScreening()}>
-              <Sparkles className="h-3.5 w-3.5" /> 发起 AI 筛选
-            </Button>
+      {/* ═══ 头部区 ═══ */}
+      <div className="page-container">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-5 pb-5">
+          <div>
+            <h1 className="text-lg font-semibold text-text-primary tracking-tight">政策服务</h1>
+            <p className="text-xs text-text-muted mt-1">高新技术企业认定 · 我的工作台 · {myTasks.length} 家企业</p>
           </div>
+          <Button variant="primary" size="sm" onClick={() => startScreening()}>
+            <Sparkles className="h-3.5 w-3.5" /> 发起 AI 筛选
+          </Button>
         </div>
       </div>
 

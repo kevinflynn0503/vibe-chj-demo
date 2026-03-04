@@ -146,27 +146,24 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-full">
-      {/* ═══ 头部渐变区 ═══ */}
-      <div className="relative">
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(51,112,255,0.04) 0%, rgba(255,255,255,0) 100%)' }} />
-        <div className="relative page-container">
-          <div className="flex items-center justify-between pt-5 pb-5">
-            <div>
-              <h1 className="text-lg font-semibold text-text-primary tracking-tight">管理看板</h1>
-              <p className="text-xs text-text-muted mt-1">{today} · 管理者视图</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button variant="default" size="sm"
-                onClick={() => sendChat('请生成本周团队周报：走访完成情况、政策推进进度、孵化器运营要点、AI 处理统计。')}
-                icon={<Bot className="h-3.5 w-3.5" />}>
-                AI 周报
-              </Button>
-              <Button variant="primary" size="sm"
-                onClick={() => sendChat('请分析团队工作状况，给出管理优化建议：任务分配、员工关注、流程优化。')}
-                icon={<Sparkles className="h-3.5 w-3.5" />}>
-                AI 建议
-              </Button>
-            </div>
+      {/* ═══ 头部区 ═══ */}
+      <div className="page-container">
+        <div className="flex items-center justify-between pt-5 pb-5">
+          <div>
+            <h1 className="text-lg font-semibold text-text-primary tracking-tight">管理看板</h1>
+            <p className="text-xs text-text-muted mt-1">{today} · 管理者视图</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button variant="default" size="sm"
+              onClick={() => sendChat('请生成本周团队周报：走访完成情况、政策推进进度、孵化器运营要点、AI 处理统计。')}
+              icon={<Bot className="h-3.5 w-3.5" />}>
+              AI 周报
+            </Button>
+            <Button variant="primary" size="sm"
+              onClick={() => sendChat('请分析团队工作状况，给出管理优化建议：任务分配、员工关注、流程优化。')}
+              icon={<Sparkles className="h-3.5 w-3.5" />}>
+              AI 建议
+            </Button>
           </div>
         </div>
       </div>

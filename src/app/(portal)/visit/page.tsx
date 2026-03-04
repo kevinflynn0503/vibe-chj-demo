@@ -93,24 +93,21 @@ export default function VisitWorkbench() {
 
   return (
     <div className="min-h-full">
-      {/* ═══ 头部渐变区 ═══ */}
-      <div className="relative">
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(51,112,255,0.04) 0%, rgba(255,255,255,0) 100%)' }} />
-        <div className="relative page-container">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-5 pb-5">
-            <div>
-              <h1 className="text-lg font-semibold text-text-primary tracking-tight">走访任务看板</h1>
-              <p className="text-xs text-text-muted mt-1">走访全流程：准备 → 走访 → 确认 → 跟进 · {total} 项任务</p>
-            </div>
-            <div className="flex items-center gap-2 w-full sm:w-auto">
-              <SearchBar placeholder="搜索..." value={search} onChange={setSearch} className="sm:w-56" />
-              <Button variant="default" size="sm" className="shrink-0" onClick={() => router.push('/visit/records')}>
-                <FileText className="h-3.5 w-3.5" /> 走访记录
-              </Button>
-              <Button variant="primary" size="sm" className="shrink-0" onClick={() => router.push('/enterprises')}>
-                <Plus className="h-3.5 w-3.5" /> 新增走访
-              </Button>
-            </div>
+      {/* ═══ 头部区 ═══ */}
+      <div className="page-container">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-5 pb-5">
+          <div>
+            <h1 className="text-lg font-semibold text-text-primary tracking-tight">走访任务看板</h1>
+            <p className="text-xs text-text-muted mt-1">走访全流程：准备 → 走访 → 确认 → 跟进 · {total} 项任务</p>
+          </div>
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <SearchBar placeholder="搜索..." value={search} onChange={setSearch} className="sm:w-56" />
+            <Button variant="default" size="sm" className="shrink-0" onClick={() => router.push('/visit/records')}>
+              <FileText className="h-3.5 w-3.5" /> 走访记录
+            </Button>
+            <Button variant="primary" size="sm" className="shrink-0" onClick={() => router.push('/enterprises')}>
+              <Plus className="h-3.5 w-3.5" /> 新增走访
+            </Button>
           </div>
         </div>
       </div>

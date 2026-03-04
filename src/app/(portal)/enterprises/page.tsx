@@ -90,36 +90,33 @@ export default function EnterprisesPage() {
 
   return (
     <div className="min-h-full">
-      {/* ═══ 头部渐变区 ═══ */}
-      <div className="relative">
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(51,112,255,0.04) 0%, rgba(255,255,255,0) 100%)' }} />
-        <div className="relative page-container">
-          <PageHeader
-            title="企业画像库"
-            description={`共 ${totalEnterprises} 家园区企业`}
-            className="pb-5"
-            actions={
-              <>
-                <Button
-                  variant="default"
-                  size="sm"
-                  icon={<Bot />}
-                  onClick={() => sendChat(`请分析园区 ${totalEnterprises} 家企业的整体情况：行业分布、发展阶段分布、政策覆盖率、高潜力企业推荐，并给出本月重点关注建议。`)}
-                >
-                  AI 园区分析
-                </Button>
-                <Button
-                  variant="primary"
-                  size="sm"
-                  icon={<Sparkles />}
-                  onClick={() => sendChat('请推荐本月应优先走访的企业，考虑：近期未走访、政策匹配度高、发展阶段需关注、有活跃需求等因素。')}
-                >
-                  AI 推荐走访
-                </Button>
-              </>
-            }
-          />
-        </div>
+      {/* ═══ 头部区 ═══ */}
+      <div className="page-container">
+        <PageHeader
+          title="企业画像库"
+          description={`共 ${totalEnterprises} 家园区企业`}
+          className="pb-5"
+          actions={
+            <>
+              <Button
+                variant="default"
+                size="sm"
+                icon={<Bot />}
+                onClick={() => sendChat(`请分析园区 ${totalEnterprises} 家企业的整体情况：行业分布、发展阶段分布、政策覆盖率、高潜力企业推荐，并给出本月重点关注建议。`)}
+              >
+                AI 园区分析
+              </Button>
+              <Button
+                variant="primary"
+                size="sm"
+                icon={<Sparkles />}
+                onClick={() => sendChat('请推荐本月应优先走访的企业，考虑：近期未走访、政策匹配度高、发展阶段需关注、有活跃需求等因素。')}
+              >
+                AI 推荐走访
+              </Button>
+            </>
+          }
+        />
       </div>
 
       <div className="page-container space-y-6">

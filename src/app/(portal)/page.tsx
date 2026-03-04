@@ -187,14 +187,7 @@ export default function HomePage() {
 
       {/* ═══ Hero 区 ═══ */}
       <div className="relative animate-fade-in">
-        <div
-          className="absolute inset-0"
-          style={{
-            background: 'linear-gradient(180deg, rgba(51,112,255,0.04) 0%, rgba(255,255,255,0) 100%)',
-          }}
-        />
-
-        <div className="relative page-container pb-0">
+        <div className="page-container pb-0">
           {/* 问候 + 摘要 */}
           <div className="flex items-end justify-between pt-5 pb-6">
             <div>
