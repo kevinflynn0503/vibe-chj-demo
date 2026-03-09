@@ -106,16 +106,16 @@ export default function IncubatorEnterprisePage() {
           </Button>
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-start gap-4">
-              <div className="w-14 h-14 bg-[rgba(27,27,27,0.06)] text-brand border border-line-light rounded-lg flex items-center justify-center text-xl font-bold shrink-0">
+              <div className="w-14 h-14 bg-neutral-50 text-brand border border-line-light rounded-lg flex items-center justify-center text-xl font-bold shrink-0">
                 {ent.name.charAt(0)}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-3 flex-wrap">
                   <h1 className="text-lg font-semibold text-text-primary">{ent.name}</h1>
                   {ent.funding_stage && (
-                    <span className="text-tag px-2 py-0.5 bg-[rgba(27,27,27,0.06)] text-warning rounded border border-line-light">{ent.funding_stage}</span>
+                    <span className="text-tag px-2 py-0.5 bg-neutral-50 text-warning rounded border border-line-light">{ent.funding_stage}</span>
                   )}
-                  <span className="flex items-center gap-1 text-tag text-brand bg-[rgba(27,27,27,0.06)] px-1.5 py-0.5 rounded">
+                  <span className="flex items-center gap-1 text-tag text-brand bg-neutral-50 px-1.5 py-0.5 rounded">
                     <Bot className="h-3 w-3" /> BP 解析
                   </span>
                 </div>
@@ -143,7 +143,7 @@ export default function IncubatorEnterprisePage() {
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-sm font-semibold text-text-primary">AI 画像摘要</span>
-                <span className="text-tag text-brand bg-[rgba(27,27,27,0.06)] px-1.5 py-0.5 rounded border border-line-light">✦ AI 生成</span>
+                <span className="text-tag text-brand bg-neutral-50 px-1.5 py-0.5 rounded border border-line-light">✦ AI 生成</span>
               </div>
               <p className="text-xs text-text-secondary leading-relaxed">
                 {ent.name} 是一家专注于{ent.products.join('、')}的{ent.funding_stage || '初创'}企业，
@@ -161,10 +161,10 @@ export default function IncubatorEnterprisePage() {
           <div className="bg-surface-card border border-line rounded-lg p-4">
             <div className="text-xs text-text-muted mb-1">活跃度</div>
             <div className="flex items-center gap-2">
-              <span className={cn("text-2xl font-bold font-mono", scoreColor)}>{ent.activity_score}</span>
+              <span className={cn("text-2xl font-bold tabular-nums", scoreColor)}>{ent.activity_score}</span>
               {trendIcon}
             </div>
-            <div className="w-full h-1.5 bg-[rgba(27,27,27,0.06)] rounded-full mt-2 overflow-hidden">
+            <div className="w-full h-1.5 bg-neutral-50 rounded-full mt-2 overflow-hidden">
               <div className={cn("h-full rounded-full", scoreBg)} style={{ width: `${ent.activity_score}%` }} />
             </div>
           </div>
@@ -210,12 +210,12 @@ export default function IncubatorEnterprisePage() {
               <div className="px-4 py-3 border-b border-line-light flex items-center gap-2">
                 <Briefcase className="h-4 w-4 text-text-muted" />
                 <h2 className="text-sm font-semibold text-text-primary">产品与服务</h2>
-                <span className="flex items-center gap-0.5 text-tag text-brand bg-[rgba(27,27,27,0.06)] px-1.5 py-0.5 rounded"><Bot className="h-3 w-3" /> BP 解析</span>
+                <span className="flex items-center gap-0.5 text-tag text-brand bg-neutral-50 px-1.5 py-0.5 rounded"><Bot className="h-3 w-3" /> BP 解析</span>
               </div>
               <div className="p-4">
                 <div className="flex flex-wrap gap-2">
                   {ent.products.map((p, i) => (
-                    <span key={i} className="text-xs px-2.5 py-1 bg-[rgba(27,27,27,0.06)] text-brand rounded border border-line-light">{p}</span>
+                    <span key={i} className="text-xs px-2.5 py-1 bg-neutral-50 text-brand rounded border border-line-light">{p}</span>
                   ))}
                 </div>
                 {ent.target_market && (
@@ -239,7 +239,7 @@ export default function IncubatorEnterprisePage() {
               <div className="p-4">
                 <div className="flex flex-wrap gap-2">
                   {ent.tech_stack.map((t, i) => (
-                    <span key={i} className="text-xs px-2.5 py-1 bg-[rgba(27,27,27,0.06)] text-text-secondary rounded border border-line">{t}</span>
+                    <span key={i} className="text-xs px-2.5 py-1 bg-neutral-50 text-text-secondary rounded border border-line">{t}</span>
                   ))}
                 </div>
               </div>
@@ -250,12 +250,12 @@ export default function IncubatorEnterprisePage() {
               <div className="px-4 py-3 border-b border-line-light flex items-center gap-2">
                 <UserCircle className="h-4 w-4 text-text-muted" />
                 <h2 className="text-sm font-semibold text-text-primary">核心团队</h2>
-                <span className="flex items-center gap-0.5 text-tag text-brand bg-[rgba(27,27,27,0.06)] px-1.5 py-0.5 rounded"><Bot className="h-3 w-3" /> BP 解析</span>
+                <span className="flex items-center gap-0.5 text-tag text-brand bg-neutral-50 px-1.5 py-0.5 rounded"><Bot className="h-3 w-3" /> BP 解析</span>
               </div>
               <div className="divide-y divide-line-light">
                 {mockTeam.map((m, i) => (
                   <div key={i} className="px-4 py-3 flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-[rgba(27,27,27,0.06)] text-text-muted flex items-center justify-center text-xs font-bold shrink-0">
+                    <div className="w-8 h-8 rounded-full bg-neutral-50 text-text-muted flex items-center justify-center text-xs font-bold shrink-0">
                       {m.name.charAt(0)}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -279,7 +279,7 @@ export default function IncubatorEnterprisePage() {
                     <div className="flex items-center gap-3">
                       <div className={cn(
                         "w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold shrink-0",
-                        i === mockFundingHistory.length - 1 ? "bg-[rgba(27,27,27,0.06)] text-success border border-line-light" : "bg-[rgba(27,27,27,0.06)] text-text-muted border border-line-light"
+                        i === mockFundingHistory.length - 1 ? "bg-neutral-50 text-success border border-line-light" : "bg-neutral-50 text-text-muted border border-line-light"
                       )}>
                         {f.round.charAt(0)}
                       </div>
@@ -288,7 +288,7 @@ export default function IncubatorEnterprisePage() {
                         <div className="text-xs text-text-muted">{f.investor}</div>
                       </div>
                     </div>
-                    <span className="text-xs text-text-muted font-mono">{f.date}</span>
+                    <span className="text-xs text-text-muted tabular-nums">{f.date}</span>
                   </div>
                 ))}
               </div>
@@ -300,7 +300,7 @@ export default function IncubatorEnterprisePage() {
                 <div className="px-4 py-3 border-b border-line-light flex items-center gap-2">
                   <FileText className="h-4 w-4 text-text-muted" />
                   <h2 className="text-sm font-semibold text-text-primary">商业计划简介</h2>
-                  <span className="flex items-center gap-0.5 text-tag text-brand bg-[rgba(27,27,27,0.06)] px-1.5 py-0.5 rounded"><Bot className="h-3 w-3" /> BP 解析</span>
+                  <span className="flex items-center gap-0.5 text-tag text-brand bg-neutral-50 px-1.5 py-0.5 rounded"><Bot className="h-3 w-3" /> BP 解析</span>
                 </div>
                 <div className="p-4">
                   <p className="text-sm text-text-secondary leading-relaxed">{ent.bp_summary}</p>
@@ -317,7 +317,7 @@ export default function IncubatorEnterprisePage() {
               <div className="px-4 py-3 border-b border-line-light flex items-center gap-2">
                 <Activity className="h-4 w-4 text-brand" />
                 <h2 className="text-sm font-semibold text-text-primary">活跃度分解</h2>
-                <span className="flex items-center gap-0.5 text-tag text-brand bg-[rgba(27,27,27,0.06)] px-1.5 py-0.5 rounded"><Bot className="h-3 w-3" /> AI 监测</span>
+                <span className="flex items-center gap-0.5 text-tag text-brand bg-neutral-50 px-1.5 py-0.5 rounded"><Bot className="h-3 w-3" /> AI 监测</span>
               </div>
               <div className="p-4 space-y-3">
                 {mockActivityBreakdown.map((item, i) => (
@@ -325,13 +325,13 @@ export default function IncubatorEnterprisePage() {
                     <div className="flex items-center justify-between text-xs mb-1">
                       <span className="text-text-secondary">{item.label}</span>
                       <div className="flex items-center gap-1.5">
-                        <span className="font-mono font-semibold text-text-primary">{item.score}</span>
+                        <span className="tabular-nums font-semibold text-text-primary">{item.score}</span>
                         {item.trend === 'up' && <TrendingUp className="h-3 w-3 text-success" />}
                         {item.trend === 'down' && <TrendingDown className="h-3 w-3 text-error" />}
                         {item.trend === 'stable' && <Minus className="h-3 w-3 text-text-muted" />}
                       </div>
                     </div>
-                    <div className="h-1.5 bg-[rgba(27,27,27,0.06)] rounded-full overflow-hidden">
+                    <div className="h-1.5 bg-neutral-50 rounded-full overflow-hidden">
                       <div className={cn("h-full rounded-full",
                         item.score >= 70 ? 'bg-success' : item.score >= 50 ? 'bg-brand' : 'bg-warning'
                       )} style={{ width: `${item.score}%` }} />
@@ -376,7 +376,7 @@ export default function IncubatorEnterprisePage() {
                         <div className="text-tag text-text-muted mt-0.5">{m.date}</div>
                       </div>
                       <span className={cn("text-tag px-1.5 py-0.5 rounded border",
-                        m.status === 'matched' ? 'bg-[rgba(27,27,27,0.06)] text-success border-line-light' : 'bg-[rgba(27,27,27,0.06)] text-warning border-line-light'
+                        m.status === 'matched' ? 'bg-neutral-50 text-success border-line-light' : 'bg-neutral-50 text-warning border-line-light'
                       )}>
                         {m.result}
                       </span>

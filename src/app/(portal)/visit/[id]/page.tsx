@@ -89,7 +89,7 @@ function VisitPrepContent() {
             <div className="flex items-center gap-3">
               <div className={cn(
                 "w-12 h-12 rounded-lg flex items-center justify-center text-lg font-bold shrink-0",
-                enterprise.is_incubated ? "bg-[rgba(27,27,27,0.06)] text-brand border border-line-light" : "bg-[rgba(27,27,27,0.06)] text-brand border border-line-light"
+                enterprise.is_incubated ? "bg-neutral-50 text-brand border border-line-light" : "bg-neutral-50 text-brand border border-line-light"
               )}>
                 {name.charAt(0)}
               </div>
@@ -124,13 +124,13 @@ function VisitPrepContent() {
 
         {/* 政策联动提示 */}
         {fromPolicy && (
-          <div className="flex items-center gap-3 px-4 py-3 bg-[rgba(27,27,27,0.06)] border border-line rounded-lg">
+          <div className="flex items-center gap-3 px-4 py-3 bg-neutral-50 border border-line rounded-lg">
             <Shield className="h-5 w-5 text-brand shrink-0" />
             <div className="flex-1">
               <p className="text-sm font-medium text-text-primary">政策触达走访 · {policyName}</p>
               <p className="text-xs text-text-secondary mt-0.5">本次走访同时承担政策触达任务，请务必询问下方"政策必问问题"</p>
             </div>
-            <span className="flex items-center gap-1 text-tag text-brand bg-[rgba(27,27,27,0.06)] px-2 py-1 rounded border border-line">
+            <span className="flex items-center gap-1 text-tag text-brand bg-neutral-50 px-2 py-1 rounded border border-line">
               <Bot className="h-3 w-3" /> 科创部门 · 7 条必问
             </span>
           </div>
@@ -184,12 +184,12 @@ function VisitPrepContent() {
                   <div className="px-4 py-3 border-b border-line-light flex items-center gap-2">
                     <HelpCircle className="h-4 w-4 text-warning" />
                     <h2 className="text-sm font-semibold text-text-primary">必问问题</h2>
-                    <span className="text-tag px-1.5 py-0.5 bg-[rgba(27,27,27,0.06)] text-warning rounded border border-line-light">{checklist.must_ask_questions.length} 项</span>
+                    <span className="text-tag px-1.5 py-0.5 bg-neutral-50 text-warning rounded border border-line-light">{checklist.must_ask_questions.length} 项</span>
                   </div>
                   <div className="p-4 space-y-2">
                     {checklist.must_ask_questions.map((q, i) => (
                       <div key={i} className="flex items-start gap-2 text-xs text-text-secondary">
-                        <span className="shrink-0 w-4 h-4 rounded bg-[rgba(27,27,27,0.06)] text-warning text-tag font-bold flex items-center justify-center border border-line-light">{i + 1}</span>
+                        <span className="shrink-0 w-4 h-4 rounded bg-neutral-50 text-warning text-tag font-bold flex items-center justify-center border border-line-light">{i + 1}</span>
                         <span>{q}</span>
                       </div>
                     ))}
@@ -199,15 +199,15 @@ function VisitPrepContent() {
                 {/* 政策必问问题（政策×走访联动） */}
                 {fromPolicy && (
                   <div className="bg-surface-card border-2 border-line rounded-lg">
-                    <div className="px-4 py-3 border-b border-line-light bg-[rgba(27,27,27,0.06)] flex items-center gap-2">
+                    <div className="px-4 py-3 border-b border-line-light bg-neutral-50 flex items-center gap-2">
                       <Shield className="h-4 w-4 text-brand" />
                       <h2 className="text-sm font-semibold text-text-primary">政策必问问题</h2>
-                      <span className="text-tag px-1.5 py-0.5 bg-[rgba(27,27,27,0.06)] text-brand rounded border border-line">科创7条 · {policyName}</span>
+                      <span className="text-tag px-1.5 py-0.5 bg-neutral-50 text-brand rounded border border-line">科创7条 · {policyName}</span>
                     </div>
                     <div className="p-4 space-y-2">
                       {POLICY_MUST_ASK.map((q, i) => (
                         <div key={i} className="flex items-start gap-2 text-xs text-text-secondary">
-                          <span className="shrink-0 w-4 h-4 rounded bg-[rgba(27,27,27,0.06)] text-brand text-tag font-bold flex items-center justify-center border border-line-light">{i + 1}</span>
+                          <span className="shrink-0 w-4 h-4 rounded bg-neutral-50 text-brand text-tag font-bold flex items-center justify-center border border-line-light">{i + 1}</span>
                           <span>{q}</span>
                         </div>
                       ))}
@@ -224,7 +224,7 @@ function VisitPrepContent() {
                     </div>
                     <div className="p-4 space-y-2">
                       {checklist.key_insights.map((ins, i) => (
-                        <div key={i} className="p-3 rounded-lg text-xs text-text-secondary bg-[rgba(27,27,27,0.06)] border border-line-light leading-relaxed">
+                        <div key={i} className="p-3 rounded-lg text-xs text-text-secondary bg-neutral-50 border border-line-light leading-relaxed">
                           {ins}
                         </div>
                       ))}
@@ -278,7 +278,7 @@ function VisitPrepContent() {
                       <div className="flex items-center gap-2">
                         <span className={cn(
                           "text-tag px-1.5 py-0.5 rounded border",
-                          v.is_confirmed ? "bg-[rgba(27,27,27,0.06)] text-success border-line-light" : "bg-[rgba(27,27,27,0.06)] text-warning border-line-light"
+                          v.is_confirmed ? "bg-neutral-50 text-success border-line-light" : "bg-neutral-50 text-warning border-line-light"
                         )}>
                           {v.is_confirmed ? '已确认' : '待确认'}
                         </span>

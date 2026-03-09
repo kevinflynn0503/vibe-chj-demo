@@ -76,12 +76,12 @@ export default function ReportPage() {
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-lg font-semibold text-text-primary">{name} · 背调报告</h1>
-                <span className="flex items-center gap-1 text-tag text-brand bg-[rgba(27,27,27,0.06)] px-1.5 py-0.5 rounded">
+                <span className="flex items-center gap-1 text-tag text-brand bg-neutral-50 px-1.5 py-0.5 rounded">
                   <Bot className="h-3 w-3" /> AI 生成
                 </span>
               </div>
               <div className="flex items-center gap-2 text-xs text-text-muted mt-0.5">
-                <span className="font-mono">{report.created_at.split('T')[0]}</span>
+                <span className="tabular-nums">{report.created_at.split('T')[0]}</span>
                 {report.created_by && <span>· {report.created_by}</span>}
                 <span className={cn(
                   'text-tag px-1.5 py-0.5 rounded border',
@@ -124,7 +124,7 @@ export default function ReportPage() {
                 <div className="px-4 py-3 border-b border-line flex items-center justify-between">
                   <h2 className="text-sm font-semibold text-text-primary">{section.title}</h2>
                   {section.source && (
-                    <span className="text-tag px-1.5 py-0.5 bg-[rgba(27,27,27,0.06)] text-text-muted rounded border border-line">{section.source}</span>
+                    <span className="text-tag px-1.5 py-0.5 bg-neutral-50 text-text-muted rounded border border-line">{section.source}</span>
                   )}
                 </div>
                 <div className="px-4 py-4 text-sm leading-relaxed whitespace-pre-line text-text-secondary">
@@ -184,7 +184,7 @@ export default function ReportPage() {
                   </div>
                   <div className="p-4 space-y-2">
                     {checklist.key_insights.map((ins, i) => (
-                      <div key={i} className="p-3 rounded-lg text-xs text-text-secondary bg-[rgba(27,27,27,0.06)] border border-line leading-relaxed">
+                      <div key={i} className="p-3 rounded-lg text-xs text-text-secondary bg-neutral-50 border border-line leading-relaxed">
                         {ins}
                       </div>
                     ))}

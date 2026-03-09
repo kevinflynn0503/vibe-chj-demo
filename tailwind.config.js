@@ -1,18 +1,3 @@
-/**
- * Tailwind CSS 配置
- *
- * ═══ 单一数据源架构 ═══
- *
- * 所有设计值定义在 src/index.css 的 :root CSS 变量中，
- * 本文件通过 var() 引用，确保 Tailwind 类名与 CSS 变量保持同步。
- *
- * 修改颜色/尺寸时：只需修改 index.css 中的 :root 变量。
- *
- * 注意：使用 var() 的颜色不支持 Tailwind 的 /opacity 修饰符
- *       （如 bg-brand/50 无效），需使用显式的 alpha 变体
- *       （如 bg-brand-subtle、bg-brand-alpha-10）。
- */
-
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./src/**/*.{js,ts,jsx,tsx,mdx}'],
@@ -34,9 +19,20 @@ export default {
         '2xl':  ['var(--font-size-2xl)',  { lineHeight: 'var(--line-height-tight)' }],
       },
 
+      /* ── Spacing (8级) ── */
+      spacing: {
+        'sp-1': 'var(--space-1)',
+        'sp-2': 'var(--space-2)',
+        'sp-3': 'var(--space-3)',
+        'sp-4': 'var(--space-4)',
+        'sp-5': 'var(--space-5)',
+        'sp-6': 'var(--space-6)',
+        'sp-7': 'var(--space-7)',
+        'sp-8': 'var(--space-8)',
+      },
+
       /* ── Colors (引用 CSS 变量) ── */
       colors: {
-        /* 品牌色 */
         brand: {
           DEFAULT:    'var(--color-brand)',
           hover:      'var(--color-brand-hover)',
@@ -48,14 +44,12 @@ export default {
           'alpha-20': 'var(--color-brand-alpha-20)',
           'alpha-25': 'var(--color-brand-alpha-25)',
         },
-        /* 文字色 */
         text: {
           primary:   'var(--color-text-primary)',
           secondary: 'var(--color-text-secondary)',
           muted:     'var(--color-text-muted)',
           inverse:   'var(--color-text-inverse)',
         },
-        /* 背景 / 表面 */
         surface: {
           primary:   'var(--color-bg-primary)',
           card:      'var(--color-bg-card)',
@@ -65,13 +59,11 @@ export default {
           'hover-btn':  'var(--color-bg-hover-btn)',
           active:    'var(--color-bg-active)',
         },
-        /* 边框 */
         line: {
           DEFAULT:   'var(--color-border)',
           light:     'var(--color-border-light)',
           hover:     'var(--color-border-hover)',
         },
-        /* 语义色 */
         success: {
           DEFAULT:   'var(--color-success)',
           light:     'var(--color-success-light)',
@@ -88,7 +80,6 @@ export default {
           DEFAULT:   'var(--color-info)',
           light:     'var(--color-info-light)',
         },
-        /* 数据可视化色 */
         data: {
           blue:   'var(--color-data-blue)',
           green:  'var(--color-data-green)',
@@ -97,9 +88,21 @@ export default {
           purple: 'var(--color-data-purple)',
           cyan:   'var(--color-data-cyan)',
         },
+        neutral: {
+          50:  'var(--color-neutral-50)',
+          100: 'var(--color-neutral-100)',
+          200: 'var(--color-neutral-200)',
+          300: 'var(--color-neutral-300)',
+          400: 'var(--color-neutral-400)',
+          500: 'var(--color-neutral-500)',
+          600: 'var(--color-neutral-600)',
+          700: 'var(--color-neutral-700)',
+          800: 'var(--color-neutral-800)',
+          900: 'var(--color-neutral-900)',
+        },
       },
 
-      /* ── Border Radius (引用 CSS 变量) ── */
+      /* ── Border Radius ── */
       borderRadius: {
         'sm':      'var(--radius-sm)',
         DEFAULT:   'var(--radius)',
@@ -108,7 +111,7 @@ export default {
         'full':    'var(--radius-full)',
       },
 
-      /* ── Box Shadow (引用 CSS 变量) ── */
+      /* ── Box Shadow ── */
       boxShadow: {
         'xs':         'var(--shadow-xs)',
         'sm':         'var(--shadow-sm)',
@@ -121,32 +124,40 @@ export default {
         'brand':      'var(--shadow-brand)',
       },
 
-      /* ── Animation ── */
+      /* ── Transition ── */
       transitionDuration: {
         fast:   'var(--duration-fast)',
         normal: 'var(--duration-normal)',
         slow:   'var(--duration-slow)',
       },
+      transitionTimingFunction: {
+        'out-expo': 'var(--easing)',
+        'out-cubic': 'var(--easing-hover)',
+      },
+
+      /* ── Animation ── */
       keyframes: {
         'fade-in': {
-          from: { opacity: '0', transform: 'translateY(8px)' },
+          from: { opacity: '0', transform: 'translateY(10px)' },
           to:   { opacity: '1', transform: 'translateY(0)' },
         },
         'fade-in-up': {
-          from: { opacity: '0', transform: 'translateY(12px)' },
+          from: { opacity: '0', transform: 'translateY(14px)' },
           to:   { opacity: '1', transform: 'translateY(0)' },
         },
         'scale-in': {
-          from: { opacity: '0', transform: 'scale(0.95)' },
+          from: { opacity: '0', transform: 'scale(0.96)' },
           to:   { opacity: '1', transform: 'scale(1)' },
         },
       },
       animation: {
-        'fade-in': 'fade-in var(--duration-slow) ease-out both',
-        'fade-in-up': 'fade-in-up 400ms ease-out both',
-        'scale-in': 'scale-in var(--duration-slow) ease-out both',
+        'fade-in': 'fade-in var(--duration-slow) var(--easing) both',
+        'fade-in-up': 'fade-in-up 400ms var(--easing) both',
+        'scale-in': 'scale-in var(--duration-slow) var(--easing) both',
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/container-queries'),
+  ],
 };

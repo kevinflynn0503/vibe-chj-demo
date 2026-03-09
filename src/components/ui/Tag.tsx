@@ -30,8 +30,8 @@ const variantStyles: Record<TagVariant, string> = {
   red: 'bg-error-light text-error border-transparent',
   purple: 'bg-info-light text-info border-transparent',
   violet: 'bg-info-light text-info border-transparent',
-  gray: 'bg-[rgba(27,27,27,0.06)] text-text-secondary border-transparent',
-  slate: 'bg-[rgba(27,27,27,0.06)] text-text-secondary border-transparent',
+  gray: 'bg-neutral-50 text-text-secondary border-transparent',
+  slate: 'bg-neutral-50 text-text-secondary border-transparent',
 };
 
 export function Tag({ 

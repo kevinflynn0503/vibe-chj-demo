@@ -40,9 +40,9 @@ export default function PolicyPage() {
   const willing = myTasks.filter(a => a.touch_status === 'willing');
 
   const GRADE_COLORS: Record<string, string> = {
-    A: 'bg-[rgba(27,27,27,0.06)] text-success border-line-light',
-    B: 'bg-[rgba(27,27,27,0.06)] text-brand border-line-light',
-    C: 'bg-[rgba(27,27,27,0.06)] text-warning border-line-light',
+    A: 'bg-neutral-50 text-success border-line-light',
+    B: 'bg-neutral-50 text-brand border-line-light',
+    C: 'bg-neutral-50 text-warning border-line-light',
   };
 
   if (loading) return <PageSkeleton />;
@@ -70,28 +70,28 @@ export default function PolicyPage() {
               <span className="text-xs text-text-muted">分配给我</span>
               <Briefcase className="h-3.5 w-3.5 text-text-muted" />
             </div>
-            <div className="text-2xl font-semibold font-mono text-text-primary">{myTasks.length}</div>
+            <div className="text-2xl font-semibold tabular-nums text-text-primary">{myTasks.length}</div>
           </CardCompact>
           <CardCompact>
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs text-text-muted">待走访</span>
               <Target className="h-3.5 w-3.5 text-text-muted" />
             </div>
-            <div className={cn("text-2xl font-semibold font-mono", pendingVisit.length > 0 ? 'text-warning' : 'text-text-muted')}>{pendingVisit.length}</div>
+            <div className={cn("text-2xl font-semibold tabular-nums", pendingVisit.length > 0 ? 'text-warning' : 'text-text-muted')}>{pendingVisit.length}</div>
           </CardCompact>
           <CardCompact>
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs text-text-muted">有意愿</span>
               <CheckCircle2 className="h-3.5 w-3.5 text-text-muted" />
             </div>
-            <div className="text-2xl font-semibold font-mono text-success">{willing.length}</div>
+            <div className="text-2xl font-semibold tabular-nums text-success">{willing.length}</div>
           </CardCompact>
           <CardCompact>
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs text-text-muted">转化率</span>
               <TrendingUp className="h-3.5 w-3.5 text-text-muted" />
             </div>
-            <div className="text-2xl font-semibold font-mono text-brand">
+            <div className="text-2xl font-semibold tabular-nums text-brand">
               {myTasks.length > 0 ? Math.round((willing.length / myTasks.length) * 100) : 0}%
             </div>
           </CardCompact>
@@ -116,15 +116,15 @@ export default function PolicyPage() {
           {pendingVisit.length > 0 ? (
             <div className="divide-y divide-line-light">
               {pendingVisit.map(a => (
-                <div key={a.id} className="px-4 py-4 transition-colors duration-150 hover:bg-surface-hover-row">
+                <div key={a.id} className="px-4 py-4 transition-colors duration-normal ease-out-expo hover:bg-surface-hover-row">
                   <div className="flex items-start gap-3">
                     <div className={cn("w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold shrink-0 border",
-                      GRADE_COLORS[a.grade] || 'bg-[rgba(27,27,27,0.06)] text-text-muted border-line-light'
+                      GRADE_COLORS[a.grade] || 'bg-neutral-50 text-text-muted border-line-light'
                     )}>{a.grade}</div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="text-sm font-semibold text-text-primary">{a.enterprise_name}</span>
-                        <span className="text-xs text-text-muted font-mono">{a.grade_score}分</span>
+                        <span className="text-xs text-text-muted tabular-nums">{a.grade_score}分</span>
                       </div>
                       <div className="text-xs text-text-secondary">{a.policy_type}</div>
                       <div className="flex items-center gap-2 mt-2">
@@ -168,9 +168,9 @@ export default function PolicyPage() {
             </div>
             <div className="divide-y divide-line-light">
               {visited.map(a => (
-                <div key={a.id} className="px-4 py-3 flex items-center gap-3 transition-colors duration-150 hover:bg-surface-hover-row">
+                <div key={a.id} className="px-4 py-3 flex items-center gap-3 transition-colors duration-normal ease-out-expo hover:bg-surface-hover-row">
                   <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 border",
-                    GRADE_COLORS[a.grade] || 'bg-[rgba(27,27,27,0.06)] text-text-muted border-line-light'
+                    GRADE_COLORS[a.grade] || 'bg-neutral-50 text-text-muted border-line-light'
                   )}>{a.grade}</div>
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-medium text-text-primary">{a.enterprise_name}</div>
@@ -208,7 +208,7 @@ export default function PolicyPage() {
                 <div key={a.id} className="px-4 py-3 flex items-center gap-3 hover:bg-surface-hover-row transition-colors cursor-pointer"
                   onClick={() => router.push(`/policy/diagnosis/${a.id}`)}>
                   <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 border",
-                    GRADE_COLORS[a.grade] || 'bg-[rgba(27,27,27,0.06)] text-text-muted border-line-light'
+                    GRADE_COLORS[a.grade] || 'bg-neutral-50 text-text-muted border-line-light'
                   )}>{a.grade}</div>
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-semibold text-text-primary">{a.enterprise_name}</div>

@@ -116,11 +116,11 @@ function VisitRecordsContent() {
                       key={record.id}
                       className={cn(
                         'cursor-pointer transition-colors',
-                        !record.is_confirmed && 'bg-[rgba(27,27,27,0.06)] hover:bg-surface-hover-row'
+                        !record.is_confirmed && 'bg-neutral-50 hover:bg-surface-hover-row'
                       )}
                       onClick={() => router.push(`/visit/confirm/${record.id}`)}
                     >
-                      <td className="font-mono text-text-secondary text-sm">{record.visit_date}</td>
+                      <td className="tabular-nums text-text-secondary text-sm">{record.visit_date}</td>
                       <td className="font-semibold text-text-primary">{record.enterprise_name}</td>
                       <td className="text-text-primary">{record.visitor_name}</td>
                       <td className="text-text-secondary">{record.visitor_department ?? '-'}</td>
@@ -180,7 +180,7 @@ export default function VisitRecordsPage() {
       <div className="min-h-screen bg-surface-card">
         <div className="bg-surface-card border-b border-line">
           <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-4">
-            <div className="h-4 w-24 bg-[rgba(27,27,27,0.06)] rounded animate-pulse" />
+            <div className="h-4 w-24 bg-neutral-50 rounded animate-pulse" />
           </div>
         </div>
       </div>

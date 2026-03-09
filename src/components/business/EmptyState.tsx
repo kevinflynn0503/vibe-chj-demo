@@ -1,15 +1,12 @@
 /**
- * EmptyState — 统一空状态组件
+ * EmptyState — 空状态
  *
- * 替代各页面重复的空状态提示
- *
- * 使用方式：
- * <EmptyState icon={Building2} message="未找到匹配企业" />
- * <EmptyState icon={FileText} message="暂无走访记录" action={<Button>新建走访</Button>} />
+ * Impeccable 重构：
+ * - 去掉大图标（图标+圆角矩形模板）
+ * - 空状态应"教用户如何开始"
  */
 
 import { cn } from '@/lib/utils';
-import { Inbox } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
 
@@ -17,24 +14,23 @@ interface EmptyStateProps {
   icon?: LucideIcon;
   message?: string;
   description?: string;
-  /** 操作区（按钮等） */
   action?: ReactNode;
   className?: string;
 }
 
 export function EmptyState({
-  icon: Icon = Inbox,
+  icon: Icon,
   message = '暂无数据',
   description,
   action,
   className,
 }: EmptyStateProps) {
   return (
-    <div className={cn('flex flex-col items-center py-16', className)}>
-      <Icon className="h-12 w-12 text-text-muted mb-3" />
-      <p className="text-sm text-text-secondary">{message}</p>
+    <div className={cn('flex flex-col items-center py-16 animate-fade-in', className)}>
+      {Icon && <Icon className="h-8 w-8 text-text-muted mb-3 opacity-40" />}
+      <p className="text-sm font-medium text-text-secondary">{message}</p>
       {description && (
-        <p className="text-xs text-text-muted mt-1">{description}</p>
+        <p className="text-xs text-text-muted mt-1.5 max-w-xs text-center">{description}</p>
       )}
       {action && <div className="mt-4">{action}</div>}
     </div>

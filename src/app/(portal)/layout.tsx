@@ -29,34 +29,44 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
   const activeTab = getActiveTab(pathname);
 
   return (
-    <div className="h-screen flex flex-col bg-white">
-      <nav className="shrink-0 z-50 flex items-center justify-center gap-1 px-4 h-11" style={{ background: 'rgba(51,112,255,0.04)' }}>
-        {TABS.map(tab => {
-          const isActive = activeTab === tab.id;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => router.push(tab.href)}
-              className={cn(
-                'relative flex items-center gap-1.5 px-3 h-11 text-xs font-medium transition-colors duration-150 cursor-pointer',
-                isActive
-                  ? 'text-text-primary'
-                  : 'text-text-muted hover:text-text-primary'
-              )}
-            >
-              <tab.icon className={cn("h-3.5 w-3.5", isActive ? "text-brand" : "")} />
-              <span>{tab.label}</span>
-              {isActive && (
-                <span className="absolute bottom-0 left-3 right-3 h-[2px] bg-brand rounded-full" />
-              )}
-            </button>
-          );
-        })}
+    <div className="h-screen flex flex-col bg-surface-primary">
+      {/* 导航栏：透明融入页面背景，无分割线 */}
+      <nav className="shrink-0 z-50 h-[52px] relative">
+        {/* 品牌标识 — 绝对定位在左侧 */}
+        <div className="absolute left-5 top-0 h-full flex items-center gap-2.5">
+          <span className="text-sm font-semibold text-brand tracking-tight">漕河泾</span>
+          <span className="text-tag text-text-muted font-normal">智能驾驶舱</span>
+        </div>
+
+        {/* Tab — flex 居中 */}
+        <div className="h-full flex items-center justify-center gap-0.5">
+          {TABS.map(tab => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => router.push(tab.href)}
+                className={cn(
+                  'relative flex items-center gap-1.5 px-3.5 h-[52px] text-sm font-medium cursor-pointer',
+                  'transition-colors duration-normal ease-out-expo',
+                  'focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-brand focus-visible:rounded-sm',
+                  isActive
+                    ? 'text-text-primary'
+                    : 'text-text-muted hover:text-text-secondary'
+                )}
+              >
+                <tab.icon className={cn("h-4 w-4", isActive ? "text-brand" : "")} />
+                <span>{tab.label}</span>
+                {isActive && (
+                  <span className="absolute bottom-0 left-3.5 right-3.5 h-[2px] bg-brand rounded-full" />
+                )}
+              </button>
+            );
+          })}
+        </div>
       </nav>
 
-      <main className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden portal-scroll"
-        style={{ background: 'linear-gradient(180deg, rgba(51,112,255,0.04) 0%, rgba(51,112,255,0.01) 120px, #FFFFFF 240px)' }}
-      >
+      <main className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden portal-scroll">
         {children}
       </main>
     </div>

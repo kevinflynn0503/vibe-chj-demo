@@ -89,7 +89,7 @@ export default function MatchPage() {
           {/* AI 匹配入口 */}
           <div className="bg-surface-card border border-line rounded-lg p-5">
             <div className="flex items-center gap-2 mb-3">
-              <div className="p-2 bg-[rgba(27,27,27,0.06)] rounded-lg">
+              <div className="p-2 bg-neutral-50 rounded-lg">
                 <Rocket className="h-5 w-5 text-brand" />
               </div>
               <div>
@@ -106,7 +106,7 @@ export default function MatchPage() {
                   value={inputQuery}
                   onChange={e => setInputQuery(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && handleNewMatch()}
-                  className="w-full pl-10 pr-4 py-2.5 text-sm bg-[rgba(27,27,27,0.06)] border border-line rounded-lg hover:border-line-hover focus:border-brand focus:outline-none transition-colors"
+                  className="w-full pl-10 pr-4 py-2.5 text-sm bg-neutral-50 border border-line rounded-lg hover:border-line-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-1 focus-visible:border-brand transition-colors"
                 />
               </div>
               <Button
@@ -123,10 +123,10 @@ export default function MatchPage() {
           {showResult && (
             <>
               {/* 需求上下文 + AI 标识 */}
-              <div className="bg-[rgba(27,27,27,0.06)] border border-line-light rounded-lg p-4">
+              <div className="bg-neutral-50 border border-line-light rounded-lg p-4">
                 <div className="flex items-center justify-between mb-2">
                   <div className="text-xs font-semibold text-brand">当前需求</div>
-                  <span className="flex items-center gap-1 text-tag text-brand bg-[rgba(27,27,27,0.06)] px-1.5 py-0.5 rounded">
+                  <span className="flex items-center gap-1 text-tag text-brand bg-neutral-50 px-1.5 py-0.5 rounded">
                     <Bot className="h-3 w-3" /> AI 已分析 · 拆解为 {resultResolved.sub_tasks?.length || 0} 个子任务
                   </span>
                 </div>
@@ -147,7 +147,7 @@ export default function MatchPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <h2 className="text-sm font-semibold text-text-primary">推荐企业 ({resultResolved.matches.length})</h2>
-                    <span className="text-tag px-1.5 py-0.5 bg-[rgba(27,27,27,0.06)] text-brand rounded flex items-center gap-1">
+                    <span className="text-tag px-1.5 py-0.5 bg-neutral-50 text-brand rounded flex items-center gap-1">
                       <Bot className="h-3 w-3" /> AI 推荐
                     </span>
                   </div>
@@ -161,7 +161,7 @@ export default function MatchPage() {
                   return (
                     <div key={m.enterprise_id} className={cn(
                       "bg-surface-card border rounded-lg p-4 transition-all",
-                      isAccepted ? "border-line bg-[rgba(27,27,27,0.06)]" :
+                      isAccepted ? "border-line bg-neutral-50" :
                       isIgnored ? "border-line opacity-50" :
                       "border-line hover:border-brand"
                     )}>
@@ -169,15 +169,15 @@ export default function MatchPage() {
                         <div className="flex items-center gap-3">
                           <div className={cn(
                             "w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold shrink-0",
-                            i === 0 ? "bg-brand text-text-inverse" : "bg-[rgba(27,27,27,0.06)] text-text-muted"
+                            i === 0 ? "bg-brand text-text-inverse" : "bg-neutral-50 text-text-muted"
                           )}>
                             {i + 1}
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
                               <span className="text-base font-semibold text-text-primary">{m.name}</span>
-                              {isAccepted && <span className="text-tag px-1.5 py-0.5 bg-[rgba(27,27,27,0.06)] text-success rounded flex items-center gap-0.5"><CheckCircle2 className="h-3 w-3" />已采纳</span>}
-                              {isIgnored && <span className="text-tag px-1.5 py-0.5 bg-[rgba(27,27,27,0.06)] text-text-muted rounded">已忽略</span>}
+                              {isAccepted && <span className="text-tag px-1.5 py-0.5 bg-neutral-50 text-success rounded flex items-center gap-0.5"><CheckCircle2 className="h-3 w-3" />已采纳</span>}
+                              {isIgnored && <span className="text-tag px-1.5 py-0.5 bg-neutral-50 text-text-muted rounded">已忽略</span>}
                             </div>
                             <div className="flex items-center gap-2 text-xs text-text-muted mt-0.5">
                               <span className="flex items-center gap-0.5"><MapPin className="h-3 w-3" /> {m.location}</span>
@@ -189,21 +189,21 @@ export default function MatchPage() {
 
                         <div className="flex items-center gap-3 pl-11 sm:pl-0">
                           <div className="text-right">
-                            <div className="text-lg font-bold text-brand font-mono">{m.match_score}%</div>
+                            <div className="text-lg font-bold text-brand tabular-nums">{m.match_score}%</div>
                             <div className="text-xs text-text-muted">匹配度</div>
                           </div>
                         </div>
                       </div>
 
                       {/* 匹配原因 */}
-                      <div className="bg-[rgba(27,27,27,0.06)] rounded p-3 text-sm text-text-secondary leading-relaxed mb-3 border border-line-light">
+                      <div className="bg-neutral-50 rounded p-3 text-sm text-text-secondary leading-relaxed mb-3 border border-line-light">
                         <span className="font-semibold text-text-primary">匹配原因：</span>
                         {m.match_reason}
                       </div>
 
                       <div className="flex flex-wrap gap-2 mb-3">
                         {m.products?.map(p => (
-                          <span key={p} className="text-tag px-1.5 py-0.5 bg-[rgba(27,27,27,0.06)] text-text-muted rounded border border-line-light">{p}</span>
+                          <span key={p} className="text-tag px-1.5 py-0.5 bg-neutral-50 text-text-muted rounded border border-line-light">{p}</span>
                         ))}
                       </div>
 
@@ -219,7 +219,7 @@ export default function MatchPage() {
                           {!isAccepted && !isIgnored && (
                             <>
                               <button
-                                className="flex items-center gap-1 text-xs font-medium text-success bg-[rgba(27,27,27,0.06)] hover:bg-surface-hover-row px-3 py-1.5 rounded border border-line-light transition-colors"
+                                className="flex items-center gap-1 text-xs font-medium text-success bg-neutral-50 hover:bg-surface-hover-row px-3 py-1.5 rounded border border-line-light transition-colors"
                                 onClick={() => handleAccept(m.enterprise_id)}
                               >
                                 <CheckCircle2 className="h-3.5 w-3.5" /> 采纳对接
@@ -235,13 +235,13 @@ export default function MatchPage() {
                           {isAccepted && (
                             <div className="flex items-center gap-2">
                               <button
-                                className="flex items-center gap-1 text-xs font-medium text-brand bg-[rgba(27,27,27,0.06)] hover:bg-surface-hover-row px-3 py-1.5 rounded border border-line-light transition-colors"
+                                className="flex items-center gap-1 text-xs font-medium text-brand bg-neutral-50 hover:bg-surface-hover-row px-3 py-1.5 rounded border border-line-light transition-colors"
                                 onClick={() => sendChat(`请为「${m.name}」与需求方之间起草一封对接邮件，包含双方业务概况、合作切入点和建议会议时间。`)}
                               >
                                 <Send className="h-3 w-3" /> 起草对接邮件
                               </button>
                               <button
-                                className="flex items-center gap-1 text-xs font-medium text-success bg-[rgba(27,27,27,0.06)] hover:bg-surface-hover-row px-3 py-1.5 rounded border border-line-light transition-colors"
+                                className="flex items-center gap-1 text-xs font-medium text-success bg-neutral-50 hover:bg-surface-hover-row px-3 py-1.5 rounded border border-line-light transition-colors"
                                 onClick={() => sendChat(`请安排与「${m.name}」的对接会议，生成会议议程和准备材料清单。`)}
                               >
                                 安排见面
@@ -277,7 +277,7 @@ export default function MatchPage() {
                       <Lightbulb className="h-5 w-5 text-warning" />
                       <h3 className="text-sm font-semibold text-text-primary">AI 组合建议</h3>
                     </div>
-                    <span className="flex items-center gap-1 text-tag text-brand bg-[rgba(27,27,27,0.06)] px-1.5 py-0.5 rounded">
+                    <span className="flex items-center gap-1 text-tag text-brand bg-neutral-50 px-1.5 py-0.5 rounded">
                       <Bot className="h-3 w-3" /> AI 生成
                     </span>
                   </div>

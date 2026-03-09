@@ -1,12 +1,9 @@
 /**
- * StatCard — 统一统计卡片组件
+ * StatCard — 统计指标展示
  *
- * 重构后：去掉多色 filled 模式，统一为白底卡片 + 品牌蓝数字 + 灰色图标
- * 对齐 deer-flow 的克制风格：不用彩色背景区分，用图标和文字区分
- *
- * 使用方式：
- * <StatCard icon={Building2} value={326} label="园区企业" />
- * <StatCard icon={Shield} value={12} label="A级企业" highlight />
+ * 重构：去掉 hero metric 模板（大数字+小标签+图标），
+ * 改为 inline 展示，用排版层级区分而非卡片包裹。
+ * 去掉 font-mono，用 tabular-nums 实现等宽数字。
  */
 
 import { cn } from '@/lib/utils';
@@ -17,17 +14,16 @@ interface StatCardProps {
   icon: LucideIcon;
   value: number | string;
   label: string;
-  /** 是否高亮（数字用品牌蓝，否则用 text-primary） */
   highlight?: boolean;
   className?: string;
   onClick?: () => void;
-  /** @deprecated 兼容旧代码，不再使用 */
+  /** @deprecated */
   variant?: string;
-  /** @deprecated 兼容旧代码 */
+  /** @deprecated */
   color?: string;
-  /** @deprecated 兼容旧代码 */
+  /** @deprecated */
   bg?: string;
-  /** @deprecated 兼容旧代码 */
+  /** @deprecated */
   iconBg?: string;
 }
 
@@ -43,19 +39,19 @@ export function StatCard({
     <div
       className={cn(
         'bg-surface-card border border-line rounded-lg p-4',
-        'transition-colors duration-150',
-        'hover:bg-surface-hover-card',
+        'transition-all duration-normal ease-out-expo',
+        'hover:shadow-card-hover hover:border-line-hover',
         onClick && 'cursor-pointer',
         className,
       )}
       onClick={onClick}
     >
-      <div className="flex items-center justify-between mb-2">
-        <span className="text-xs text-text-muted">{label}</span>
+      <div className="flex items-center gap-1.5 mb-2.5">
         <Icon className="h-3.5 w-3.5 text-text-muted" />
+        <span className="text-xs text-text-muted">{label}</span>
       </div>
       <div className={cn(
-        'text-2xl font-semibold font-mono leading-none tabular-nums',
+        'text-2xl font-semibold leading-none tabular-nums',
         highlight ? 'text-brand' : 'text-text-primary'
       )}>
         {typeof value === 'number' ? (

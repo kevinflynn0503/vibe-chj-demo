@@ -40,7 +40,7 @@ export function ProgressBar({
   return (
     <div className={cn('flex items-center gap-2', className)}>
       <div className={cn(
-        'flex-1 rounded-full bg-[rgba(27,27,27,0.06)] overflow-hidden',
+        'flex-1 rounded-full bg-neutral-50 overflow-hidden',
         size === 'sm' ? 'h-1.5' : 'h-2.5',
       )}>
         <div
@@ -52,7 +52,7 @@ export function ProgressBar({
         />
       </div>
       {showLabel && (
-        <span className="text-xs text-text-muted font-mono tabular-nums shrink-0">
+        <span className="text-xs text-text-muted tabular-nums shrink-0">
           {Math.round(clamped)}%
         </span>
       )}

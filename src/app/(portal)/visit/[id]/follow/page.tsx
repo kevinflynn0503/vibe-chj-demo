@@ -115,7 +115,7 @@ function FollowPageContent() {
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-lg font-semibold text-text-primary">{enterprise.short_name ?? enterprise.name}</h1>
-                <span className="text-xs px-2 py-0.5 bg-[rgba(27,27,27,0.06)] text-success rounded border border-line-light">跟进中</span>
+                <span className="text-xs px-2 py-0.5 bg-neutral-50 text-success rounded border border-line-light">跟进中</span>
               </div>
               <p className="text-xs text-text-muted mt-0.5">
                 {allDemands.length} 条需求待跟进 · 已走访 {records.length} 次
@@ -155,14 +155,14 @@ function FollowPageContent() {
                   <Target className="h-4 w-4 text-brand" />
                   <h2 className="text-sm font-semibold text-text-primary">当前跟进需求</h2>
                   <span className={cn("text-tag px-1.5 py-0.5 rounded",
-                    focusDemand.status === 'pending' ? 'bg-[rgba(27,27,27,0.06)] text-error border border-line-light' :
-                    focusDemand.status === 'processing' ? 'bg-[rgba(27,27,27,0.06)] text-brand border border-line-light' :
-                    'bg-[rgba(27,27,27,0.06)] text-success border border-line-light'
+                    focusDemand.status === 'pending' ? 'bg-neutral-50 text-error border border-line-light' :
+                    focusDemand.status === 'processing' ? 'bg-neutral-50 text-brand border border-line-light' :
+                    'bg-neutral-50 text-success border border-line-light'
                   )}>
                     {focusDemand.status === 'pending' ? '待处理' : focusDemand.status === 'processing' ? '处理中' : '已完成'}
                   </span>
                 </div>
-                <div className="bg-[rgba(27,27,27,0.06)] rounded-lg p-3 border border-line-light mb-3">
+                <div className="bg-neutral-50 rounded-lg p-3 border border-line-light mb-3">
                   <p className="text-sm text-text-secondary leading-relaxed">{focusDemand.demand_content}</p>
                 </div>
                 <div className="flex items-center gap-4 text-xs text-text-muted">
@@ -186,12 +186,12 @@ function FollowPageContent() {
               <div className="flex items-center gap-2 mb-3">
                 <Bot className="h-4 w-4 text-brand" />
                 <h2 className="text-sm font-semibold text-text-primary">AI 跟进建议</h2>
-                <span className="text-tag px-1.5 py-0.5 bg-[rgba(27,27,27,0.06)] text-brand rounded">✦ AI 生成</span>
+                <span className="text-tag px-1.5 py-0.5 bg-neutral-50 text-brand rounded">✦ AI 生成</span>
               </div>
               <div className="space-y-3">
                 {aiSuggestions.map((s, i) => (
                   <div key={i} className={cn("rounded-lg p-3 border", 
-                    s.priority === 'high' ? 'bg-[rgba(27,27,27,0.06)] border-line-light' : 'bg-[rgba(27,27,27,0.06)] border-line-light'
+                    s.priority === 'high' ? 'bg-neutral-50 border-line-light' : 'bg-neutral-50 border-line-light'
                   )}>
                     <div className="flex items-center gap-2 mb-1">
                       {s.type === 'action' && <Send className="h-3.5 w-3.5 text-brand" />}
@@ -200,7 +200,7 @@ function FollowPageContent() {
                       {s.type === 'risk' && <AlertTriangle className="h-3.5 w-3.5 text-error" />}
                       <span className="text-xs font-semibold text-text-primary">{s.title}</span>
                       {s.priority === 'high' && (
-                        <span className="text-tag px-1 py-0.5 bg-[rgba(27,27,27,0.06)] text-error rounded">重要</span>
+                        <span className="text-tag px-1 py-0.5 bg-neutral-50 text-error rounded">重要</span>
                       )}
                     </div>
                     <p className="text-xs text-text-secondary leading-relaxed pl-5">{s.content}</p>
@@ -217,7 +217,7 @@ function FollowPageContent() {
                   {allDemands.map(d => (
                     <div key={d.id} className={cn(
                       "flex items-center gap-3 p-2.5 rounded-lg border transition-colors cursor-pointer",
-                      d.id === focusDemand?.id ? 'bg-[rgba(27,27,27,0.06)] border-line' : 'bg-surface-card border-line-light hover:border-line-hover'
+                      d.id === focusDemand?.id ? 'bg-neutral-50 border-line' : 'bg-surface-card border-line-light hover:border-line-hover'
                     )} onClick={() => router.push(`/visit/${enterpriseId}/follow?demand=${d.id}`)}>
                       <div className={cn("w-1.5 h-1.5 rounded-full shrink-0",
                         d.status === 'pending' ? 'bg-error' : d.status === 'processing' ? 'bg-brand' : 'bg-success'
@@ -293,7 +293,7 @@ function FollowPageContent() {
                         <div className="flex items-center justify-between mb-0.5">
                           <span className="text-xs font-medium text-text-secondary">{r.visit_date}</span>
                           <span className={cn("text-tag px-1 py-0.5 rounded",
-                            r.is_confirmed ? 'bg-[rgba(27,27,27,0.06)] text-success' : 'bg-[rgba(27,27,27,0.06)] text-warning'
+                            r.is_confirmed ? 'bg-neutral-50 text-success' : 'bg-neutral-50 text-warning'
                           )}>{r.is_confirmed ? '已确认' : '待确认'}</span>
                         </div>
                         {r.key_findings && r.key_findings[0] && (

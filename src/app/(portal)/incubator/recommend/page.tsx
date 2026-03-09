@@ -72,10 +72,10 @@ const mockRecommendations: RecommendItem[] = [
 ];
 
 const signalTypeConfig: Record<string, { label: string; cls: string; icon: React.ComponentType<{ className?: string }> }> = {
-  product: { label: '新产品', cls: 'bg-[rgba(27,27,27,0.06)] text-brand border-line-light', icon: Sparkles },
-  funding: { label: '融资', cls: 'bg-[rgba(27,27,27,0.06)] text-success border-line-light', icon: TrendingUp },
-  tech: { label: '技术突破', cls: 'bg-[rgba(27,27,27,0.06)] text-brand border-line-light', icon: Zap },
-  expansion: { label: '扩张', cls: 'bg-[rgba(27,27,27,0.06)] text-warning border-line-light', icon: Target },
+  product: { label: '新产品', cls: 'bg-neutral-50 text-brand border-line-light', icon: Sparkles },
+  funding: { label: '融资', cls: 'bg-neutral-50 text-success border-line-light', icon: TrendingUp },
+  tech: { label: '技术突破', cls: 'bg-neutral-50 text-brand border-line-light', icon: Zap },
+  expansion: { label: '扩张', cls: 'bg-neutral-50 text-warning border-line-light', icon: Target },
 };
 
 export default function RecommendPage() {
@@ -105,7 +105,7 @@ export default function RecommendPage() {
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-lg font-semibold text-text-primary">反向推荐</h1>
-                <span className="flex items-center gap-1 text-tag text-brand bg-[rgba(27,27,27,0.06)] px-1.5 py-0.5 rounded">
+                <span className="flex items-center gap-1 text-tag text-brand bg-neutral-50 px-1.5 py-0.5 rounded">
                   <Bot className="h-3 w-3" /> AI 自动监测
                 </span>
               </div>
@@ -120,15 +120,15 @@ export default function RecommendPage() {
         {/* 概览 */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           <div className="bg-surface-card border border-line rounded-lg p-4 text-center">
-            <div className="text-2xl font-semibold text-text-primary font-mono">{mockRecommendations.length}</div>
+            <div className="text-2xl font-semibold text-text-primary tabular-nums">{mockRecommendations.length}</div>
             <div className="text-xs text-text-muted mt-0.5">变化信号</div>
           </div>
           <div className="bg-surface-card border border-line rounded-lg p-4 text-center">
-            <div className="text-2xl font-bold text-brand font-mono">{totalRecommendations}</div>
+            <div className="text-2xl font-bold text-brand tabular-nums">{totalRecommendations}</div>
             <div className="text-xs text-text-muted mt-0.5">推荐对接</div>
           </div>
           <div className="bg-surface-card border border-line rounded-lg p-4 text-center">
-            <div className="text-2xl font-bold text-success font-mono">
+            <div className="text-2xl font-bold text-success tabular-nums">
               {new Set(mockRecommendations.map(r => r.incubatorEnterprise)).size}
             </div>
             <div className="text-xs text-text-muted mt-0.5">涉及企业</div>
@@ -150,7 +150,7 @@ export default function RecommendPage() {
                       {signalConfig.label}
                     </span>
                     <span className="text-sm font-semibold text-text-primary">{rec.incubatorEnterprise}</span>
-                    <span className="text-xs text-text-muted font-mono">{rec.signalTime}</span>
+                    <span className="text-xs text-text-muted tabular-nums">{rec.signalTime}</span>
                   </div>
                   <p className="text-xs text-text-secondary mt-1.5">{rec.signal}</p>
                 </div>
@@ -167,20 +167,20 @@ export default function RecommendPage() {
                         <div className="flex items-center justify-between hover:bg-surface-hover-row -mx-1 px-1 rounded cursor-pointer"
                           onClick={() => router.push(`/enterprises/${r.enterpriseId}`)}>
                           <div className="flex items-center gap-3 flex-1 min-w-0">
-                            <div className="w-8 h-8 bg-[rgba(27,27,27,0.06)] text-brand border border-line-light rounded-lg flex items-center justify-center text-xs font-bold shrink-0">
+                            <div className="w-8 h-8 bg-neutral-50 text-brand border border-line-light rounded-lg flex items-center justify-center text-xs font-bold shrink-0">
                               {r.enterpriseName.charAt(0)}
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2">
                                 <span className="text-sm font-medium text-text-primary">{r.enterpriseName}</span>
-                                {isAccepted && <span className="text-tag px-1.5 py-0.5 bg-[rgba(27,27,27,0.06)] text-success rounded flex items-center gap-0.5"><CheckCircle2 className="h-3 w-3" />已采纳</span>}
+                                {isAccepted && <span className="text-tag px-1.5 py-0.5 bg-neutral-50 text-success rounded flex items-center gap-0.5"><CheckCircle2 className="h-3 w-3" />已采纳</span>}
                               </div>
                               <div className="text-xs text-text-muted mt-0.5 truncate">{r.reason}</div>
                             </div>
                           </div>
                           <div className="flex items-center gap-3 shrink-0 ml-4">
                             <div className="text-right">
-                              <div className={cn("text-sm font-bold font-mono",
+                              <div className={cn("text-sm font-bold tabular-nums",
                                 r.matchScore >= 90 ? 'text-success' :
                                 r.matchScore >= 70 ? 'text-brand' : 'text-warning'
                               )}>

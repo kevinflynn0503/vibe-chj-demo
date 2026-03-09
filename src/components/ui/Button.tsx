@@ -1,14 +1,5 @@
 /**
- * Button 组件 — 统一按钮样式
- *
- * 使用规范：
- * - <Button>默认按钮</Button>
- * - <Button variant="primary">品牌按钮</Button>
- * - <Button variant="ai" size="sm" icon={<Bot />}>AI 操作</Button>
- * - <Button variant="ghost" size="icon"><Settings /></Button>
- * - <Button loading>提交中...</Button>
- *
- * 替代原有 CSS 类：.btn .btn-primary .btn-default .btn-ghost .btn-text .btn-ai
+ * Button — 统一按钮，easing 改为 ease-out-expo
  */
 
 import { cn } from '@/lib/utils';
@@ -26,9 +17,9 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantStyles: Record<ButtonVariant, string> = {
   default:
-    'bg-white text-text-primary border border-line hover:bg-surface-hover-btn hover:border-line-hover',
+    'bg-surface-card text-text-primary border border-line hover:bg-surface-hover-btn hover:border-line-hover hover:shadow-xs',
   primary:
-    'bg-brand text-text-inverse border border-transparent hover:bg-brand-hover',
+    'bg-brand text-text-inverse border border-transparent hover:bg-brand-hover hover:shadow-brand-sm',
   ghost:
     'bg-transparent text-text-secondary border border-transparent hover:bg-surface-hover-btn hover:text-text-primary',
   text:
@@ -67,13 +58,10 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={isDisabled}
         className={cn(
-          // 基础样式
-          'inline-flex items-center justify-center gap-1.5 font-medium rounded-md cursor-pointer transition-colors duration-150',
-          // 变体
+          'inline-flex items-center justify-center gap-1.5 font-medium rounded-md cursor-pointer',
+          'transition-all duration-normal ease-out-expo',
           variantStyles[variant],
-          // 尺寸
           sizeStyles[size],
-          // 禁用
           isDisabled && 'opacity-50 cursor-not-allowed pointer-events-none',
           className,
         )}

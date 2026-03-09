@@ -1,14 +1,7 @@
 /**
- * SearchBar 组件 - 统一搜索框样式
- * 
- * 使用示例：
- * ```tsx
- * <SearchBar 
- *   placeholder="搜索企业名称、赛道..." 
- *   value={search} 
- *   onChange={setSearch}
- * />
- * ```
+ * SearchBar / FilterSelect / SortButton
+ *
+ * focus:outline-none → focus-visible ring（impeccable accessibility）
  */
 
 import { Search } from 'lucide-react';
@@ -21,29 +14,32 @@ interface SearchBarProps {
   className?: string;
 }
 
-export function SearchBar({ 
-  placeholder = "搜索...", 
-  value, 
-  onChange, 
-  className 
+const inputFocus = 'focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-1 focus-visible:border-brand';
+
+export function SearchBar({
+  placeholder = "搜索...",
+  value,
+  onChange,
+  className
 }: SearchBarProps) {
   return (
     <div className={cn("relative flex-1", className)}>
       <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-muted" />
-      <input 
-        type="text" 
+      <input
+        type="text"
         placeholder={placeholder}
-        className="w-full pl-10 pr-4 py-2 text-sm border border-line rounded-md focus:outline-none focus:border-brand transition-colors bg-surface-card"
-        value={value} 
-        onChange={e => onChange(e.target.value)} 
+        className={cn(
+          "w-full pl-10 pr-4 py-2 text-sm border border-line rounded-md bg-surface-card",
+          "transition-colors duration-normal ease-out-expo",
+          inputFocus,
+        )}
+        value={value}
+        onChange={e => onChange(e.target.value)}
       />
     </div>
   );
 }
 
-/**
- * FilterSelect 组件 - 统一筛选下拉框
- */
 interface FilterSelectProps {
   icon?: React.ComponentType<{ className?: string }>;
   value: string;
@@ -64,12 +60,14 @@ export function FilterSelect({
   return (
     <div className={cn("relative", className)}>
       {Icon && <Icon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-muted" />}
-      <select 
+      <select
         className={cn(
-          "w-full pr-8 py-2 text-sm border border-line rounded-md focus:outline-none focus:border-brand appearance-none bg-surface-card",
+          "w-full pr-8 py-2 text-sm border border-line rounded-md appearance-none bg-surface-card",
+          "transition-colors duration-normal ease-out-expo",
+          inputFocus,
           Icon && "pl-10"
         )}
-        value={value} 
+        value={value}
         onChange={e => onChange(e.target.value)}
       >
         <option value="">{placeholder}</option>
@@ -81,9 +79,6 @@ export function FilterSelect({
   );
 }
 
-/**
- * SortButton 组件 - 统一排序按钮
- */
 interface SortButtonProps {
   active: boolean;
   onClick: () => void;
@@ -94,10 +89,12 @@ export function SortButton({ active, onClick, children }: SortButtonProps) {
   return (
     <button
       className={cn(
-        "px-3 py-2 text-xs rounded-md border transition-colors",
-        active 
-          ? 'bg-[rgba(27,27,27,0.06)] text-text-primary border-text-primary' 
-          : 'bg-surface-card text-text-secondary border-line hover:border-line-hover'
+        "px-3 py-2 text-xs rounded-md border cursor-pointer",
+        "transition-all duration-normal ease-out-expo",
+        "focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-1",
+        active
+          ? 'bg-neutral-50 text-text-primary border-line-hover'
+          : 'bg-surface-card text-text-secondary border-line hover:border-line-hover hover:text-text-primary'
       )}
       onClick={onClick}
     >

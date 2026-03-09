@@ -234,7 +234,7 @@ export const GRADE_STYLES: Record<Grade, { bg: string; text: string; label: stri
   A: { bg: 'bg-emerald-50', text: 'text-emerald-700', label: 'A 级' },
   B: { bg: 'bg-blue-50', text: 'text-blue-700', label: 'B 级' },
   C: { bg: 'bg-amber-50', text: 'text-amber-700', label: 'C 级' },
-  unqualified: { bg: 'bg-[rgba(27,27,27,0.06)]', text: 'text-text-muted', label: '不符合' },
+  unqualified: { bg: 'bg-neutral-50', text: 'text-text-muted', label: '不符合' },
 };
 
 export const TOUCH_STATUS_LABELS: Record<TouchStatus, string> = {

@@ -1,11 +1,12 @@
 /**
- * 孵化器运营 — 布局优化版
- * 
- * 改造：
- * 1. 清晰的三大场景入口（运营监控 / 订单匹配 / 反向推荐）
- * 2. 操作简化：每个区域只有 1-2 个核心操作
- * 3. AI 监测状态统一展示
- * 4. 在孵企业列表简化为紧凑卡片
+ * 孵化器运营
+ *
+ * Impeccable 重构：
+ * - 运营指标用 inline divider 替代 6 个等尺寸卡片
+ * - 去掉 font-mono，用 tabular-nums
+ * - 场景入口卡片去掉嵌套 footer
+ * - 企业名录：微型进度条改为可读数字
+ * - stagger 入场
  */
 'use client';
 
@@ -14,13 +15,13 @@ import { useState, useEffect } from 'react';
 import {
   Rocket, TrendingDown, TrendingUp, Zap, Building2, Activity,
   ChevronRight, ArrowRight, MapPin, AlertTriangle, Sparkles, Bot,
-  Clock, CheckCircle2, Target, Search, BarChart3, Handshake
+  Clock, CheckCircle2, Target, Handshake
 } from 'lucide-react';
 import { sendChat } from '@/lib/host-api';
 import { cn } from '@/lib/utils';
 import { fetchIncubatorStats, fetchIncubatorEnterprises, fetchActivityReports } from '@/services/incubator';
 import type { IncubatorEnterprise } from '@/lib/schema';
-import { Card, CardCompact, CardStandard, Tag, Button, PageSkeleton } from '@/components/ui';
+import { Card, CardStandard, Tag, Button, PageSkeleton } from '@/components/ui';
 
 export default function IncubatorPage() {
   const router = useRouter();
@@ -47,7 +48,6 @@ export default function IncubatorPage() {
   if (loading) return <PageSkeleton />;
 
   const statsResolved = stats!;
-
   const alerts = activityReports.filter(r => r.trend === 'down');
   const topActive = activityReports.filter(r => r.trend === 'up').slice(0, 3);
   const entIdToIncId = Object.fromEntries(enterprises.map(e => [e.enterprise_id, e.id]));
@@ -56,9 +56,9 @@ export default function IncubatorPage() {
     <div className="min-h-full">
       {/* ═══ 头部区 ═══ */}
       <div className="page-container">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-5 pb-5">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-sp-6 pb-sp-5">
           <div>
-            <h1 className="text-lg font-semibold text-text-primary tracking-tight">孵化器运营</h1>
+            <h1 className="text-xl font-semibold text-text-primary tracking-tight">孵化器运营</h1>
             <p className="text-xs text-text-muted mt-1">A6 奇岱松校友中心 · {statsResolved.total_enterprises} 家在孵</p>
           </div>
           <Button variant="primary" size="sm" onClick={() => router.push('/incubator/match')}>
@@ -67,228 +67,151 @@ export default function IncubatorPage() {
         </div>
       </div>
 
-      <div className="page-container space-y-6">
+      <div className="page-container space-y-sp-7 stagger-in">
 
-        {/* ═══ 运营指标 ═══ */}
-        <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
-          <CardCompact>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-text-muted">在孵企业</span>
-              <Building2 className="h-3.5 w-3.5 text-text-muted" />
+        {/* ═══ 运营指标 — inline divider ═══ */}
+        <div className="grid grid-cols-6 gap-0 divide-x divide-line border border-line rounded-lg py-4">
+          {[
+            { v: statsResolved.total_enterprises, l: '在孵企业', icon: Building2 },
+            { v: topActive.length, l: '高活跃', icon: TrendingUp, color: 'text-success' },
+            { v: alerts.length, l: '异常预警', icon: AlertTriangle, color: 'text-error' },
+            { v: 156, l: '本周会议', icon: Clock },
+            { v: 89, l: '本周访客', icon: Activity },
+            { v: '92%', l: '工位使用率', icon: MapPin },
+          ].map((s, i) => (
+            <div key={i} className="flex flex-col items-center px-sp-3">
+              <div className="flex items-center gap-1 mb-1.5">
+                <s.icon className="h-3 w-3 text-text-muted" />
+                <span className="text-tag text-text-muted">{s.l}</span>
+              </div>
+              <span className={cn("text-xl font-semibold tabular-nums", s.color || "text-text-primary")}>{s.v}</span>
             </div>
-            <div className="text-2xl font-semibold font-mono text-text-primary">{statsResolved.total_enterprises}</div>
-          </CardCompact>
-          <CardCompact>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-text-muted">高活跃</span>
-              <TrendingUp className="h-3.5 w-3.5 text-text-muted" />
-            </div>
-            <div className="text-2xl font-semibold font-mono text-success">{topActive.length}</div>
-          </CardCompact>
-          <CardCompact>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-text-muted">异常预警</span>
-              <AlertTriangle className="h-3.5 w-3.5 text-text-muted" />
-            </div>
-            <div className="text-2xl font-semibold font-mono text-error">{alerts.length}</div>
-          </CardCompact>
-          <CardCompact>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-text-muted">本周会议</span>
-              <Clock className="h-3.5 w-3.5 text-text-muted" />
-            </div>
-            <div className="text-2xl font-semibold font-mono text-text-primary">156</div>
-          </CardCompact>
-          <CardCompact>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-text-muted">本周访客</span>
-              <Activity className="h-3.5 w-3.5 text-text-muted" />
-            </div>
-            <div className="text-2xl font-semibold font-mono text-text-primary">89</div>
-          </CardCompact>
-          <CardCompact>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-text-muted">工位使用率</span>
-              <MapPin className="h-3.5 w-3.5 text-text-muted" />
-            </div>
-            <div className="text-2xl font-semibold font-mono text-text-primary">92%</div>
-          </CardCompact>
+          ))}
         </div>
 
-        {/* ═══ 三大场景入口 ═══ */}
+        {/* ═══ 三大场景入口 — 去掉嵌套 footer ═══ */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* 异常预警 */}
-          <CardStandard hover className="p-0 overflow-hidden cursor-pointer group"
-            onClick={() => router.push('/incubator/alerts')}>
-            <div className="px-4 py-3 border-b border-line-light flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4 text-text-muted" />
-                <h2 className="text-sm font-semibold text-text-primary">异常预警</h2>
-                {alerts.length > 0 && <Tag variant="red" className="rounded-full">{alerts.length}</Tag>}
-              </div>
-              <ChevronRight className="h-4 w-4 text-text-muted group-hover:text-error" />
-            </div>
-            <div className="p-4 space-y-2">
-              {alerts.length > 0 ? alerts.slice(0, 2).map(r => (
-                <div key={r.enterprise_id} className="flex items-center gap-2 text-xs">
-                  <TrendingDown className="h-3 w-3 text-error shrink-0" />
-                  <span className="text-text-primary truncate">{r.name}</span>
-                  <span className="text-error shrink-0">活跃度 {r.activity_score}</span>
+          {[
+            {
+              title: '异常预警', icon: AlertTriangle, href: '/incubator/alerts',
+              desc: alerts.length > 0
+                ? alerts.slice(0, 2).map(r => `${r.name} 活跃度 ${r.activity_score}`).join(' · ')
+                : '暂无异常',
+              badge: alerts.length > 0 ? String(alerts.length) : undefined,
+              badgeColor: 'red' as const,
+              hint: 'AI 持续监测活跃度，自动检测异常',
+            },
+            {
+              title: 'AI 订单匹配', icon: Rocket, href: '/incubator/match',
+              desc: `待处理 ${statsResolved.pending_orders} 个 · 本月匹配 ${statsResolved.total_orders} 次`,
+              hint: 'AI 自动拆解需求 + 语义匹配企业能力',
+            },
+            {
+              title: 'AI 反向推荐', icon: Zap, href: '/incubator/recommend',
+              desc: '3 条新推荐待审 · 本月推荐 8 条',
+              hint: 'AI 监测变化信号（融资/新产品/团队扩张）',
+            },
+          ].map(s => (
+            <div
+              key={s.title}
+              onClick={() => router.push(s.href)}
+              className="border border-line rounded-lg p-4 cursor-pointer transition-all duration-normal ease-out-expo hover:shadow-card-hover hover:border-line-hover group"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <s.icon className="h-4 w-4 text-text-muted" />
+                  <h2 className="text-sm font-semibold text-text-primary">{s.title}</h2>
+                  {s.badge && <Tag variant={s.badgeColor!} className="rounded-full">{s.badge}</Tag>}
                 </div>
-              )) : <p className="text-xs text-text-muted">暂无异常</p>}
-              {alerts.length > 2 && <p className="text-tag text-text-muted">+{alerts.length - 2} 更多...</p>}
-            </div>
-            <div className="px-4 py-2.5 bg-[rgba(27,27,27,0.06)] border-t border-line-light flex items-center gap-1.5 text-tag text-error">
-              <Bot className="h-3 w-3" /> AI 持续监测活跃度，自动检测异常
-            </div>
-          </CardStandard>
-
-          {/* 订单匹配 */}
-          <CardStandard hover className="p-0 overflow-hidden cursor-pointer group"
-            onClick={() => router.push('/incubator/match')}>
-            <div className="px-4 py-3 border-b border-line-light flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Rocket className="h-4 w-4 text-text-muted" />
-                <h2 className="text-sm font-semibold text-text-primary">AI 订单匹配</h2>
+                <ChevronRight className="h-4 w-4 text-text-muted opacity-0 group-hover:opacity-100 transition-opacity duration-normal" />
               </div>
-              <ChevronRight className="h-4 w-4 text-text-muted group-hover:text-brand" />
+              <p className="text-xs text-text-secondary mb-2">{s.desc}</p>
+              <p className="text-tag text-text-muted">{s.hint}</p>
             </div>
-            <div className="p-4">
-              <p className="text-xs text-text-secondary mb-3">输入大企业需求 → AI 拆解子任务 → 匹配孵化企业能力</p>
-              <div className="flex items-center gap-3 text-xs">
-                <span className="text-brand font-medium">待处理 {statsResolved.pending_orders} 个</span>
-                <span className="text-text-muted">本月匹配 {statsResolved.total_orders} 次</span>
-              </div>
-            </div>
-            <div className="px-4 py-2.5 bg-[rgba(27,27,27,0.06)] border-t border-line-light flex items-center gap-1.5 text-tag text-brand">
-              <Sparkles className="h-3 w-3" /> AI 自动拆解需求 + 语义匹配企业能力
-            </div>
-          </CardStandard>
-
-          {/* 反向推荐 */}
-          <CardStandard hover className="p-0 overflow-hidden cursor-pointer group"
-            onClick={() => router.push('/incubator/recommend')}>
-            <div className="px-4 py-3 border-b border-line-light flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Zap className="h-4 w-4 text-text-muted" />
-                <h2 className="text-sm font-semibold text-text-primary">AI 反向推荐</h2>
-              </div>
-              <ChevronRight className="h-4 w-4 text-text-muted group-hover:text-success" />
-            </div>
-            <div className="p-4">
-              <p className="text-xs text-text-secondary mb-3">在孵企业有变化 → AI 自动推荐可对接的园区合作伙伴</p>
-              <div className="flex items-center gap-3 text-xs">
-                <span className="text-success font-medium">3 条新推荐待审</span>
-                <span className="text-text-muted">本月推荐 8 条</span>
-              </div>
-            </div>
-            <div className="px-4 py-2.5 bg-[rgba(27,27,27,0.06)] border-t border-line-light flex items-center gap-1.5 text-tag text-success">
-              <Bot className="h-3 w-3" /> AI 监测变化信号（融资/新产品/团队扩张）
-            </div>
-          </CardStandard>
+          ))}
         </div>
 
-        {/* ═══ 两栏：高活跃 + 最近动态 ═══ */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* ═══ 两栏 ═══ */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-sp-5">
           {/* 高活跃企业 */}
           <Card className="p-0">
-            <div className="px-4 py-3 border-b border-line-light flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Activity className="h-4 w-4 text-text-muted" />
-                <h2 className="text-sm font-semibold text-text-primary">高活跃企业</h2>
-                <Tag variant="emerald" className="flex items-center gap-0.5"><Bot className="h-3 w-3" /> AI 识别</Tag>
-              </div>
+            <div className="px-4 py-3.5 border-b border-line flex items-center gap-2">
+              <Activity className="h-4 w-4 text-text-muted" />
+              <h2 className="text-sm font-semibold text-text-primary">高活跃企业</h2>
             </div>
             <div className="divide-y divide-line-light">
               {topActive.map(r => (
-                <div key={r.enterprise_id} className="px-4 py-3 flex items-center justify-between hover:bg-surface-hover-row transition-colors cursor-pointer"
+                <div key={r.enterprise_id} className="px-4 py-3.5 flex items-center justify-between hover:bg-surface-hover-row transition-colors duration-normal ease-out-expo cursor-pointer group"
                   onClick={() => { const incId = entIdToIncId[r.enterprise_id]; if (incId) router.push(`/incubator/${incId}`); }}>
                   <div>
-                    <div className="text-sm font-medium text-text-primary">{r.name}</div>
-                    <div className="text-xs text-success mt-0.5">
+                    <div className="text-sm font-medium text-text-primary group-hover:text-brand transition-colors duration-normal">{r.name}</div>
+                    <div className="text-xs text-success mt-0.5 tabular-nums">
                       活跃度 {r.activity_score} · {r.signals?.[0] || '会议频次上升'}
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Button variant="text" size="sm"
-                      icon={<Sparkles className="h-3 w-3" />}
-                      onClick={(e) => { e.stopPropagation(); sendChat(`「${r.name}」活跃度上升，请分析原因并推荐可对接的合作机会。`); }}>
-                      AI 分析
-                    </Button>
-                    <ChevronRight className="h-4 w-4 text-text-muted" />
-                  </div>
+                  <ChevronRight className="h-4 w-4 text-text-muted opacity-0 group-hover:opacity-100 transition-opacity duration-normal" />
                 </div>
               ))}
-              {topActive.length === 0 && <div className="px-4 py-6 text-center text-xs text-text-muted">暂无高活跃企业</div>}
+              {topActive.length === 0 && <div className="px-4 py-8 text-center text-xs text-text-muted">暂无高活跃企业</div>}
             </div>
           </Card>
 
           {/* 最近动态 */}
           <Card className="p-0">
-            <div className="px-4 py-3 border-b border-line-light flex items-center gap-2">
+            <div className="px-4 py-3.5 border-b border-line flex items-center gap-2">
               <Clock className="h-4 w-4 text-text-muted" />
               <h2 className="text-sm font-semibold text-text-primary">最近动态</h2>
             </div>
             <div className="divide-y divide-line-light">
               {[
-                { icon: Sparkles, text: 'AI 完成「仪电-自动洗车」需求匹配，推荐 3 家', time: '10分钟前', cls: 'bg-[rgba(27,27,27,0.06)] text-brand' },
-                { icon: AlertTriangle, text: '芯视科技活跃度下降至 35，触发预警', time: '2小时前', cls: 'bg-[rgba(27,27,27,0.06)] text-error' },
-                { icon: Zap, text: 'AI 检测到微纳智造完成 Pre-A 融资，推荐合作方', time: '昨天', cls: 'bg-[rgba(27,27,27,0.06)] text-success' },
-                { icon: Handshake, text: '你采纳了「传感器供应商」匹配方案', time: '昨天', cls: 'bg-[rgba(27,27,27,0.06)] text-brand' },
-                { icon: CheckCircle2, text: '清洁智造走访完成，AI 已提取走访记录', time: '2天前', cls: 'bg-[rgba(27,27,27,0.06)] text-success' },
+                { text: 'AI 完成「仪电-自动洗车」需求匹配，推荐 3 家', time: '10分钟前', color: 'text-brand' },
+                { text: '芯视科技活跃度下降至 35，触发预警', time: '2小时前', color: 'text-error' },
+                { text: 'AI 检测到微纳智造完成 Pre-A 融资', time: '昨天', color: 'text-success' },
+                { text: '你采纳了「传感器供应商」匹配方案', time: '昨天', color: 'text-brand' },
+                { text: '清洁智造走访完成，AI 已提取走访记录', time: '2天前', color: 'text-success' },
               ].map((item, i) => (
-                <div key={i} className="px-4 py-3 flex items-center gap-3 hover:bg-surface-hover-row transition-colors">
-                  <div className={cn("p-1.5 rounded-full shrink-0", item.cls)}>
-                    <item.icon className="h-3.5 w-3.5" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs text-text-primary truncate">{item.text}</p>
-                  </div>
-                  <span className="text-tag text-text-muted shrink-0">{item.time}</span>
+                <div key={i} className="px-4 py-3 flex items-center gap-3 hover:bg-surface-hover-row transition-colors duration-normal ease-out-expo">
+                  <div className={cn("w-1.5 h-1.5 rounded-full shrink-0", item.color.replace('text-', 'bg-'))} />
+                  <p className="text-sm text-text-primary flex-1 min-w-0 truncate">{item.text}</p>
+                  <span className="text-tag text-text-muted shrink-0 tabular-nums">{item.time}</span>
                 </div>
               ))}
             </div>
           </Card>
         </div>
 
-        {/* ═══ 在孵企业名录 ═══ */}
+        {/* ═══ 在孵企业名录 — 活跃度用数字+色彩，不用微型进度条 ═══ */}
         <div>
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-sp-4">
             <h2 className="text-sm font-semibold text-text-primary">在孵企业名录</h2>
-            <span className="text-xs text-text-secondary">{enterprises.length} 家</span>
+            <span className="text-xs text-text-muted">{enterprises.length} 家</span>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 stagger-in">
             {enterprises.map(ent => (
-              <CardStandard key={ent.id} hover
-                className="cursor-pointer group"
-                onClick={() => router.push(`/incubator/${ent.id}`)}>
+              <div key={ent.id}
+                onClick={() => router.push(`/incubator/${ent.id}`)}
+                className="border border-line rounded-lg p-4 cursor-pointer transition-all duration-normal ease-out-expo hover:shadow-card-hover hover:border-line-hover group">
                 <div className="flex items-start gap-3 mb-2">
-                  <div className="w-9 h-9 bg-[rgba(27,27,27,0.06)] text-brand border border-line-light rounded-lg flex items-center justify-center text-sm font-bold shrink-0">
-                    {ent.name.charAt(0)}
-                  </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-semibold text-text-primary truncate group-hover:text-brand transition-colors">{ent.name}</div>
-                    <div className="flex items-center gap-2 mt-0.5">
+                    <div className="text-sm font-semibold text-text-primary truncate group-hover:text-brand transition-colors duration-normal">{ent.name}</div>
+                    <div className="flex items-center gap-2 mt-1">
                       {ent.funding_stage && <Tag variant="orange">{ent.funding_stage}</Tag>}
-                      <span className="text-tag text-text-muted">{ent.employee_count ? `${ent.employee_count}人` : ''}</span>
+                      {ent.employee_count && <span className="text-tag text-text-muted">{ent.employee_count}人</span>}
                     </div>
                   </div>
-                  <div className="flex items-center gap-1.5 shrink-0">
-                    <div className="w-10 h-1.5 bg-[rgba(27,27,27,0.06)] rounded-full overflow-hidden">
-                      <div className={cn("h-full rounded-full", ent.activity_score >= 80 ? "bg-success" : ent.activity_score >= 50 ? "bg-brand" : "bg-error")}
-                        style={{ width: `${ent.activity_score}%` }} />
-                    </div>
-                    <span className={cn("text-tag font-mono font-bold", ent.activity_score >= 80 ? "text-success" : ent.activity_score >= 50 ? "text-brand" : "text-error")}>
-                      {ent.activity_score}
-                    </span>
-                  </div>
+                  <span className={cn(
+                    "text-sm font-semibold tabular-nums shrink-0",
+                    ent.activity_score >= 80 ? "text-success" : ent.activity_score >= 50 ? "text-brand" : "text-error"
+                  )}>
+                    {ent.activity_score}
+                  </span>
                 </div>
                 <div className="flex flex-wrap gap-1">
                   {ent.products.slice(0, 3).map((p, i) => (
                     <Tag key={i} variant="blue">{p}</Tag>
                   ))}
                 </div>
-              </CardStandard>
+              </div>
             ))}
           </div>
         </div>

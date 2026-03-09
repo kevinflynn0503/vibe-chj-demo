@@ -134,7 +134,7 @@ export default function AlertsPage() {
                 <c.icon className={cn("h-3.5 w-3.5", c.iconColor)} />
                 <span className="text-xs text-text-muted">{c.label}</span>
               </div>
-              <div className={cn("text-xl font-bold font-mono", c.color)}>{c.value}</div>
+              <div className={cn("text-xl font-bold tabular-nums", c.color)}>{c.value}</div>
             </div>
           ))}
         </div>
@@ -142,10 +142,10 @@ export default function AlertsPage() {
         {/* 异常列表 */}
         {alerts.length > 0 && (
           <div className="bg-surface-card border border-line rounded-lg overflow-hidden">
-            <div className="px-4 py-3 border-b border-line-light flex items-center gap-2 bg-[rgba(27,27,27,0.06)]">
+            <div className="px-4 py-3 border-b border-line-light flex items-center gap-2 bg-neutral-50">
               <AlertTriangle className="h-4 w-4 text-error" />
               <h2 className="text-sm font-semibold text-text-primary">异常企业</h2>
-              <span className="text-xs text-error bg-[rgba(27,27,27,0.06)] px-1.5 py-0.5 rounded">{alerts.length}</span>
+              <span className="text-xs text-error bg-neutral-50 px-1.5 py-0.5 rounded">{alerts.length}</span>
             </div>
             <div className="divide-y divide-line-light">
               {alerts.map(r => {
@@ -159,7 +159,7 @@ export default function AlertsPage() {
                     <div className="px-4 py-3 flex items-center justify-between hover:bg-surface-hover-row transition-colors">
                       <div className="flex items-center gap-3 flex-1 cursor-pointer"
                         onClick={() => { if (ent) router.push(`/incubator/${ent.id}`); }}>
-                        <div className="w-9 h-9 bg-[rgba(27,27,27,0.06)] text-error rounded-lg flex items-center justify-center text-sm font-bold shrink-0">
+                        <div className="w-9 h-9 bg-neutral-50 text-error rounded-lg flex items-center justify-center text-sm font-bold shrink-0">
                           {r.name.charAt(0)}
                         </div>
                         <div>
@@ -172,7 +172,7 @@ export default function AlertsPage() {
                           {r.signals && (
                             <div className="flex flex-wrap gap-1 mt-1">
                               {r.signals.map((s, i) => (
-                                <span key={i} className="text-tag px-1.5 py-0.5 bg-[rgba(27,27,27,0.06)] text-error rounded">{s}</span>
+                                <span key={i} className="text-tag px-1.5 py-0.5 bg-neutral-50 text-error rounded">{s}</span>
                               ))}
                             </div>
                           )}
@@ -183,7 +183,7 @@ export default function AlertsPage() {
                           className={cn(
                             "flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded border transition-colors",
                             isExpanded ? "bg-brand text-white border-brand" :
-                            "text-brand bg-[rgba(27,27,27,0.06)] hover:bg-surface-hover-btn border-line-light"
+                            "text-brand bg-neutral-50 hover:bg-surface-hover-btn border-line-light"
                           )}
                           onClick={() => handleAiAnalyze(r.enterprise_id, r.name)}
                         >
@@ -201,14 +201,14 @@ export default function AlertsPage() {
                     {/* AI 分析展开区域 */}
                     {isExpanded && analysis && (
                       <div className="px-4 pb-4">
-                        <div className="bg-[rgba(27,27,27,0.06)] border border-line-light rounded-lg p-4 ml-12">
+                        <div className="bg-neutral-50 border border-line-light rounded-lg p-4 ml-12">
                           <div className="flex items-center gap-2 mb-2">
                             <Bot className="h-4 w-4 text-brand" />
                             <span className="text-xs font-semibold text-text-primary">AI 分析结果</span>
                             <span className={cn("text-tag px-1.5 py-0.5 rounded",
-                              analysis.risk_level === 'high' ? 'bg-[rgba(27,27,27,0.06)] text-error' :
-                              analysis.risk_level === 'medium' ? 'bg-[rgba(27,27,27,0.06)] text-warning' :
-                              'bg-[rgba(27,27,27,0.06)] text-success'
+                              analysis.risk_level === 'high' ? 'bg-neutral-50 text-error' :
+                              analysis.risk_level === 'medium' ? 'bg-neutral-50 text-warning' :
+                              'bg-neutral-50 text-success'
                             )}>
                               风险: {analysis.risk_level === 'high' ? '高' : analysis.risk_level === 'medium' ? '中' : '低'}
                             </span>
@@ -261,7 +261,7 @@ export default function AlertsPage() {
             <div className="px-4 py-3 border-b border-line-light flex items-center gap-2">
               <Clock className="h-4 w-4 text-warning" />
               <h2 className="text-sm font-semibold text-text-primary">需关注</h2>
-              <span className="text-xs text-warning bg-[rgba(27,27,27,0.06)] px-1.5 py-0.5 rounded">{warnings.length}</span>
+              <span className="text-xs text-warning bg-neutral-50 px-1.5 py-0.5 rounded">{warnings.length}</span>
             </div>
             <div className="divide-y divide-line-light">
               {warnings.map(r => {
@@ -270,7 +270,7 @@ export default function AlertsPage() {
                   <div key={r.enterprise_id} className="px-4 py-3 flex items-center justify-between hover:bg-surface-hover-row transition-colors">
                     <div className="flex items-center gap-3 flex-1 cursor-pointer"
                       onClick={() => { if (ent) router.push(`/incubator/${ent.id}`); }}>
-                      <div className="w-9 h-9 bg-[rgba(27,27,27,0.06)] text-warning rounded-lg flex items-center justify-center text-sm font-bold shrink-0">
+                      <div className="w-9 h-9 bg-neutral-50 text-warning rounded-lg flex items-center justify-center text-sm font-bold shrink-0">
                         {r.name.charAt(0)}
                       </div>
                       <div>
@@ -282,7 +282,7 @@ export default function AlertsPage() {
                       </div>
                     </div>
                     <button
-                      className="shrink-0 flex items-center gap-1 text-tag font-medium text-brand bg-[rgba(27,27,27,0.06)] hover:bg-surface-hover-btn px-2 py-1 rounded border border-line-light transition-colors ml-2"
+                      className="shrink-0 flex items-center gap-1 text-tag font-medium text-brand bg-neutral-50 hover:bg-surface-hover-btn px-2 py-1 rounded border border-line-light transition-colors ml-2"
                       onClick={() => sendChat(`请分析「${r.name}」的活跃度变化趋势，评估是否需要干预。`)}
                     >
                       <Sparkles className="h-3 w-3" /> AI 分析
@@ -300,7 +300,7 @@ export default function AlertsPage() {
             <div className="px-4 py-3 border-b border-line-light flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-success" />
               <h2 className="text-sm font-semibold text-text-primary">健康运行</h2>
-              <span className="text-xs text-success bg-[rgba(27,27,27,0.06)] px-1.5 py-0.5 rounded">{healthy.length}</span>
+              <span className="text-xs text-success bg-neutral-50 px-1.5 py-0.5 rounded">{healthy.length}</span>
             </div>
             <div className="divide-y divide-line-light">
               {healthy.map(r => {
@@ -309,7 +309,7 @@ export default function AlertsPage() {
                   <div key={r.enterprise_id} className="px-4 py-3 flex items-center justify-between hover:bg-surface-hover-row transition-colors cursor-pointer"
                     onClick={() => { if (ent) router.push(`/incubator/${ent.id}`); }}>
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 bg-[rgba(27,27,27,0.06)] text-success rounded-lg flex items-center justify-center text-sm font-bold shrink-0">
+                      <div className="w-9 h-9 bg-neutral-50 text-success rounded-lg flex items-center justify-center text-sm font-bold shrink-0">
                         {r.name.charAt(0)}
                       </div>
                       <div>

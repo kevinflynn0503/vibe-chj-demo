@@ -92,13 +92,13 @@ export default function ConfirmPage() {
               <div className="flex items-center gap-2 mt-1 text-xs text-text-muted">
                 <span className="font-medium text-text-secondary">{record.enterprise_name}</span>
                 <span>·</span>
-                <span className="font-mono">{record.visit_date}</span>
+                <span className="tabular-nums">{record.visit_date}</span>
                 <span>·</span>
                 <span>{record.visitor_name}</span>
                 {record.visit_type && (
                   <>
                     <span>·</span>
-                    <span className="text-tag px-1.5 py-0.5 bg-[rgba(27,27,27,0.06)] text-brand rounded">
+                    <span className="text-tag px-1.5 py-0.5 bg-neutral-50 text-brand rounded">
                       {VISIT_TYPE_LABELS[record.visit_type as VisitType]}
                     </span>
                   </>
@@ -112,7 +112,7 @@ export default function ConfirmPage() {
       {/* ═══ 内容区 ═══ */}
       <div className="page-container space-y-6">
         {/* 来源提示 */}
-        <div className="flex items-center gap-3 px-4 py-3 bg-[rgba(27,27,27,0.06)] border border-line rounded-[10px]">
+        <div className="flex items-center gap-3 px-4 py-3 bg-neutral-50 border border-line rounded-[10px]">
           <FileVideo className="h-4 w-4 text-brand shrink-0" />
           <div className="flex-1">
             <p className="text-sm font-medium text-text-primary">数据来源: 飞书妙记 · AI 自动提取</p>
@@ -138,7 +138,7 @@ export default function ConfirmPage() {
                 <textarea
                   value={markdownContent}
                   onChange={e => setMarkdownContent(e.target.value)}
-                  className="w-full font-mono text-sm resize-none border border-line rounded-lg p-4 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand/20"
+                  className="w-full text-sm resize-none border border-line rounded-lg p-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-1 focus-visible:border-brand"
                   style={{ minHeight: '500px' }}
                   placeholder="编辑 Markdown 内容..."
                 />
@@ -174,7 +174,7 @@ export default function ConfirmPage() {
               <div className="bg-surface-card border border-line rounded-[10px] p-4">
                 <div className="flex items-center gap-2 mb-3">
                   <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider">赛道问题覆盖</h3>
-                  <span className="flex items-center gap-0.5 text-tag text-brand bg-[rgba(27,27,27,0.06)] px-1.5 py-0.5 rounded">
+                  <span className="flex items-center gap-0.5 text-tag text-brand bg-neutral-50 px-1.5 py-0.5 rounded">
                     <Bot className="h-3 w-3" /> AI 检测
                   </span>
                 </div>
@@ -191,7 +191,7 @@ export default function ConfirmPage() {
                     {coverage.track_questions.total}
                   </span>
                 </div>
-                <div className="h-1.5 bg-[rgba(27,27,27,0.06)] rounded-full overflow-hidden">
+                <div className="h-1.5 bg-neutral-50 rounded-full overflow-hidden">
                   <div
                     className="h-full bg-success rounded-full transition-all"
                     style={{ width: `${(coverage.track_questions.covered / coverage.track_questions.total) * 100}%` }}
@@ -216,7 +216,7 @@ export default function ConfirmPage() {
               <div className="bg-surface-card border border-line rounded-[10px] p-4">
                 <div className="flex items-center gap-2 mb-3">
                   <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider">政策问题覆盖</h3>
-                  <span className="flex items-center gap-0.5 text-tag text-brand bg-[rgba(27,27,27,0.06)] px-1.5 py-0.5 rounded">
+                  <span className="flex items-center gap-0.5 text-tag text-brand bg-neutral-50 px-1.5 py-0.5 rounded">
                     <Bot className="h-3 w-3" /> AI 检测
                   </span>
                 </div>
@@ -233,7 +233,7 @@ export default function ConfirmPage() {
                     {coverage.policy_questions.total}
                   </span>
                 </div>
-                <div className="h-1.5 bg-[rgba(27,27,27,0.06)] rounded-full overflow-hidden">
+                <div className="h-1.5 bg-neutral-50 rounded-full overflow-hidden">
                   <div
                     className="h-full bg-brand rounded-full transition-all"
                     style={{ width: `${(coverage.policy_questions.covered / coverage.policy_questions.total) * 100}%` }}

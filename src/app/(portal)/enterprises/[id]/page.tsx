@@ -138,7 +138,7 @@ export default function EnterprisePage() {
               <div className="flex items-center gap-3 mb-2">
                 <h1 className="text-xl font-semibold text-text-primary truncate">{enterprise.name}</h1>
                 <span className={cn("px-2 py-0.5 text-xs font-medium rounded border",
-                  enterprise.is_incubated ? "bg-[rgba(27,27,27,0.06)] text-brand border-line-light" : "bg-[rgba(27,27,27,0.06)] text-success border-line-light"
+                  enterprise.is_incubated ? "bg-neutral-50 text-brand border-line-light" : "bg-neutral-50 text-success border-line-light"
                 )}>{enterprise.is_incubated ? "在孵" : "存续"}</span>
               </div>
               <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs text-text-muted mb-3">
@@ -147,7 +147,7 @@ export default function EnterprisePage() {
                 <span className="flex items-center gap-1"><MapPin className="h-3 w-3 text-text-muted" />{enterprise.office_address}</span>
               </div>
               {/* 核心指标 */}
-              <div className="grid grid-cols-4 gap-4 bg-[rgba(27,27,27,0.06)] border border-line-light rounded-lg p-3">
+              <div className="grid grid-cols-4 gap-4 bg-neutral-50 border border-line-light rounded-lg p-3">
                 <div>
                   <div className="text-tag text-text-muted">法定代表人</div>
                   <div className="text-sm font-semibold text-brand">{enterprise.legal_person || '-'}</div>
@@ -181,7 +181,7 @@ export default function EnterprisePage() {
                 {tab.key === 'ai' && <Sparkles className="h-3 w-3 inline mr-1" />}
                 {tab.label}
                 {tab.count !== undefined && tab.count > 0 && (
-                  <span className="ml-1 text-xs text-text-muted bg-[rgba(27,27,27,0.06)] px-1.5 py-0.5 rounded-full">{tab.count}</span>
+                  <span className="ml-1 text-xs text-text-muted bg-neutral-50 px-1.5 py-0.5 rounded-full">{tab.count}</span>
                 )}
               </button>
             ))}
@@ -224,13 +224,13 @@ function AITab({ enterprise, report, assessments }: { enterprise: any; report: a
       <div className="bg-surface-card border border-line-light rounded-lg p-5">
         <div className="flex items-start gap-4">
           <div className="bg-brand text-white rounded-xl w-16 h-16 flex flex-col items-center justify-center shrink-0">
-            <span className="text-2xl font-bold font-mono">{aiScore.overall}</span>
+            <span className="text-2xl font-bold tabular-nums">{aiScore.overall}</span>
             <span className="text-[9px] opacity-80">综合评分</span>
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
               <h3 className="text-base font-semibold text-text-primary">AI 综合评估</h3>
-              <span className="text-tag text-brand bg-[rgba(27,27,27,0.06)] px-1.5 py-0.5 rounded border border-line-light">✦ AI 生成</span>
+              <span className="text-tag text-brand bg-neutral-50 px-1.5 py-0.5 rounded border border-line-light">✦ AI 生成</span>
             </div>
             <p className="text-sm text-text-secondary leading-relaxed">
               {enterprise.ai_summary || `「${name}」是一家${enterprise.industry}领域的${enterprise.development_stage}企业，注册资本${enterprise.registered_capital}，员工${enterprise.employee_count}人。综合评估企业发展势头良好，创新能力中上，建议持续关注。`}
@@ -252,17 +252,17 @@ function AITab({ enterprise, report, assessments }: { enterprise: any; report: a
       {/* 维度评分 */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
         {[
-          { label: '成长性', score: aiScore.growth, color: 'text-success', bg: 'bg-[rgba(27,27,27,0.06)]', icon: TrendingUp },
-          { label: '创新力', score: aiScore.innovation, color: 'text-brand', bg: 'bg-[rgba(27,27,27,0.06)]', icon: Lightbulb },
-          { label: '财务健康', score: aiScore.financial, color: 'text-warning', bg: 'bg-[rgba(27,27,27,0.06)]', icon: DollarSign },
-          { label: '风险控制', score: aiScore.risk, color: 'text-brand', bg: 'bg-[rgba(27,27,27,0.06)]', icon: Shield },
-          { label: '政策匹配', score: aiScore.policy, color: 'text-brand', bg: 'bg-[rgba(27,27,27,0.06)]', icon: Award },
+          { label: '成长性', score: aiScore.growth, color: 'text-success', bg: 'bg-neutral-50', icon: TrendingUp },
+          { label: '创新力', score: aiScore.innovation, color: 'text-brand', bg: 'bg-neutral-50', icon: Lightbulb },
+          { label: '财务健康', score: aiScore.financial, color: 'text-warning', bg: 'bg-neutral-50', icon: DollarSign },
+          { label: '风险控制', score: aiScore.risk, color: 'text-brand', bg: 'bg-neutral-50', icon: Shield },
+          { label: '政策匹配', score: aiScore.policy, color: 'text-brand', bg: 'bg-neutral-50', icon: Award },
         ].map((dim, i) => (
           <div key={i} className="bg-surface-card border border-line rounded-lg p-4 text-center">
             <dim.icon className={cn("h-5 w-5 mx-auto mb-2", dim.color)} />
-            <div className={cn("text-2xl font-bold font-mono", dim.color)}>{dim.score}</div>
+            <div className={cn("text-2xl font-bold tabular-nums", dim.color)}>{dim.score}</div>
             <div className="text-xs text-text-muted mt-1">{dim.label}</div>
-            <div className="w-full h-1.5 bg-[rgba(27,27,27,0.06)] rounded-full mt-2 overflow-hidden">
+            <div className="w-full h-1.5 bg-neutral-50 rounded-full mt-2 overflow-hidden">
               <div className={cn("h-full rounded-full", dim.bg.replace('50', '400'))} style={{ width: `${dim.score}%`, backgroundColor: dim.score >= 80 ? 'var(--color-success)' : dim.score >= 60 ? 'var(--color-brand)' : 'var(--color-warning)' }}  /* 进度条动态色 */ />
             </div>
           </div>
@@ -306,9 +306,9 @@ function AITab({ enterprise, report, assessments }: { enterprise: any; report: a
               { text: '知识产权诉讼 0 条', level: 'safe' },
             ].map((item, i) => (
               <div key={i} className={cn("flex items-center justify-between p-2 rounded border text-xs",
-                item.level === 'safe' ? 'bg-[rgba(27,27,27,0.06)] text-success border-line-light' :
-                item.level === 'info' ? 'bg-[rgba(27,27,27,0.06)] text-text-secondary border-line-light' :
-                'bg-[rgba(27,27,27,0.06)] text-error border-line-light'
+                item.level === 'safe' ? 'bg-neutral-50 text-success border-line-light' :
+                item.level === 'info' ? 'bg-neutral-50 text-text-secondary border-line-light' :
+                'bg-neutral-50 text-error border-line-light'
               )}>
                 <span>{item.text}</span>
                 {item.level === 'safe' && <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />}
@@ -350,7 +350,7 @@ function AITab({ enterprise, report, assessments }: { enterprise: any; report: a
             ].map((item, i) => (
               <div key={i} className="flex items-center justify-between text-xs">
                 <span className="text-text-muted w-24">{item.label}</span>
-                <span className={cn("font-mono font-bold", item.better ? 'text-success' : 'text-warning')}>{item.enterprise}</span>
+                <span className={cn("tabular-nums font-bold", item.better ? 'text-success' : 'text-warning')}>{item.enterprise}</span>
                 <span className="text-text-muted">行业: {item.benchmark}</span>
                 {item.better ? <TrendingUp className="h-3 w-3 text-success" /> : <TrendingDown className="h-3 w-3 text-warning" />}
               </div>
@@ -364,11 +364,11 @@ function AITab({ enterprise, report, assessments }: { enterprise: any; report: a
         <div className="bg-surface-card border border-line rounded-lg p-4">
           <h3 className="text-sm font-semibold text-text-primary mb-3 flex items-center gap-2">
             <FileText className="h-4 w-4 text-text-muted" /> 深度背调报告
-            <span className="text-tag text-brand bg-[rgba(27,27,27,0.06)] px-1.5 py-0.5 rounded">✦ AI 生成</span>
+            <span className="text-tag text-brand bg-neutral-50 px-1.5 py-0.5 rounded">✦ AI 生成</span>
           </h3>
           <div className="space-y-3">
             {Object.values(report.report_content).map((section: any, i) => (
-              <div key={i} className="bg-[rgba(27,27,27,0.06)] p-4 rounded border border-line-light">
+              <div key={i} className="bg-neutral-50 p-4 rounded border border-line-light">
                 <div className="font-semibold text-sm text-text-primary mb-2">{section.title}</div>
                 <div className="text-sm text-text-secondary whitespace-pre-wrap leading-relaxed">{section.content}</div>
               </div>
@@ -415,12 +415,12 @@ function BasicTab({ enterprise, report }: { enterprise: any; report: any }) {
           <span className="w-1 h-4 bg-brand rounded-full" /> 产业链定位
         </h3>
         <div className="flex items-center gap-4">
-          <div className="flex-1 p-4 bg-[rgba(27,27,27,0.06)] rounded border border-line-light text-center">
+          <div className="flex-1 p-4 bg-neutral-50 rounded border border-line-light text-center">
             <div className="text-xs text-text-muted mb-1">供应链位置</div>
             <div className="text-sm font-semibold text-text-primary">{enterprise.supply_chain_position}</div>
           </div>
           <ArrowRight className="h-4 w-4 text-text-muted shrink-0" />
-          <div className="flex-1 p-4 bg-[rgba(27,27,27,0.06)] rounded border border-line-light text-center">
+          <div className="flex-1 p-4 bg-neutral-50 rounded border border-line-light text-center">
             <div className="text-xs text-text-muted mb-1">发展阶段</div>
             <div className="text-sm font-semibold text-text-primary">{enterprise.development_stage}</div>
           </div>
@@ -432,7 +432,7 @@ function BasicTab({ enterprise, report }: { enterprise: any; report: any }) {
         <h3 className="text-sm font-semibold text-text-primary mb-3">企业标签</h3>
         <div className="flex flex-wrap gap-2">
           {enterprise.industry_tags?.map((t: string) => (
-            <span key={t} className="px-2 py-1 bg-[rgba(27,27,27,0.06)] text-brand text-xs rounded border border-line-light">{t}</span>
+            <span key={t} className="px-2 py-1 bg-neutral-50 text-brand text-xs rounded border border-line-light">{t}</span>
           ))}
         </div>
       </div>
@@ -465,7 +465,7 @@ function FinanceTab({ enterprise }: { enterprise: any }) {
         {financialIndicators.map((fi, i) => (
           <div key={i} className="bg-surface-card border border-line rounded-lg p-4">
             <div className="text-xs text-text-muted mb-1">{fi.label}</div>
-            <div className="text-xl font-bold font-mono text-text-primary">{fi.value}</div>
+            <div className="text-xl font-bold tabular-nums text-text-primary">{fi.value}</div>
             <div className={cn("text-xs font-medium mt-1 flex items-center gap-1", fi.up ? 'text-success' : 'text-error')}>
               {fi.up ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
               {fi.change}
@@ -485,7 +485,7 @@ function FinanceTab({ enterprise }: { enterprise: any }) {
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-[rgba(27,27,27,0.06)] text-text-muted text-xs">
+            <thead className="bg-neutral-50 text-text-muted text-xs">
               <tr>
                 <th className="px-4 py-3 text-left font-medium">年份</th>
                 <th className="px-4 py-3 text-right font-medium">营业收入</th>
@@ -499,10 +499,10 @@ function FinanceTab({ enterprise }: { enterprise: any }) {
               {financialYears.map((fy, i) => (
                 <tr key={i} className="hover:bg-surface-hover-row">
                   <td className="px-4 py-3 font-semibold text-text-primary">{fy.year}</td>
-                  <td className="px-4 py-3 text-right font-mono">{fy.revenue}</td>
-                  <td className="px-4 py-3 text-right font-mono">{fy.profit}</td>
-                  <td className="px-4 py-3 text-right font-mono">{fy.tax}</td>
-                  <td className="px-4 py-3 text-right font-mono">{fy.rdRatio}</td>
+                  <td className="px-4 py-3 text-right tabular-nums">{fy.revenue}</td>
+                  <td className="px-4 py-3 text-right tabular-nums">{fy.profit}</td>
+                  <td className="px-4 py-3 text-right tabular-nums">{fy.tax}</td>
+                  <td className="px-4 py-3 text-right tabular-nums">{fy.rdRatio}</td>
                   <td className="px-4 py-3 text-right">
                     <span className="text-success font-medium">{fy.growth}</span>
                   </td>
@@ -527,7 +527,7 @@ function FinanceTab({ enterprise }: { enterprise: any }) {
             ].map((item, i) => (
               <div key={i} className="flex items-center justify-between py-1.5 border-b border-line-light last:border-b-0">
                 <span className="text-xs text-text-muted">{item.label}</span>
-                <span className="text-sm font-mono font-medium text-text-primary">{item.value}</span>
+                <span className="text-sm tabular-nums font-medium text-text-primary">{item.value}</span>
               </div>
             ))}
           </div>
@@ -541,13 +541,13 @@ function FinanceTab({ enterprise }: { enterprise: any }) {
               { round: 'A 轮', amount: '2,000万', date: '2022-03', investor: '松禾资本' },
               { round: '天使轮', amount: '500万', date: '2020-08', investor: '个人投资者' },
             ].map((item, i) => (
-              <div key={i} className="flex items-center gap-3 p-2 bg-[rgba(27,27,27,0.06)] rounded border border-line-light">
-                <span className="text-xs font-bold text-brand bg-[rgba(27,27,27,0.06)] px-2 py-0.5 rounded">{item.round}</span>
+              <div key={i} className="flex items-center gap-3 p-2 bg-neutral-50 rounded border border-line-light">
+                <span className="text-xs font-bold text-brand bg-neutral-50 px-2 py-0.5 rounded">{item.round}</span>
                 <div className="flex-1">
-                  <span className="text-sm font-mono font-semibold text-text-primary">{item.amount}</span>
+                  <span className="text-sm tabular-nums font-semibold text-text-primary">{item.amount}</span>
                   <span className="text-xs text-text-muted ml-2">{item.investor}</span>
                 </div>
-                <span className="text-xs text-text-muted font-mono">{item.date}</span>
+                <span className="text-xs text-text-muted tabular-nums">{item.date}</span>
               </div>
             ))}
           </div>
@@ -574,7 +574,7 @@ function IPTab({ enterprise }: { enterprise: any }) {
         ].map((item, i) => (
           <div key={i} className="bg-surface-card border border-line rounded-lg p-4 text-center">
             <item.icon className={cn("h-5 w-5 mx-auto mb-2", item.color)} />
-            <div className={cn("text-2xl font-bold font-mono", item.color)}>{item.value}</div>
+            <div className={cn("text-2xl font-bold tabular-nums", item.color)}>{item.value}</div>
             <div className="text-xs text-text-muted mt-1">{item.label}</div>
           </div>
         ))}
@@ -600,18 +600,18 @@ function IPTab({ enterprise }: { enterprise: any }) {
           ].map((p, i) => (
             <div key={i} className="px-4 py-3 flex items-center gap-3">
               <span className={cn("text-tag px-1.5 py-0.5 rounded border shrink-0",
-                p.type === '发明' ? 'bg-[rgba(27,27,27,0.06)] text-brand border-line-light' :
-                p.type === '实用新型' ? 'bg-[rgba(27,27,27,0.06)] text-success border-line-light' :
-                'bg-[rgba(27,27,27,0.06)] text-warning border-line-light'
+                p.type === '发明' ? 'bg-neutral-50 text-brand border-line-light' :
+                p.type === '实用新型' ? 'bg-neutral-50 text-success border-line-light' :
+                'bg-neutral-50 text-warning border-line-light'
               )}>{p.type}</span>
               <div className="flex-1 min-w-0">
                 <div className="text-sm text-text-primary truncate">{p.title}</div>
-                <div className="text-xs text-text-muted font-mono">{p.no}</div>
+                <div className="text-xs text-text-muted tabular-nums">{p.no}</div>
               </div>
               <span className={cn("text-tag px-1.5 py-0.5 rounded",
-                p.status === '已授权' || p.status === '已登记' ? 'bg-[rgba(27,27,27,0.06)] text-success' : 'bg-[rgba(27,27,27,0.06)] text-warning'
+                p.status === '已授权' || p.status === '已登记' ? 'bg-neutral-50 text-success' : 'bg-neutral-50 text-warning'
               )}>{p.status}</span>
-              <span className="text-xs text-text-muted font-mono">{p.date}</span>
+              <span className="text-xs text-text-muted tabular-nums">{p.date}</span>
             </div>
           ))}
         </div>
@@ -622,7 +622,7 @@ function IPTab({ enterprise }: { enterprise: any }) {
         <h3 className="text-sm font-semibold text-text-primary mb-3">商标注册</h3>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           {['SenseTech', '芯视感知', 'DeepSense', '智驾之眼', '芯视云'].map((tm, i) => (
-            <div key={i} className="p-3 bg-[rgba(27,27,27,0.06)] border border-line-light rounded text-center">
+            <div key={i} className="p-3 bg-neutral-50 border border-line-light rounded text-center">
               <div className="text-sm font-semibold text-text-primary">{tm}</div>
               <div className="text-tag text-success mt-1">已注册</div>
             </div>
@@ -674,7 +674,7 @@ function TeamTab({ enterprise }: { enterprise: any }) {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
                   <span className="text-sm font-semibold text-text-primary">{p.name}</span>
-                  <span className="text-xs text-brand bg-[rgba(27,27,27,0.06)] px-1.5 py-0.5 rounded">{p.title}</span>
+                  <span className="text-xs text-brand bg-neutral-50 px-1.5 py-0.5 rounded">{p.title}</span>
                 </div>
                 <p className="text-xs text-text-muted leading-relaxed">{p.background}</p>
               </div>
@@ -691,14 +691,14 @@ function TeamTab({ enterprise }: { enterprise: any }) {
             <div key={i} className="flex items-center gap-3">
               <div className="flex-1 min-w-0 flex items-center gap-2">
                 <span className={cn("text-tag px-1.5 py-0.5 rounded border shrink-0",
-                  sh.type === '自然人' ? 'bg-[rgba(27,27,27,0.06)] text-brand border-line-light' :
-                  sh.type === '机构' ? 'bg-[rgba(27,27,27,0.06)] text-brand border-line-light' :
-                  'bg-[rgba(27,27,27,0.06)] text-text-muted border-line-light'
+                  sh.type === '自然人' ? 'bg-neutral-50 text-brand border-line-light' :
+                  sh.type === '机构' ? 'bg-neutral-50 text-brand border-line-light' :
+                  'bg-neutral-50 text-text-muted border-line-light'
                 )}>{sh.type}</span>
                 <span className="text-sm text-text-primary">{sh.name}</span>
               </div>
-              <span className="text-sm font-bold font-mono text-text-primary w-16 text-right">{sh.ratio}</span>
-              <div className="w-32 h-2 bg-[rgba(27,27,27,0.06)] rounded-full overflow-hidden">
+              <span className="text-sm font-bold tabular-nums text-text-primary w-16 text-right">{sh.ratio}</span>
+              <div className="w-32 h-2 bg-neutral-50 rounded-full overflow-hidden">
                 <div className="h-full bg-brand rounded-full" style={{ width: sh.ratio }} />
               </div>
             </div>
@@ -716,8 +716,8 @@ function TeamTab({ enterprise }: { enterprise: any }) {
             { label: '硕士及以上', value: Math.round((enterprise.employee_count || 120) * 0.3), ratio: '30%' },
             { label: '参保人数', value: Math.round((enterprise.employee_count || 120) * 0.9) },
           ].map((item, i) => (
-            <div key={i} className="p-3 bg-[rgba(27,27,27,0.06)] rounded border border-line-light text-center">
-              <div className="text-xl font-bold font-mono text-text-primary">{item.value}</div>
+            <div key={i} className="p-3 bg-neutral-50 rounded border border-line-light text-center">
+              <div className="text-xl font-bold tabular-nums text-text-primary">{item.value}</div>
               <div className="text-xs text-text-muted mt-1">{item.label}</div>
               {item.ratio && <div className="text-tag text-brand mt-0.5">占比 {item.ratio}</div>}
             </div>
@@ -740,16 +740,16 @@ function VisitsTab({ visits, router }: { visits: any[]; router: any }) {
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-3">
               <span className="text-sm font-semibold text-text-primary">{v.visit_date}</span>
-              <span className="px-1.5 py-0.5 text-xs bg-[rgba(27,27,27,0.06)] text-text-secondary rounded">{v.visitor_name}</span>
+              <span className="px-1.5 py-0.5 text-xs bg-neutral-50 text-text-secondary rounded">{v.visitor_name}</span>
             </div>
             <div className="flex items-center gap-2">
               <span className={cn("text-xs px-2 py-0.5 rounded-full border",
-                v.is_confirmed ? "bg-[rgba(27,27,27,0.06)] text-success border-line-light" : "bg-[rgba(27,27,27,0.06)] text-warning border-line-light"
+                v.is_confirmed ? "bg-neutral-50 text-success border-line-light" : "bg-neutral-50 text-warning border-line-light"
               )}>{v.is_confirmed ? "已确认" : "待确认"}</span>
               <ChevronRight className="h-4 w-4 text-text-muted group-hover:text-brand" />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4 bg-[rgba(27,27,27,0.06)] p-3 rounded text-sm">
+          <div className="grid grid-cols-2 gap-4 bg-neutral-50 p-3 rounded text-sm">
             <div>
               <span className="text-text-muted block mb-1 text-xs">访谈对象</span>
               <span className="text-text-primary font-medium text-xs">{v.counterpart_name} {v.counterpart_title}</span>
@@ -775,15 +775,15 @@ function DemandsTab({ demands }: { demands: any[] }) {
 
   const statusMap: Record<string, string> = { pending: '待处理', processing: '处理中', done: '已完成' };
   const statusClass: Record<string, string> = {
-    pending: 'bg-[rgba(27,27,27,0.06)] text-warning border-line-light',
-    processing: 'bg-[rgba(27,27,27,0.06)] text-brand border-line-light',
-    done: 'bg-[rgba(27,27,27,0.06)] text-success border-line-light',
+    pending: 'bg-neutral-50 text-warning border-line-light',
+    processing: 'bg-neutral-50 text-brand border-line-light',
+    done: 'bg-neutral-50 text-success border-line-light',
   };
 
   return (
     <div className="bg-surface-card border border-line rounded-lg overflow-hidden">
       <table className="w-full text-sm text-left">
-        <thead className="bg-[rgba(27,27,27,0.06)] text-text-muted font-medium border-b border-line text-xs">
+        <thead className="bg-neutral-50 text-text-muted font-medium border-b border-line text-xs">
           <tr>
             <th className="px-4 py-3">需求内容</th>
             <th className="px-4 py-3 w-32">类型</th>
@@ -803,7 +803,7 @@ function DemandsTab({ demands }: { demands: any[] }) {
                   {statusMap[d.status]}
                 </span>
               </td>
-              <td className="px-4 py-3 text-text-muted font-mono text-xs">{d.created_at.split('T')[0]}</td>
+              <td className="px-4 py-3 text-text-muted tabular-nums text-xs">{d.created_at.split('T')[0]}</td>
             </tr>
           ))}
         </tbody>
@@ -834,7 +834,7 @@ function PolicyTab({ assessments }: { assessments: any[] }) {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {a.screening_details.map((d: any, i: number) => (
-              <div key={i} className="flex items-center justify-between p-2 bg-[rgba(27,27,27,0.06)] rounded border border-line-light">
+              <div key={i} className="flex items-center justify-between p-2 bg-neutral-50 rounded border border-line-light">
                 <div className="flex items-center gap-2">
                   {d.result === 'pass' && <CheckCircle2 className="h-4 w-4 text-success" />}
                   {d.result === 'fail' && <AlertCircle className="h-4 w-4 text-error" />}
@@ -857,7 +857,7 @@ function PolicyTab({ assessments }: { assessments: any[] }) {
 function EmptyState({ text }: { text: string }) {
   return (
     <div className="py-12 text-center">
-      <div className="bg-[rgba(27,27,27,0.06)] w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
+      <div className="bg-neutral-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
         <Briefcase className="h-6 w-6 text-text-muted" />
       </div>
       <p className="text-text-muted text-sm">{text}</p>
